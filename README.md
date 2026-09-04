@@ -2,31 +2,26 @@
 
 Aplicação web para registar rendimentos, despesas, fontes de trabalho, contas e tarefas num único local.
 
-## Modelo inicial
+## Estrutura inicial da base de dados
 
-A primeira versão da base de dados inclui:
+O repositório contém apenas a definição inicial das tabelas para servir de base ao desenvolvimento do projeto.
 
-- `User` — utilizadores da aplicação
-- `Source` — origem do rendimento/despesa, por exemplo Vinted, Padeiro ou Freelance
-- `Entry` — movimento financeiro
-- `TransactionType` — tipo de movimento (`Income` / `Expense`)
-- `Account` — local onde o dinheiro entra ou sai
-- `AccountType` — tipo de conta
-- `Task` — tarefas do utilizador
-- `TaskStatus` — colunas do Kanban
+Tabelas atuais:
 
-## Kanban inicial
+- `User`
+- `Source`
+- `Entry`
+- `TransactionType`
+- `Account`
+- `AccountType`
+- `Task`
+- `TaskStatus`
 
-Cada novo utilizador deverá começar com estas colunas:
+A tabela `TaskStatus` permite suportar um Kanban com estados como `To Do`, `Doing`, `Testing` e `Done`, mas esses estados não são inseridos automaticamente na base de dados.
 
-1. To Do
-2. Doing
-3. Testing
-4. Done
+## Ficheiros
 
-A posição das colunas é controlada por `TaskStatus.SortOrder` e a posição das tarefas dentro de cada coluna por `Task.SortOrder`.
+- `database/schema.dbml` — modelo visual para dbdiagram.io
+- `database/schema.sql` — definição SQL das tabelas e relações em PostgreSQL
 
-## Ficheiros da base de dados
-
-- `database/schema.dbml` — modelo para dbdiagram.io
-- `database/seed-template.sql` — dados iniciais de referência e template para criar os estados do Kanban de um utilizador
+O projeto da aplicação ainda não foi criado. Estes ficheiros servem apenas como ponto de partida para implementares depois o backend, frontend e migrations.
