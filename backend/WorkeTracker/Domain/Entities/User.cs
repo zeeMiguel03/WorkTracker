@@ -28,23 +28,32 @@ namespace Domain.Entities
         public string Email { get; private set; } = string.Empty;
 
         [Column("password_hash")]
+        [Required]
         [MaxLength(MAX_LENGTH_PASSWORD_HASH)]
         public string PasswordHash { get; private set; } = string.Empty;
 
         [Column("profile_image_url")]
         [MaxLength(MAX_LENGTH_PROFILE_IMAGE)]
-        public string? ProfileImageUrl { get; private set; } = string.Empty;
+        public string? ProfileImageUrl { get; private set; } 
 
         [Column("created_at")]
+        [Required]
         public DateTime CreatedAt { get; private set; }
 
         [Column("ut_creation")]
         public int? UtCreation { get; private set; }
 
+        public ICollection<TaskStatus> TaskStatuses { get; private set; } = new List<TaskStatus>();
+        public ICollection<Task> Tasks { get; private set; } = new List<Task>();
+        public ICollection<Account> Accounts { get; private set; } = new List<Account>();
+        public ICollection<Source> Sources { get; private set; } = new List<Source>();
+
         private User() { }
 
         public static User Create(string name, string email, string passwordHash, string? profileImageUrl, int? utCreation)
         {
+            ValidatePasswordHash(passwordHash);
+
             var user = new User
             {
                 Name = NormalizeAndValidateName(name),
@@ -52,7 +61,7 @@ namespace Domain.Entities
                 PasswordHash = passwordHash,
                 ProfileImageUrl = NormalizeAndValidateProfileImageUrl(profileImageUrl),
                 UtCreation = utCreation,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
             };
 
             return user;
