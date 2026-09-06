@@ -71,17 +71,8 @@ namespace Domain.Entities
 
         private Entry() { }
 
-        public static Entry Create(
-            int sourceId,
-            int transactionTypeId,
-            int accountId,
-            string name,
-            string? imageUrl,
-            string? description,
-            decimal quantity,
-            decimal value,
-            DateTime date,
-            int? utCreation)
+        public static Entry Create(int sourceId, int transactionTypeId, int accountId, string name, string? imageUrl,
+            string? description, decimal quantity, decimal value, DateTime date, int? utCreation)
         {
             var entry = new Entry
             {
@@ -101,16 +92,8 @@ namespace Domain.Entities
             return entry;
         }
 
-        public void Update(
-            int sourceId,
-            int transactionTypeId,
-            int accountId,
-            string name,
-            string? imageUrl,
-            string? description,
-            decimal quantity,
-            decimal value,
-            DateTime date)
+        public void Update(int sourceId, int transactionTypeId, int accountId, string name,
+            string? imageUrl, string? description, decimal quantity, decimal value, DateTime date)
         {
             SourceId = ValidateSourceId(sourceId);
             TransactionTypeId = ValidateTransactionTypeId(transactionTypeId);

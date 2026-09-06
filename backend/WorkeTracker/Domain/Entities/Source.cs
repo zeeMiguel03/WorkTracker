@@ -44,16 +44,11 @@ namespace Domain.Entities
 
         public ICollection<Entry> Entries { get; private set; } = new List<Entry>();
 
-        public ICollection<Task> Tasks { get; private set; } = new List<Task>();
+        public ICollection<Tasks> Tasks { get; private set; } = new List<Tasks>();
 
         private Source() { }
 
-        public static Source Create(
-            int userId,
-            string name,
-            string? imageUrl,
-            bool isActive,
-            int? utCreation)
+        public static Source Create(int userId, string name, string? imageUrl, bool isActive, int? utCreation)
         {
             var source = new Source
             {

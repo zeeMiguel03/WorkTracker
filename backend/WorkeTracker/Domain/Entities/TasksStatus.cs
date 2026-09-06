@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Domain.Entities
 {
     [Table("task_status")]
-    public class TaskStatus
+    public class TasksStatus
     {
         private const int MAX_LENGTH_NAME = 150;
         private const int MAX_LENGTH_COLOR = 7;
@@ -44,13 +44,13 @@ namespace Domain.Entities
         [ForeignKey(nameof(UserId))]
         public User User { get; private set; } = null!;
 
-        public ICollection<Task> Tasks { get; private set; } = new List<Task>();
+        public ICollection<Tasks> Tasks { get; private set; } = new List<Tasks>();
 
-        private TaskStatus() { }
+        private TasksStatus() { }
 
-        public static TaskStatus Create(string name, string color, int sortOrder, int userId, int? utCreation)
+        public static TasksStatus Create(string name, string color, int sortOrder, int userId, int? utCreation)
         {
-            var taskStatus = new TaskStatus
+            var taskStatus = new TasksStatus
             {
                 Name = NormalizeAndValidateName(name),
                 Color = NormalizeAndValidateColor(color),

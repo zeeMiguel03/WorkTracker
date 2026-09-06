@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
-    [Table("task")]
-    public class Task
+    [Table("tasks")]
+    public class Tasks
     {
         private const int MAX_LENGTH_TITLE = 150;
         private const int MAX_LENGTH_DESCRIPTION = 500;
@@ -60,17 +60,17 @@ namespace Domain.Entities
         public User User { get; private set; } = null!;
 
         [ForeignKey(nameof(TaskStatusId))]
-        public TaskStatus TaskStatus { get; private set; } = null!;
+        public TasksStatus TaskStatus { get; private set; } = null!;
 
         [ForeignKey(nameof(SourceId))]
         public Source? Source { get; private set; }
 
-        private Task() { }
+        private Tasks() { }
 
-        public static Task Create(int userId, int? sourceId, int taskStatusId, string title,
+        public static Tasks Create(int userId, int? sourceId, int taskStatusId, string title,
             string? description, int priority, int sortOrder, DateTime? dueDate, int? utCreation)
         {
-            var task = new Task
+            var task = new Tasks
             {
                 UserId = ValidateUserId(userId),
                 SourceId = ValidateSourceId(sourceId),

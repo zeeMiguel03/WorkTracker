@@ -43,8 +43,8 @@ namespace Domain.Entities
         [Column("ut_creation")]
         public int? UtCreation { get; private set; }
 
-        public ICollection<TaskStatus> TaskStatuses { get; private set; } = new List<TaskStatus>();
-        public ICollection<Task> Tasks { get; private set; } = new List<Task>();
+        public ICollection<TasksStatus> TasksStatus { get; private set; } = new List<TasksStatus>();
+        public ICollection<Tasks> Tasks { get; private set; } = new List<Tasks>();
         public ICollection<Account> Accounts { get; private set; } = new List<Account>();
         public ICollection<Source> Sources { get; private set; } = new List<Source>();
 

@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CA4BD45C-F759-4656-BB75-731FB52E06D1}|Domain\\Domain.csproj|c:\\users\\miguel\\desktop\\worktracker\\worktracker\\backend\\worketracker\\domain\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CA4BD45C-F759-4656-BB75-731FB52E06D1}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|c:\\users\\miguel\\desktop\\worktracker\\worktracker\\backend\\worketracker\\domain\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -40,9 +40,9 @@
               "RelativeDocumentMoniker": "Domain\\Entities\\User.cs",
               "ToolTip": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Entities\\User.cs",
               "RelativeToolTip": "Domain\\Entities\\User.cs",
-              "ViewState": "AgIAAFgAAAAAAAAAAAAAAEEAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAABMAAAAAAAAAAAAAACQAAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-04T23:21:35.564Z",
+              "WhenOpened": "2026-09-05T23:46:53.91Z",
               "EditorCaption": ""
             }
           ]
