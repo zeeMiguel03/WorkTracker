@@ -2,9 +2,6 @@
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infrastructure.Repositories
 {
@@ -33,8 +30,10 @@ namespace Infrastructure.Repositories
 
         public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
+            var normalizedEmail = email.Trim().ToLowerInvariant();
+
             return _context.users.FirstOrDefaultAsync(
-                user => user.Email == email,
+                user => user.Email == normalizedEmail,
                 cancellationToken);
         }
 
@@ -43,6 +42,14 @@ namespace Infrastructure.Repositories
             return _context.users.FirstOrDefaultAsync(
                 user => user.Id == id,
                 cancellationToken);
+        }
+
+        public async Task<List<User>> GetAllAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.users
+                .AsNoTracking()
+                .OrderBy(user => user.Name)
+                .ToListAsync(cancellationToken);
         }
 
         public void Remove(User user)
