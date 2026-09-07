@@ -1,10 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\",
+  "WorkspaceRootPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|c:\\users\\miguel\\desktop\\worktracker\\worktracker\\backend\\worketracker\\domain\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E528BBC3-1C26-8C35-F682-23718816ADCD}|Domain\\Domain.csproj|solutionrelative:domain\\entities\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D4933AE0-7A8B-DB9A-6CFF-C0DB8751C78E}|WorkeTracker\\API.csproj|c:\\users\\win11\\desktop\\worktracker\\worktracker\\backend\\worketracker\\worketracker\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D4933AE0-7A8B-DB9A-6CFF-C0DB8751C78E}|WorkeTracker\\API.csproj|solutionrelative:worketracker\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,15 +14,28 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\Program.cs",
+              "RelativeDocumentMoniker": "WorkeTracker\\Program.cs",
+              "ToolTip": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\Program.cs",
+              "RelativeToolTip": "WorkeTracker\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-07T21:49:49.762Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Bookmark",
@@ -31,19 +44,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "User.cs",
-              "DocumentMoniker": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Entities\\User.cs",
-              "RelativeDocumentMoniker": "Domain\\Entities\\User.cs",
-              "ToolTip": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Entities\\User.cs",
-              "RelativeToolTip": "Domain\\Entities\\User.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAAACQAAAA9AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-05T23:46:53.91Z",
-              "EditorCaption": ""
             }
           ]
         }
