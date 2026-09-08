@@ -13,11 +13,35 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Infrastructure.Services
 {
+    /// <summary>
+    /// Provides secure storage, processing, reading, and deletion
+    /// of user-uploaded profile images.
+    /// </summary>
+    /// <remarks>
+    /// Uploaded images are validated using their actual encoded format,
+    /// resized when necessary, stripped of metadata, and normalized to WebP.
+    ///
+    /// The original uploaded file is never stored directly.
+    /// </remarks>
     public sealed class UploadService : IUploadService
     {
+        /// <summary>
+        /// Directory used to store user profile images inside the uploads root.
+        /// </summary>
         private const string UsersFolder = "users";
+
+        /// <summary>
+        /// Extension used for every processed image.
+        /// </summary>
         private const string OutputExtension = ".webp";
 
+        /// <summary>
+        /// File extensions accepted at the upload boundary.
+        /// </summary>
+        /// <remarks>
+        /// Extensions are only an initial validation mechanism.
+        /// The actual encoded image format is validated separately.
+        /// </remarks>
         private static readonly HashSet<string> AllowedExtensions =
             new(StringComparer.OrdinalIgnoreCase)
             {
@@ -27,6 +51,9 @@ namespace Infrastructure.Services
                 ".webp"
             };
 
+        /// <summary>
+        /// Actual image formats accepted after content inspection.
+        /// </summary>
         private static readonly HashSet<string> AllowedFormats =
             new(StringComparer.OrdinalIgnoreCase)
             {
@@ -35,22 +62,52 @@ namespace Infrastructure.Services
                 "WEBP"
             };
 
+        /// <summary>
+        /// Defines the appropriate path comparison behavior for the
+        /// operating system.
+        /// </summary>
+        /// <remarks>
+        /// Windows paths are normally case-insensitive, while Linux and
+        /// other Unix-like systems are normally case-sensitive.
+        /// </remarks>
         private static readonly StringComparison PathComparison =
             OperatingSystem.IsWindows()
                 ? StringComparison.OrdinalIgnoreCase
                 : StringComparison.Ordinal;
 
-        private static readonly Configuration ImageConfiguration =
-            CreateImageConfiguration();
+
+        /// <summary>
+        /// Shared ImageSharp configuration used by all service instances.
+        /// </summary>
+        /// <remarks>
+        /// Sharing the configuration prevents the creation of a separate
+        /// memory allocator for every request.
+        /// </remarks>
+        private static readonly Configuration ImageConfiguration = CreateImageConfiguration();
 
         private readonly string _rootUploadPath;
         private readonly UploadOptions _options;
         private readonly ILogger<UploadService> _logger;
 
-        public UploadService(
-            IWebHostEnvironment environment,
-            IOptions<UploadOptions> options,
-            ILogger<UploadService> logger)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UploadService"/> class.
+        /// </summary>
+        /// <param name="environment">
+        /// Provides the application content root and web root paths.
+        /// </param>
+        /// <param name="options">
+        /// Contains upload size, dimension, and output quality settings.
+        /// </param>
+        /// <param name="logger">
+        /// Logger used to record infrastructure cleanup failures.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when any required dependency is null.
+        /// </exception>
+        /// <exception cref="DomainException">
+        /// Thrown when the upload root contains a symbolic link or junction.
+        /// </exception>
+        public UploadService(IWebHostEnvironment environment, IOptions<UploadOptions> options, ILogger<UploadService> logger)
         {
             ArgumentNullException.ThrowIfNull(environment);
             ArgumentNullException.ThrowIfNull(options);
@@ -61,6 +118,7 @@ namespace Infrastructure.Services
 
             var webRootPath = environment.WebRootPath;
 
+            // WebRootPath can be null when wwwroot has not been initialized.
             if (string.IsNullOrWhiteSpace(webRootPath))
             {
                 webRootPath = Path.Combine(environment.ContentRootPath, "wwwroot");
@@ -69,14 +127,60 @@ namespace Infrastructure.Services
             _rootUploadPath = Path.GetFullPath(Path.Combine(webRootPath, "uploads"));
 
             Directory.CreateDirectory(_rootUploadPath);
+
+
+            // Prevent the configured upload root from redirecting file
+            // operations through a symbolic link or filesystem junction.
             RejectSymbolicLinksInPath(_rootUploadPath);
         }
 
+        /// <summary>
+        /// Validates, processes, and stores a user profile image.
+        /// </summary>
+        /// <param name="file">Image received from the HTTP request.</param>
+        /// <param name="cancellationToken">
+        /// Token used to cancel the upload and image-processing operation.
+        /// </param>
+        /// <returns>
+        /// A relative path such as
+        /// <c>uploads/users/identifier.webp</c>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="file"/> is null.
+        /// </exception>
+        /// <exception cref="DomainException">
+        /// Thrown when the file is empty, too large, has an unsupported
+        /// extension or format, contains invalid image data, exceeds the
+        /// dimension limits, or requires too much processing memory.
+        /// </exception>
+        /// <exception cref="OperationCanceledException">
+        /// Thrown when the operation is cancelled.
+        /// </exception>
         public Task<string> UploadUserImageAsync(IFormFile file, CancellationToken cancellationToken = default)
         {
             return UploadImageAsync(file, UsersFolder, cancellationToken);
         }
 
+        /// <summary>
+        /// Deletes a previously stored image.
+        /// </summary>
+        /// <param name="relativePath">
+        /// Relative path previously returned by the upload service.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// Token used to cancel the operation before deletion starts.
+        /// </param>
+        /// <returns>A completed task.</returns>
+        /// <remarks>
+        /// A null, empty, or missing file is treated as a successful no-op.
+        /// </remarks>
+        /// <exception cref="DomainException">
+        /// Thrown when the path escapes the uploads directory or contains
+        /// a symbolic link.
+        /// </exception>
+        /// <exception cref="OperationCanceledException">
+        /// Thrown when the operation is cancelled.
+        /// </exception>
         public Task DeleteImageAsync(string? relativePath, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -91,12 +195,35 @@ namespace Infrastructure.Services
             if (File.Exists(fullPath))
             {
                 RejectSymbolicLinksInPath(fullPath);
+
                 File.Delete(fullPath);
             }
 
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Opens a stored upload for asynchronous sequential reading.
+        /// </summary>
+        /// <param name="relativePath">
+        /// Relative path previously returned by the upload service.
+        /// </param>
+        /// <param name="cancellationToken">
+        /// Token used to cancel the operation before the stream is opened.
+        /// </param>
+        /// <returns>
+        /// A readable file stream.
+        /// </returns>
+        /// <remarks>
+        /// The caller owns the returned stream and must dispose it.
+        /// </remarks>
+        /// <exception cref="DomainException">
+        /// Thrown when the path is invalid, the file does not exist,
+        /// or the path contains a symbolic link.
+        /// </exception>
+        /// <exception cref="OperationCanceledException">
+        /// Thrown when the operation is cancelled.
+        /// </exception>
         public Task<Stream> ReadUploadAsync(string relativePath, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -130,11 +257,21 @@ namespace Infrastructure.Services
             return Task.FromResult(stream);
         }
 
+
+        /// <summary>
+        /// Executes the complete validation and image-processing pipeline.
+        /// </summary>
+        /// <param name="file">Uploaded image.</param>
+        /// <param name="subFolder">Destination folder inside uploads.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>The relative path of the processed image.</returns>
         private async Task<string> UploadImageAsync(IFormFile file, string subFolder, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(file);
+
             cancellationToken.ThrowIfCancellationRequested();
 
+            // Reject empty files and files exceeding the configured byte limit.
             ValidateFileSize(file);
 
             var originalExtension = Path
@@ -146,7 +283,12 @@ namespace Infrastructure.Services
             var decoderOptions = new DecoderOptions
             {
                 Configuration = ImageConfiguration,
+
+                // Animated images are treated as static profile images.
                 MaxFrames = 1,
+
+                // Metadata must initially be available so that EXIF
+                // orientation can be applied later.
                 SkipMetadata = false
             };
 
@@ -156,6 +298,8 @@ namespace Infrastructure.Services
             {
                 await using var identifyStream = file.OpenReadStream();
 
+                // Identify reads the encoded format and dimensions without
+                // performing the complete pixel-processing pipeline.
                 imageInfo = await Image.IdentifyAsync(decoderOptions, identifyStream, cancellationToken);
             }
             catch (OperationCanceledException)
@@ -172,7 +316,10 @@ namespace Infrastructure.Services
                 throw InvalidImageException(exception);
             }
 
+            // The real encoded format must match the filename extension.
             ValidateDetectedFormat(imageInfo, originalExtension);
+
+            // Dimension checks are performed before complete decoding.
             ValidateSourceDimensions(imageInfo);
 
             Image image;
@@ -187,11 +334,15 @@ namespace Infrastructure.Services
                     MaxFrames = 1,
                     SkipMetadata = false,
 
+                    // Supported decoders can reduce memory and CPU usage
+                    // by decoding toward this target size.
                     TargetSize = new Size(
                         _options.OutputMaxWidth,
                         _options.OutputMaxHeight)
                 };
 
+                // Fully decode the image. A file with a valid header but
+                // corrupted image data will fail at this stage.
                 image = await Image.LoadAsync(loadOptions, inputStream, cancellationToken);
             }
             catch (OperationCanceledException)
@@ -211,8 +362,12 @@ namespace Infrastructure.Services
             {
                 using (image)
                 {
+                    // Apply EXIF orientation before metadata is removed.
                     image.Mutate(context => context.AutoOrient());
 
+
+                    // Resize only when the decoded image exceeds the
+                    // configured output dimensions.
                     if (image.Width > _options.OutputMaxWidth ||
                         image.Height > _options.OutputMaxHeight)
                     {
@@ -223,6 +378,9 @@ namespace Infrastructure.Services
                                     _options.OutputMaxWidth,
                                     _options.OutputMaxHeight),
 
+
+                                // Preserve the complete image and its
+                                // original aspect ratio.
                                 Mode = ResizeMode.Max
                             }));
                     }
@@ -236,6 +394,18 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// Encodes the processed image as WebP and safely stores it.
+        /// </summary>
+        /// <param name="image">Decoded and processed image.</param>
+        /// <param name="subFolder">Destination folder inside uploads.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>The relative path of the final WebP file.</returns>
+        /// <remarks>
+        /// The image is first written to a temporary file. After encoding
+        /// completes successfully, the temporary file is moved to its final
+        /// name. This prevents incomplete files from being exposed.
+        /// </remarks>
         private async Task<string> SaveImageAsync(Image image, string subFolder, CancellationToken cancellationToken)
         {
             var targetFolder = Path.Combine(_rootUploadPath, subFolder);
@@ -273,6 +443,10 @@ namespace Infrastructure.Services
                     var encoder = new WebpEncoder
                     {
                         Quality = _options.WebpQuality,
+
+
+                        // Remove EXIF, GPS, XMP, IPTC, and other metadata
+                        // supported by the encoder.
                         SkipMetadata = true
                     };
 
@@ -283,15 +457,21 @@ namespace Infrastructure.Services
 
                 cancellationToken.ThrowIfCancellationRequested();
 
+                // CreateNew and overwrite:false prevent an existing file
+                // from being replaced, even in the unlikely event of a
+                // generated identifier collision.
                 File.Move(
                     temporaryPath,
                     finalPath,
                     overwrite: false);
 
+                // Always return a platform-independent relative path.
                 return $"uploads/{subFolder}/{fileName}";
             }
             finally
             {
+                // Remove partial temporary files after an error or
+                // cancellation.
                 if (File.Exists(temporaryPath))
                 {
                     try
@@ -301,15 +481,21 @@ namespace Infrastructure.Services
                     catch (Exception exception) when (
                         exception is IOException or UnauthorizedAccessException)
                     {
-                        _logger.LogWarning(
-                            exception,
-                            "Failed to delete temporary upload file {TemporaryFilePath}.",
-                            temporaryPath);
+                        // Cleanup failures must not replace the original
+                        // upload or processing exception.
+                        _logger.LogWarning(exception, "Failed to delete temporary upload file {TemporaryFilePath}.", temporaryPath);
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// Validates the uploaded file length.
+        /// </summary>
+        /// <param name="file">Uploaded file.</param>
+        /// <exception cref="DomainException">
+        /// Thrown when the file is empty or exceeds the configured limit.
+        /// </exception>
         private void ValidateFileSize(IFormFile file)
         {
             if (file.Length <= 0)
@@ -323,6 +509,15 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// Validates the filename extension against the upload policy.
+        /// </summary>
+        /// <param name="extension">
+        /// Lowercase filename extension, including the leading period.
+        /// </param>
+        /// <exception cref="DomainException">
+        /// Thrown when the extension is missing or unsupported.
+        /// </exception>
         private static void ValidateExtension(string extension)
         {
             if (string.IsNullOrWhiteSpace(extension) ||
@@ -336,6 +531,20 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// Validates the actual encoded image format and confirms that it
+        /// matches the filename extension.
+        /// </summary>
+        /// <param name="imageInfo">
+        /// Image information detected by ImageSharp.
+        /// </param>
+        /// <param name="originalExtension">
+        /// Extension extracted from the uploaded filename.
+        /// </param>
+        /// <exception cref="DomainException">
+        /// Thrown when the encoded format is unsupported or does not
+        /// match the filename extension.
+        /// </exception>
         private static void ValidateDetectedFormat(ImageInfo imageInfo, string originalExtension)
         {
             var detectedFormat = imageInfo.Metadata.DecodedImageFormat;
@@ -352,8 +561,18 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// Validates source width, height, and total pixel count.
+        /// </summary>
+        /// <param name="imageInfo">
+        /// Image information detected before complete decoding.
+        /// </param>
+        /// <exception cref="DomainException">
+        /// Thrown when any configured dimension limit is exceeded.
+        /// </exception>
         private void ValidateSourceDimensions(ImageInfo imageInfo)
         {
+            // Cast before multiplication to prevent Int32 overflow.
             var pixels = (long)imageInfo.Width * imageInfo.Height;
 
             if (imageInfo.Width > _options.MaxSourceWidth ||
@@ -373,6 +592,17 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// Converts a stored relative path into a validated physical path.
+        /// </summary>
+        /// <param name="relativePath">
+        /// Relative path within the uploads root.
+        /// </param>
+        /// <returns>A normalized absolute filesystem path.</returns>
+        /// <exception cref="DomainException">
+        /// Thrown when the path is absolute, malformed, too long,
+        /// unsupported, or escapes the uploads directory.
+        /// </exception>
         private string GetPhysicalPath(string relativePath)
         {
             try
@@ -389,6 +619,7 @@ namespace Infrastructure.Services
                         '\\',
                         Path.DirectorySeparatorChar);
 
+                // Never accept absolute paths from callers.
                 if (Path.IsPathRooted(normalizedPath))
                 {
                     throw InvalidPathException();
@@ -397,6 +628,8 @@ namespace Infrastructure.Services
                 var uploadsPrefix =
                     "uploads" + Path.DirectorySeparatorChar;
 
+                // Accept paths both with and without the "uploads/"
+                // prefix while resolving them against the same root.
                 if (normalizedPath.StartsWith(uploadsPrefix, PathComparison))
                 {
                     normalizedPath = normalizedPath[uploadsPrefix.Length..];
@@ -418,6 +651,15 @@ namespace Infrastructure.Services
             }
         }
 
+
+        /// <summary>
+        /// Ensures that a path is equal to or located below the configured
+        /// uploads root.
+        /// </summary>
+        /// <param name="path">Physical path to validate.</param>
+        /// <exception cref="DomainException">
+        /// Thrown when the path escapes the uploads root.
+        /// </exception>
         private void EnsurePathInsideUploads(string path)
         {
             var fullRootPath = Path
@@ -444,6 +686,14 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// Checks every existing path component below the uploads root
+        /// for symbolic links and filesystem junctions.
+        /// </summary>
+        /// <param name="path">Path whose components will be checked.</param>
+        /// <exception cref="DomainException">
+        /// Thrown when a symbolic link or junction is detected.
+        /// </exception>
         private void RejectSymbolicLinksInPath(string path)
         {
             var fullPath = Path.GetFullPath(path);
@@ -469,6 +719,14 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// Rejects an existing file or directory when it is implemented
+        /// as a symbolic link, junction, or another reparse point.
+        /// </summary>
+        /// <param name="path">Existing or potential filesystem path.</param>
+        /// <exception cref="DomainException">
+        /// Thrown when an existing path is a reparse point.
+        /// </exception>
         private static void RejectSymbolicLinkIfItExists(string path)
         {
             if (!File.Exists(path) && !Directory.Exists(path))
@@ -484,22 +742,52 @@ namespace Infrastructure.Services
             }
         }
 
+        /// <summary>
+        /// Creates the shared ImageSharp processing configuration.
+        /// </summary>
+        /// <returns>A restricted ImageSharp configuration.</returns>
+        /// <remarks>
+        /// These values limit processing memory, not the amount of disk
+        /// space used by the uploads directory.
+        ///
+        /// AllocationLimitMegabytes limits a single allocation.
+        /// AccumulativeAllocationLimitMegabytes limits all active
+        /// allocations using this allocator.
+        /// MaximumPoolSizeMegabytes limits retained pooled memory.
+        /// </remarks>
         private static Configuration CreateImageConfiguration()
         {
             var configuration = Configuration.Default.Clone();
 
+            // Limit internal CPU parallelism for each processing operation.
             configuration.MaxDegreeOfParallelism = 2;
+
             configuration.MemoryAllocator = MemoryAllocator.Create(
                 new MemoryAllocatorOptions
                 {
+                    // Maximum size of an individual allocation.
                     AllocationLimitMegabytes = 128,
+
+                    // Maximum combined size of active allocations.
                     AccumulativeAllocationLimitMegabytes = 256,
+
+                    // Maximum memory retained by the internal pool.
                     MaximumPoolSizeMegabytes = 64
                 });
 
             return configuration;
         }
 
+        /// <summary>
+        /// Determines whether a filename extension matches the actual
+        /// encoded image format.
+        /// </summary>
+        /// <param name="extension">Filename extension.</param>
+        /// <param name="formatName">Format detected by ImageSharp.</param>
+        /// <returns>
+        /// <see langword="true"/> when the extension matches the format;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
         private static bool ExtensionMatchesFormat(string extension, string formatName)
         {
             return formatName.ToUpperInvariant() switch
@@ -510,7 +798,13 @@ namespace Infrastructure.Services
                 _ => false
             };
         }
-
+        /// <summary>
+        /// Creates a domain exception for invalid or corrupted image data.
+        /// </summary>
+        /// <param name="innerException">
+        /// Optional technical exception used to identify the failure type.
+        /// </param>
+        /// <returns>A standardized domain exception.</returns>
         private static DomainException InvalidImageException(Exception? innerException = null)
         {
             return new DomainException(
@@ -521,6 +815,11 @@ namespace Infrastructure.Services
                     : new { ExceptionType = innerException.GetType().Name });
         }
 
+        /// <summary>
+        /// Creates a domain exception for an image that exceeds the
+        /// configured processing-memory limits.
+        /// </summary>
+        /// <returns>A standardized domain exception.</returns>
         private static DomainException ProcessingLimitException()
         {
             return new DomainException(
@@ -528,6 +827,13 @@ namespace Infrastructure.Services
                 "The image requires too much memory to process.");
         }
 
+        /// <summary>
+        /// Creates a domain exception for an unsafe or malformed path.
+        /// </summary>
+        /// <param name="innerException">
+        /// Optional technical exception used to identify the failure type.
+        /// </param>
+        /// <returns>A standardized domain exception.</returns>
         private static DomainException InvalidPathException(Exception? innerException = null)
         {
             return new DomainException(
