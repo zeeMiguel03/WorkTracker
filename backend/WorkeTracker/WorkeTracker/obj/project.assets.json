@@ -879,6 +879,25 @@
           }
         }
       },
+      "SixLabors.ImageSharp/4.1.1": {
+        "type": "package",
+        "dependencies": {
+          "System.IO.Hashing": "8.0.0"
+        },
+        "compile": {
+          "lib/net8.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/SixLabors.ImageSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "build/_._": {}
+        }
+      },
       "System.ClientModel/1.8.0": {
         "type": "package",
         "dependencies": {
@@ -1057,6 +1076,22 @@
           }
         }
       },
+      "System.IO.Hashing/8.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/System.IO.Hashing.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/System.IO.Hashing.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/net6.0/_._": {}
+        }
+      },
       "System.Memory.Data/8.0.1": {
         "type": "package",
         "compile": {
@@ -1141,7 +1176,8 @@
           "Application": "1.0.0",
           "Domain": "1.0.0",
           "Microsoft.EntityFrameworkCore": "10.0.11",
-          "Microsoft.EntityFrameworkCore.SqlServer": "10.0.11"
+          "Microsoft.EntityFrameworkCore.SqlServer": "10.0.11",
+          "SixLabors.ImageSharp": "4.1.1"
         },
         "compile": {
           "bin/placeholder/Infrastructure.dll": {}
@@ -2894,6 +2930,25 @@
         "packageIcon.png"
       ]
     },
+    "SixLabors.ImageSharp/4.1.1": {
+      "sha512": "yhsstOTxlEF3b7K7hz6tPC+3g5ll0ZAZMJV6J/miSTB1z/AFYFgcqvQrhX3RuEM4SgmlMhR9sJOzzqeUluIjCg==",
+      "type": "package",
+      "path": "sixlabors.imagesharp/4.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "build/SixLabors.ImageSharp.props",
+        "build/SixLabors.ImageSharp.targets",
+        "build/net472/SixLabors.Licensing.dll",
+        "build/net8.0/SixLabors.Licensing.dll",
+        "lib/net8.0/SixLabors.ImageSharp.dll",
+        "lib/net8.0/SixLabors.ImageSharp.xml",
+        "sixlabors.imagesharp.128.png",
+        "sixlabors.imagesharp.4.1.1.nupkg.sha512",
+        "sixlabors.imagesharp.nuspec"
+      ]
+    },
     "System.ClientModel/1.8.0": {
       "sha512": "AqRzhn0v29GGGLj/Z6gKq4lGNtvPHT4nHdG5PDJh9IfVjv/nYUVmX11hwwws1vDFeIAzrvmn0dPu8IjLtu6fAw==",
       "type": "package",
@@ -3152,6 +3207,36 @@
         "system.identitymodel.tokens.jwt.nuspec"
       ]
     },
+    "System.IO.Hashing/8.0.0": {
+      "sha512": "ne1843evDugl0md7Fjzy6QjJrzsjh46ZKbhf8GwBXb5f/gw97J4bxMs0NQKifDuThh/f0bZ0e62NPl1jzTuRqA==",
+      "type": "package",
+      "path": "system.io.hashing/8.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "LICENSE.TXT",
+        "PACKAGE.md",
+        "THIRD-PARTY-NOTICES.TXT",
+        "buildTransitive/net461/System.IO.Hashing.targets",
+        "buildTransitive/net462/_._",
+        "buildTransitive/net6.0/_._",
+        "buildTransitive/netcoreapp2.0/System.IO.Hashing.targets",
+        "lib/net462/System.IO.Hashing.dll",
+        "lib/net462/System.IO.Hashing.xml",
+        "lib/net6.0/System.IO.Hashing.dll",
+        "lib/net6.0/System.IO.Hashing.xml",
+        "lib/net7.0/System.IO.Hashing.dll",
+        "lib/net7.0/System.IO.Hashing.xml",
+        "lib/net8.0/System.IO.Hashing.dll",
+        "lib/net8.0/System.IO.Hashing.xml",
+        "lib/netstandard2.0/System.IO.Hashing.dll",
+        "lib/netstandard2.0/System.IO.Hashing.xml",
+        "system.io.hashing.8.0.0.nupkg.sha512",
+        "system.io.hashing.nuspec",
+        "useSharedDesignerContext.txt"
+      ]
+    },
     "System.Memory.Data/8.0.1": {
       "sha512": "BVYuec3jV23EMRDeR7Dr1/qhx7369dZzJ9IWy2xylvb4YfXsrUxspWc4UWYid/tj4zZK58uGZqn2WQiaDMhmAg==",
       "type": "package",
@@ -3274,23 +3359,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Miguel\\.nuget\\packages\\": {},
+    "C:\\Users\\win11\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj",
+      "projectUniqueName": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj",
-      "packagesPath": "C:\\Users\\Miguel\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\obj\\",
+      "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj",
+      "packagesPath": "C:\\Users\\win11\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Miguel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\win11\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3299,6 +3384,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -3306,11 +3392,11 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj": {
-              "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj"
+            "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj": {
+              "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj"
             },
-            "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj"
+            "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj"
             }
           }
         }

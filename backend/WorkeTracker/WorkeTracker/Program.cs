@@ -3,6 +3,9 @@ using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Application.Interfaces;
+using Infrastructure.Options;
+using Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUnitOfWork>(serviceProvider =>
     serviceProvider.GetRequiredService<AppDbContext>());
 
+builder.Services
+    .AddOptions<UploadOptions>()
+    .Bind(builder.Configuration.GetSection(UploadOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountTypeRepository, AccountTypeRepository>();
 builder.Services.AddScoped<IEntryRepository, EntryRepository>();

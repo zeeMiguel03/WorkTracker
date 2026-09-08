@@ -4,10 +4,10 @@ namespace Application.Interfaces
 {
     public interface IUploadService
     {
-        Task<string> UploadUserImageAsync(IFormFile file);
+        Task<string> UploadUserImageAsync(IFormFile file, CancellationToken cancellationToken = default);
 
-        Task DeleteImageAsync(string? relativePath);
+        Task DeleteImageAsync(string? relativePath, CancellationToken cancellationToken = default);
 
-        Task<byte[]> ReadUploadAsync(string relativePath);
+        Task<Stream> ReadUploadAsync(string relativePath, CancellationToken cancellationToken = default);
     }
 }
