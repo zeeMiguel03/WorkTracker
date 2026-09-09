@@ -55,7 +55,6 @@ namespace Application.Services
                     profileImagePath,
                     createdByUserId);
 
-                // Generate the password hash using the newly created entity.
                 var passwordHash = _passwordHasher.HashPassword(newUser, user.Password);
 
                 newUser.SetPasswordHash(passwordHash);
