@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+using Domain.Enums;
+using Domain.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.RegularExpressions;
@@ -12,7 +13,7 @@ namespace Domain.Entities
         private const int MAX_LENGTH_BANK_NAME = 150;
         private const int MAX_LENGTH_CARD_BRAND = 50;
         private const int MAX_LENGTH_LAST4 = 4;
-        private const int MAX_LENGTH_IMAGE_URL = 500;
+        private const int MAX_LENGTH_ICON_KEY = 100;
         private const int MAX_LENGTH_COLOR = 50;
 
         [Key]
@@ -24,8 +25,8 @@ namespace Domain.Entities
         public int UserId { get; private set; }
 
         [Required]
-        [Column("account_type_id")]
-        public int AccountTypeId { get; private set; }
+        [Column("account_type")]
+        public AccountType AccountType { get; private set; }
 
         [Required]
         [Column("name")]
@@ -44,9 +45,9 @@ namespace Domain.Entities
         [MaxLength(MAX_LENGTH_LAST4)]
         public string? Last4 { get; private set; }
 
-        [Column("image_url")]
-        [MaxLength(MAX_LENGTH_IMAGE_URL)]
-        public string? ImageUrl { get; private set; }
+        [Column("icon_key")]
+        [MaxLength(MAX_LENGTH_ICON_KEY)]
+        public string? IconKey { get; private set; }
 
         [Column("color")]
         [MaxLength(MAX_LENGTH_COLOR)]
@@ -59,29 +60,33 @@ namespace Domain.Entities
         [Column("ut_creation")]
         public int? UtCreation { get; private set; }
 
-
         [ForeignKey(nameof(UserId))]
         public User User { get; private set; } = null!;
-
-        [ForeignKey(nameof(AccountTypeId))]
-        public AccountType AccountType { get; private set; } = null!;
 
         public ICollection<Entry> Entries { get; private set; } = new List<Entry>();
 
         private Account() { }
 
-        public static Account Create(int userId, int accountTypeId, string name, string? bankName,
-            string? cardBrand, string? last4, string? imageUrl, string? color, int? utCreation)
+        public static Account Create(
+            int userId,
+            AccountType accountType,
+            string name,
+            string? bankName,
+            string? cardBrand,
+            string? last4,
+            string? iconKey,
+            string? color,
+            int? utCreation)
         {
             var account = new Account
             {
                 UserId = ValidateUserId(userId),
-                AccountTypeId = ValidateAccountTypeId(accountTypeId),
+                AccountType = ValidateAccountType(accountType),
                 Name = NormalizeAndValidateName(name),
                 BankName = NormalizeAndValidateBankName(bankName),
                 CardBrand = NormalizeAndValidateCardBrand(cardBrand),
                 Last4 = NormalizeAndValidateLast4(last4),
-                ImageUrl = NormalizeAndValidateImageUrl(imageUrl),
+                IconKey = NormalizeAndValidateIconKey(iconKey),
                 Color = NormalizeAndValidateColor(color),
                 CreatedAt = DateTime.UtcNow,
                 UtCreation = utCreation
@@ -90,15 +95,21 @@ namespace Domain.Entities
             return account;
         }
 
-        public void Update(int accountTypeId, string name, string? bankName, string? cardBrand, 
-            string? last4, string? imageUrl, string? color)
+        public void Update(
+            AccountType accountType,
+            string name,
+            string? bankName,
+            string? cardBrand,
+            string? last4,
+            string? iconKey,
+            string? color)
         {
-            AccountTypeId = ValidateAccountTypeId(accountTypeId);
+            AccountType = ValidateAccountType(accountType);
             Name = NormalizeAndValidateName(name);
             BankName = NormalizeAndValidateBankName(bankName);
             CardBrand = NormalizeAndValidateCardBrand(cardBrand);
             Last4 = NormalizeAndValidateLast4(last4);
-            ImageUrl = NormalizeAndValidateImageUrl(imageUrl);
+            IconKey = NormalizeAndValidateIconKey(iconKey);
             Color = NormalizeAndValidateColor(color);
         }
 
@@ -175,21 +186,21 @@ namespace Domain.Entities
             return normalizedLast4;
         }
 
-        private static string? NormalizeAndValidateImageUrl(string? imageUrl)
+        private static string? NormalizeAndValidateIconKey(string? iconKey)
         {
-            if (string.IsNullOrWhiteSpace(imageUrl))
+            if (string.IsNullOrWhiteSpace(iconKey))
             {
                 return null;
             }
 
-            var normalizedImageUrl = imageUrl.Trim();
+            var normalizedIconKey = iconKey.Trim();
 
-            if (normalizedImageUrl.Length > MAX_LENGTH_IMAGE_URL)
+            if (normalizedIconKey.Length > MAX_LENGTH_ICON_KEY)
             {
-                throw new DomainException("IMAGE_URL_TOO_LONG", "Image URL exceeds the maximum allowed length.", new { maxLength = MAX_LENGTH_IMAGE_URL });
+                throw new DomainException("ICON_KEY_TOO_LONG", "Icon key exceeds the maximum allowed length.", new { maxLength = MAX_LENGTH_ICON_KEY });
             }
 
-            return normalizedImageUrl;
+            return normalizedIconKey;
         }
 
         private static string? NormalizeAndValidateColor(string? color)
@@ -219,14 +230,14 @@ namespace Domain.Entities
             return userId;
         }
 
-        private static int ValidateAccountTypeId(int accountTypeId)
+        private static AccountType ValidateAccountType(AccountType accountType)
         {
-            if (accountTypeId <= 0)
+            if (!Enum.IsDefined(accountType))
             {
-                throw new DomainException("INVALID_ACCOUNT_TYPE_ID", "Account type id is invalid.");
+                throw new DomainException("INVALID_ACCOUNT_TYPE", "Account type is invalid.");
             }
 
-            return accountTypeId;
+            return accountType;
         }
     }
 }

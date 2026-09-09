@@ -9,7 +9,6 @@ namespace Infrastructure.Persistence
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
         public DbSet<Account> accounts { get; set; }
-        public DbSet<AccountType> accountsType { get; set; }
         public DbSet<Entry> entries { get; set; }
         public DbSet<Source> sources { get; set; } 
         public DbSet<Tasks> tasks { get; set; }
@@ -28,18 +27,7 @@ namespace Infrastructure.Persistence
                     .HasForeignKey(x => x.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                e.HasOne(x => x.AccountType)
-                    .WithMany(x => x.Accounts)
-                    .HasForeignKey(x => x.AccountTypeId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
                 e.HasIndex(x => new { x.UserId, x.CreatedAt });
-            });
-
-            modelBuilder.Entity<AccountType>(e =>
-            {
-                e.HasIndex(x => x.Name)
-                    .IsUnique();
             });
 
             modelBuilder.Entity<Entry>(e =>

@@ -26,6 +26,14 @@ namespace Infrastructure.Repositories
                 cancellationToken);
         }
 
+        public Task<List<Account>> GetUserAccountsAsync(int idUser, CancellationToken cancellationToken = default)
+        {
+            return _context.accounts
+                .Where(account => account.UserId == idUser)
+                .OrderBy(account => account.Name)
+                .ToListAsync(cancellationToken);
+        }
+
         public void Remove(Account account)
         {
             _context.accounts.Remove(account);

@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.User;
+using Application.Exceptions;
 using Application.Interfaces;
 using Application.Interfaces.Services;
 using Domain.Entities;
@@ -74,35 +75,124 @@ namespace Application.Services
             }
         }
 
-        public Task UpdateUserAsync(int id, UpdateUserDTO user, CancellationToken cancellationToken = default)
+        public async Task UpdateUserAsync(int id, UpdateUserDTO user, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var existingUser = await _userRepo.GetByIdAsync(id, cancellationToken);
+
+            if (existingUser is null)
+            {
+                throw new DomainException("USER_NOT_FOUND", "User was not found.");
+            }
+
+            await ValidateEmailDoesNotBelongToAnotherUserAsync(id, user.Email, cancellationToken);
+
+            var oldProfileImagePath = existingUser.ProfileImageUrl;
+
+            string? newProfileImagePath = null;
+
+            try
+            {
+                if (user.ProfileImageUrl is not null)
+                {
+                    newProfileImagePath = await _uploadService.UploadUserImageAsync(user.ProfileImageUrl, cancellationToken);
+                }
+
+                var profileImagePath = newProfileImagePath ?? oldProfileImagePath;
+
+                existingUser.Edit(user.Name, user.Email, profileImagePath);
+
+                _userRepo.Update(existingUser);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                
+                if (!string.IsNullOrWhiteSpace(newProfileImagePath) &&
+                    !string.IsNullOrWhiteSpace(oldProfileImagePath))
+                {
+                    await TryDeleteProfileImageAsync(oldProfileImagePath);
+                }
+            }
+            catch
+            {
+                if (!string.IsNullOrWhiteSpace(newProfileImagePath))
+                {
+                    await TryDeleteProfileImageAsync(newProfileImagePath);
+                }
+
+                throw;
+            }
         }
 
-        public Task ChangePasswordAsync(int id, ChangeUserPasswordDTO password, CancellationToken cancellationToken = default)
+        public async Task ChangePasswordAsync(int id, ChangeUserPasswordDTO password, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var myUser = await _userRepo.GetByIdAsync(id, cancellationToken);
+
+            if (myUser is null)
+            {
+                throw new DomainException("USER_NOT_FOUND", "User was not found.");
+            }
+
+            ValidateCurrentPassword(myUser, password.CurrentPassword, cancellationToken);
+
+            var passwordHash = _passwordHasher.HashPassword(myUser, password.NewPassword);
+
+            myUser.SetPasswordHash(passwordHash);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        public Task DeleteUserAsync(int id, CancellationToken cancellationToken = default)
+        public async Task DeleteUserAsync(int id, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+
+            var myUser = await _userRepo.GetByIdAsync(id, cancellationToken);
+
+            if (myUser is null)
+            {
+                throw new DomainException("USER_NOT_FOUND", "User was not found.");
+            }
+
+            var profileImagePath = myUser.ProfileImageUrl;
+
+            _userRepo.Remove(myUser);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            if (!string.IsNullOrWhiteSpace(profileImagePath))
+            {
+                await TryDeleteProfileImageAsync(profileImagePath);
+            }
         }
 
-
-        public Task<List<GetUserDTO>> GetAllUsersAsync(CancellationToken cancellationToken = default)
+        public async Task<List<GetUserDTO>> GetAllUsersAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var users = await _userRepo.GetAllAsync(cancellationToken);
+
+            return users
+                .Select(MapToGetUserDTO)
+                .ToList();
         }
 
-        public Task<GetUserDTO?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
+        public async Task<GetUserDTO?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var user = await _userRepo.GetByEmailAsync(email, cancellationToken);
+
+            if (user is null)
+            {
+                throw new DomainException("USER_NOT_FOUND", "User was not found.");
+            }
+
+            return MapToGetUserDTO(user);
         }
 
-        public Task<GetUserDTO?> GetUserByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<GetUserDTO?> GetUserByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            var user = await _userRepo.GetByIdAsync(id, cancellationToken);
+
+            if (user is null)
+            {
+                throw new DomainException("USER_NOT_FOUND", "User was not found.");
+            }
+
+            return MapToGetUserDTO(user);
         }
 
         private async Task ValidateUserDoesNotExistAsync(string email, CancellationToken cancellationToken = default)
@@ -110,6 +200,16 @@ namespace Application.Services
             var userExists = await _userRepo.EmailExistsAsync(email, cancellationToken);
 
             if (userExists)
+            {
+                throw new DomainException("EMAIL_ALREADY_EXISTS", "A user with this email already exists.");
+            }
+        }
+
+        private async Task ValidateEmailDoesNotBelongToAnotherUserAsync(int id, string email, CancellationToken cancellationToken = default)
+        {
+            var userExists = await _userRepo.GetByEmailAsync(email, cancellationToken);
+
+            if (userExists != null && userExists.Id != id)
             {
                 throw new DomainException("EMAIL_ALREADY_EXISTS", "A user with this email already exists.");
             }
@@ -127,9 +227,32 @@ namespace Application.Services
             {
                 _logger.LogWarning(
                     exception,
-                    "Failed to delete profile image {ProfileImagePath} after user creation failed.",
+                    "Failed to delete profile image {ProfileImagePath}.",
                     profileImagePath);
             }
+        }
+
+        private void ValidateCurrentPassword(User user, string password, CancellationToken cancellationToken = default)
+        {
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
+
+            if (result == PasswordVerificationResult.Failed)
+            {
+                throw new UnauthorizedException("INVALID_PASSWORD", "Password doesn't match");
+            }
+        }
+
+        private static GetUserDTO MapToGetUserDTO(User user)
+        {
+            return new GetUserDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                ProfileImageUrl = user.ProfileImageUrl,
+                CreatedAt = user.CreatedAt,
+                UtCreation = user.UtCreation
+            };
         }
     }
 }

@@ -2,6 +2,7 @@ using API.Middleware;
 using API.Services;
 using Application.Interfaces;
 using Application.Interfaces.Services;
+using Application.Services;
 using Domain.Interfaces;
 using Infrastructure.Options;
 using Infrastructure.Persistence;
@@ -28,8 +29,8 @@ builder.Services
     .ValidateOnStart();
 
 builder.Services.AddScoped<IUploadService, UploadService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddScoped<IAccountTypeRepository, AccountTypeRepository>();
 builder.Services.AddScoped<IEntryRepository, EntryRepository>();
 builder.Services.AddScoped<ISourceRepository, SourceRepository>();
 builder.Services.AddScoped<ITasksRepository, TasksRepository>();

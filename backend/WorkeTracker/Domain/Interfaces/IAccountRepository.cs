@@ -8,6 +8,8 @@ namespace Domain.Interfaces
 
         Task<Account?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
+        Task<List<Account>> GetUserAccountsAsync(int idUser, CancellationToken cancellationToken = default);
+
         void Update(Account account);   
 
         void Remove(Account account);

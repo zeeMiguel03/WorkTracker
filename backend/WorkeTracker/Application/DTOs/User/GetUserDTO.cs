@@ -2,16 +2,16 @@
 {
     public class GetUserDTO
     {
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
-        public string Name { get; private set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
-        public string Email { get; private set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
-        public string? ProfileImageUrl { get; private set; }
+        public string? ProfileImageUrl { get; set; }
 
-        public DateTime CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; set; }
 
-        public int? UtCreation { get; private set; }
+        public int? UtCreation { get; set; }
     }
 }
