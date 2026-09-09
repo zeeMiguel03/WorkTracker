@@ -4,9 +4,9 @@ namespace Application.Interfaces
 {
     public interface IUserService
     {
-        Task<GetUserDTO> CreateUserAsync(CreateUserDTO user, CancellationToken cancellationToken = default);
+        Task CreateUserAsync(CreateUserDTO user, CancellationToken cancellationToken = default);
 
-        Task<GetUserDTO> UpdateUserAsync(int id, UpdateUserDTO user, CancellationToken cancellationToken = default);
+        Task UpdateUserAsync(int id, UpdateUserDTO user, CancellationToken cancellationToken = default);
 
         Task ChangePasswordAsync(int id, ChangeUserPasswordDTO password, CancellationToken cancellationToken = default);
 

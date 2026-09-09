@@ -50,15 +50,12 @@ namespace Domain.Entities
 
         private User() { }
 
-        public static User Create(string name, string email, string passwordHash, string? profileImageUrl, int? utCreation)
+        public static User Create(string name, string email, string? profileImageUrl, int? utCreation)
         {
-            ValidatePasswordHash(passwordHash);
-
             var user = new User
             {
                 Name = NormalizeAndValidateName(name),
                 Email = NormalizeAndValidateEmail(email),
-                PasswordHash = passwordHash,
                 ProfileImageUrl = NormalizeAndValidateProfileImageUrl(profileImageUrl),
                 UtCreation = utCreation,
                 CreatedAt = DateTime.UtcNow
