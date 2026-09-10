@@ -19,10 +19,11 @@ namespace Infrastructure.Repositories
             await _context.transaction_types.AddAsync(transactionType, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TransactionType>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<TransactionType>> GetByUserAsync(int userId, CancellationToken cancellationToken = default)
         {
             return await _context.transaction_types
                 .AsNoTracking()
+                .Where(transactionType => transactionType.UserId == userId)
                 .OrderBy(transactionType => transactionType.Name)
                 .ToListAsync(cancellationToken);
         }
@@ -34,12 +35,12 @@ namespace Infrastructure.Repositories
                 cancellationToken);
         }
 
-        public Task<TransactionType?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+        public Task<TransactionType?> GetByNameAsync(int userId, string name, CancellationToken cancellationToken = default)
         {
             var normalizedName = name.Trim();
 
             return _context.transaction_types.FirstOrDefaultAsync(
-                transactionType => transactionType.Name == normalizedName,
+                transactionType => transactionType.UserId == userId && transactionType.Name == normalizedName,
                 cancellationToken);
         }
 

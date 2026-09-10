@@ -15,6 +15,10 @@ namespace Domain.Entities
         [Column("id")]
         public int Id { get; private set; }
 
+        [Required]
+        [Column("user_id")]
+        public int UserId { get; private set; }
+
         [Column("name")]
         [Required]
         [MaxLength(MAX_LENGTH_NAME)]
@@ -32,14 +36,18 @@ namespace Domain.Entities
         [Column("ut_creation")]
         public int? UtCreation { get; private set; }
 
+        [ForeignKey(nameof(UserId))]
+        public User User { get; private set; } = null!;
+
         public ICollection<Entry> Entries { get; private set; } = new List<Entry>();
 
         private TransactionType() { }
 
-        public static TransactionType Create(string name, string color, int? utCreation)
+        public static TransactionType Create(int userId, string name, string color, int? utCreation)
         {
             var transactionType = new TransactionType
             {
+                UserId = ValidateUserId(userId),
                 Name = NormalizeAndValidateName(name),
                 Color = NormalizeAndValidateColor(color),
                 UtCreation = utCreation,
@@ -92,6 +100,16 @@ namespace Domain.Entities
             }
 
             return normalizedColor.ToUpperInvariant();
+        }
+
+        private static int ValidateUserId(int userId)
+        {
+            if (userId <= 0)
+            {
+                throw new DomainException("INVALID_USER_ID", "User id is invalid.");
+            }
+
+            return userId;
         }
     }
 }

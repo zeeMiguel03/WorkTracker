@@ -107,7 +107,12 @@ namespace Infrastructure.Persistence
 
             modelBuilder.Entity<TransactionType>(e =>
             {
-                e.HasIndex(x => x.Name)
+                e.HasOne(x => x.User)
+                    .WithMany(x => x.TransactionTypes)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasIndex(x => new { x.UserId, x.Name })
                     .IsUnique();
             });
 

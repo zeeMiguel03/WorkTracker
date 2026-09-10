@@ -47,6 +47,7 @@ namespace Domain.Entities
         public ICollection<Tasks> Tasks { get; private set; } = new List<Tasks>();
         public ICollection<Account> Accounts { get; private set; } = new List<Account>();
         public ICollection<Source> Sources { get; private set; } = new List<Source>();
+        public ICollection<TransactionType> TransactionTypes { get; private set; } = new List<TransactionType>();
 
         private User() { }
 

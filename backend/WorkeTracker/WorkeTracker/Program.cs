@@ -30,6 +30,7 @@ builder.Services
 
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITransactionTypeService, TransactionTypeService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IEntryRepository, EntryRepository>();
 builder.Services.AddScoped<ISourceRepository, SourceRepository>();

@@ -8,9 +8,9 @@ namespace Domain.Interfaces
 
         Task<TransactionType?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
-        Task<TransactionType?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
+        Task<TransactionType?> GetByNameAsync(int userId, string name, CancellationToken cancellationToken = default);
 
-        Task<IReadOnlyList<TransactionType>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<TransactionType>> GetByUserAsync(int userId, CancellationToken cancellationToken = default);
 
         Task<bool> HasAssociatedEntriesAsync(int id, CancellationToken cancellationToken = default);
 

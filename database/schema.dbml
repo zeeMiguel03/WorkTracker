@@ -32,8 +32,13 @@ Table Entry {
 
 Table TransactionType {
   Id int [pk, increment]
+  UserId int [not null]
   Name varchar(150) [not null]
   Color varchar(150) [not null]
+
+  indexes {
+    (UserId, Name) [unique]
+  }
 }
 
 Table Account {
@@ -82,6 +87,7 @@ Ref: Source.UserId > User.Id
 
 Ref: Entry.SourceId > Source.Id
 Ref: Entry.TransactionTypeId > TransactionType.Id
+Ref: TransactionType.UserId > User.Id
 Ref: Entry.AccountId > Account.Id
 
 Ref: Account.UserId > User.Id
