@@ -15,7 +15,7 @@ namespace Infrastructure.Services
 {
     /// <summary>
     /// Provides secure storage, processing, reading, and deletion
-    /// of user-uploaded profile images.
+    /// of uploaded images.
     /// </summary>
     /// <remarks>
     /// Uploaded images are validated using their actual encoded format,
@@ -29,6 +29,11 @@ namespace Infrastructure.Services
         /// Directory used to store user profile images inside the uploads root.
         /// </summary>
         private const string UsersFolder = "users";
+
+        /// <summary>
+        /// Directory used to store source images inside the uploads root.
+        /// </summary>
+        private const string SourceFolder = "sources";
 
         /// <summary>
         /// Extension used for every processed image.
@@ -162,6 +167,33 @@ namespace Infrastructure.Services
         }
 
         /// <summary>
+        /// Validates, processes, and stores a source image.
+        /// </summary>
+        /// <param name="file">Image received from the HTTP request.</param>
+        /// <param name="cancellationToken">
+        /// Token used to cancel the upload and image-processing operation.
+        /// </param>
+        /// <returns>
+        /// A relative path such as
+        /// <c>uploads/sources/identifier.webp</c>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="file"/> is null.
+        /// </exception>
+        /// <exception cref="DomainException">
+        /// Thrown when the file is empty, too large, has an unsupported
+        /// extension or format, contains invalid image data, exceeds the
+        /// dimension limits, or requires too much processing memory.
+        /// </exception>
+        /// <exception cref="OperationCanceledException">
+        /// Thrown when the operation is cancelled.
+        /// </exception>
+        public Task<string> UploadSourceImageAsync(IFormFile file, CancellationToken cancellationToken = default)
+        {
+            return UploadImageAsync(file, SourceFolder, cancellationToken);
+        }
+
+        /// <summary>
         /// Deletes a previously stored image.
         /// </summary>
         /// <param name="relativePath">
@@ -256,7 +288,6 @@ namespace Infrastructure.Services
 
             return Task.FromResult(stream);
         }
-
 
         /// <summary>
         /// Executes the complete validation and image-processing pipeline.

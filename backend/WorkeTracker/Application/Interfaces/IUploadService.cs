@@ -6,6 +6,8 @@ namespace Application.Interfaces
     {
         Task<string> UploadUserImageAsync(IFormFile file, CancellationToken cancellationToken = default);
 
+        Task<string> UploadSourceImageAsync(IFormFile file, CancellationToken cancellationToken = default);
+
         Task DeleteImageAsync(string? relativePath, CancellationToken cancellationToken = default);
 
         Task<Stream> ReadUploadAsync(string relativePath, CancellationToken cancellationToken = default);

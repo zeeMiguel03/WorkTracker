@@ -72,9 +72,12 @@ namespace Application.Services
                 throw new DomainException("TRANSACTION_TYPE_NAME_ALREADY_EXISTS", "A transaction type with this name already exists.");
             }
 
-            transactionType.Update(dto.Name, dto.Color);
+            transactionType.Update(
+                dto.Name,
+                dto.Color);
 
             _transactionTypeRepo.Update(transactionType);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
