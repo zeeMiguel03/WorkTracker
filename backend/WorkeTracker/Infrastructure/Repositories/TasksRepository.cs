@@ -26,6 +26,18 @@ namespace Infrastructure.Repositories
                 cancellationToken);
         }
 
+        public async Task<IReadOnlyList<Tasks>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            return await _context.tasks
+                .AsNoTracking()
+                .Where(tasks => tasks.UserId == userId)
+                .OrderBy(tasks => tasks.CompletedAt.HasValue)
+                .ThenBy(tasks => tasks.SortOrder)
+                .ThenBy(tasks => tasks.DueDate)
+                .ThenBy(tasks => tasks.Id)
+                .ToListAsync(cancellationToken);
+        }
+
         public void Remove(Tasks tasks)
         {
             _context.tasks.Remove(tasks);

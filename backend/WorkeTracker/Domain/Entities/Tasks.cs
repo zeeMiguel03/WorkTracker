@@ -88,8 +88,9 @@ namespace Domain.Entities
             return task;
         }
 
-        public void Update(int taskStatusId, string title, string? description, int priority, int sortOrder, DateTime? dueDate)
+        public void Update(int? sourceId, int taskStatusId, string title, string? description, int priority, int sortOrder, DateTime? dueDate)
         {
+            SourceId = ValidateSourceId(sourceId);
             TaskStatusId = ValidateTaskStatusId(taskStatusId);
             Title = NormalizeAndValidateTitle(title);
             Description = NormalizeAndValidateDescription(description);

@@ -55,7 +55,7 @@ namespace Domain.Entities
                 Name = NormalizeAndValidateName(name),
                 Color = NormalizeAndValidateColor(color),
                 SortOrder = ValidateSortOrder(sortOrder),
-                UserId = userId,
+                UserId = ValidateUserId(userId),
                 UtCreation = utCreation,
                 CreatedAt = DateTime.UtcNow
             };
@@ -118,6 +118,16 @@ namespace Domain.Entities
             }
 
             return sortOrder;
+        }
+
+        private static int ValidateUserId(int userId)
+        {
+            if (userId <= 0)
+            {
+                throw new DomainException("INVALID_USER_ID", "User id is invalid.");
+            }
+
+            return userId;
         }
     }
 }

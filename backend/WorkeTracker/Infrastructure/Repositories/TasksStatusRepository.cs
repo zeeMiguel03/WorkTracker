@@ -19,10 +19,11 @@ namespace Infrastructure.Repositories
             await _context.task_status.AddAsync(tasksStatus, cancellationToken);
         }
 
-        public async Task<IReadOnlyList<TasksStatus>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<TasksStatus>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default)
         {
             return await _context.task_status
                 .AsNoTracking()
+                .Where(tasksStatus => tasksStatus.UserId == userId)
                 .OrderBy(tasksStatus => tasksStatus.SortOrder)
                 .ToListAsync(cancellationToken);
         }
@@ -34,12 +35,17 @@ namespace Infrastructure.Repositories
                 cancellationToken);
         }
 
-        public Task<TasksStatus?> GetByNameAsync(string name, CancellationToken cancellationToken = default)
+        public Task<TasksStatus?> GetByNameAsync(int userId, string name, CancellationToken cancellationToken = default)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return Task.FromResult<TasksStatus?>(null);
+            }
+
             var normalizedName = name.Trim();
 
             return _context.task_status.FirstOrDefaultAsync(
-                tasksStatus => tasksStatus.Name == normalizedName,
+                tasksStatus => tasksStatus.UserId == userId && tasksStatus.Name == normalizedName,
                 cancellationToken);
         }
 

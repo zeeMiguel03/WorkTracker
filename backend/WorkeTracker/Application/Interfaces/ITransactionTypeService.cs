@@ -8,6 +8,8 @@ namespace Application.Interfaces
 
         Task UpdateTransactionTypeAsync(UpdateTransactionTypeDTO dto, CancellationToken cancellationToken = default);
 
+        Task DeleteTransactionTypeAsync(int idTransactionType, CancellationToken cancellationToken = default);
+
         Task<GetTransactionTypeDTO> ListTransactionTypeByIdAsync(int idTransactionType, CancellationToken cancellationToken = default);
 
         Task<List<GetTransactionTypeDTO>> ListTransactionTypesByUserAsync(CancellationToken cancellationToken = default);

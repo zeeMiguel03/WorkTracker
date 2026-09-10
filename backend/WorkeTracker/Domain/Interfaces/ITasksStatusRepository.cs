@@ -8,9 +8,9 @@ namespace Domain.Interfaces
 
         Task<TasksStatus?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
-        Task<TasksStatus?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
+        Task<TasksStatus?> GetByNameAsync(int userId, string name, CancellationToken cancellationToken = default);
 
-        Task<IReadOnlyList<TasksStatus>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<IReadOnlyList<TasksStatus>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default);
 
         Task<bool> HasAssociatedTasksAsync(int id, CancellationToken cancellationToken = default);
 

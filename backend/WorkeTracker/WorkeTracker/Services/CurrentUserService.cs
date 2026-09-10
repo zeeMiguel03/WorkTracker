@@ -56,6 +56,21 @@ public sealed class CurrentUserService : ICurrentUserService
     }
 
     /// <inheritdoc />
+    public int? GetUserIdOrNull()
+    {
+        if (User?.Identity?.IsAuthenticated != true)
+        {
+            return null;
+        }
+
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        return int.TryParse(userIdClaim, out var userId)
+            ? userId
+            : null;
+    }
+
+    /// <inheritdoc />
     public string? GetUserName()
     {
         return User?.FindFirstValue(ClaimTypes.Name);

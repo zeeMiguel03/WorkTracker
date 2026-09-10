@@ -1,15 +1,25 @@
-﻿using Domain.Exceptions;
+using Application.Exceptions;
+using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Middleware
 {
     public class ExceptionHandlingMiddleware
     {
+        private static readonly HashSet<string> AuthenticationErrorCodes =
+            new(StringComparer.Ordinal)
+            {
+                "USER_NOT_AUTHENTICATED",
+                "INVALID_USER_ID",
+                "INVALID_PASSWORD",
+                "INVALID_CREDENTIALS"
+            };
+
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
 
         public ExceptionHandlingMiddleware(
-            RequestDelegate next, 
+            RequestDelegate next,
             ILogger<ExceptionHandlingMiddleware> logger)
         {
             _next = next;
@@ -25,6 +35,10 @@ namespace API.Middleware
             catch (DomainException exception)
             {
                 await HandleDomainExceptionAsync(context, exception);
+            }
+            catch (UnauthorizedException exception)
+            {
+                await HandleUnauthorizedExceptionAsync(context, exception);
             }
             catch (Exception exception)
             {
@@ -63,6 +77,41 @@ namespace API.Middleware
             await context.Response.WriteAsJsonAsync(problem);
         }
 
+        private async Task HandleUnauthorizedExceptionAsync(HttpContext context, UnauthorizedException exception)
+        {
+            var statusCode = AuthenticationErrorCodes.Contains(exception.Code)
+                ? StatusCodes.Status401Unauthorized
+                : StatusCodes.Status403Forbidden;
+
+            _logger.LogWarning(
+                exception,
+                "Authorization exception while processing {Method} {Path}",
+                context.Request.Method,
+                context.Request.Path);
+
+            var problem = new ProblemDetails
+            {
+                Status = statusCode,
+                Title = statusCode == StatusCodes.Status401Unauthorized ? "Unauthorized" : "Forbidden",
+                Detail = exception.Message,
+                Instance = context.Request.Path
+            };
+
+            problem.Extensions["code"] = exception.Code;
+
+            if (exception.Params is not null)
+            {
+                problem.Extensions["params"] = exception.Params;
+            }
+
+            problem.Extensions["traceId"] = context.TraceIdentifier;
+
+            context.Response.StatusCode = statusCode;
+            context.Response.ContentType = "application/problem+json";
+
+            await context.Response.WriteAsJsonAsync(problem);
+        }
+
         private async Task HandleUnexpectedExceptionAsync(HttpContext context, Exception exception)
         {
             _logger.LogError(
@@ -82,11 +131,8 @@ namespace API.Middleware
             problem.Extensions["code"] = "UNEXPECTED_ERROR";
             problem.Extensions["traceId"] = context.TraceIdentifier;
 
-            context.Response.StatusCode =
-                StatusCodes.Status500InternalServerError;
-
-            context.Response.ContentType =
-                "application/problem+json";
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/problem+json";
 
             await context.Response.WriteAsJsonAsync(problem);
         }

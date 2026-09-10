@@ -26,6 +26,16 @@ namespace Infrastructure.Repositories
                 cancellationToken);
         }
 
+        public async Task<IReadOnlyList<Entry>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default)
+        {
+            return await _context.entries
+                .AsNoTracking()
+                .Where(entry => entry.Account.UserId == userId)
+                .OrderByDescending(entry => entry.Date)
+                .ThenByDescending(entry => entry.Id)
+                .ToListAsync(cancellationToken);
+        }
+
         public void Remove(Entry entry)
         {
             _context.entries.Remove(entry);

@@ -1,4 +1,5 @@
 using API.Middleware;
+using API.Options;
 using API.Services;
 using Application.Interfaces;
 using Application.Interfaces.Services;
@@ -8,7 +9,11 @@ using Infrastructure.Options;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,10 +33,46 @@ builder.Services
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services
+    .AddOptions<JwtOptions>()
+    .Bind(builder.Configuration.GetSection(JwtOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+var jwtOptions = builder.Configuration
+    .GetSection(JwtOptions.SectionName)
+    .Get<JwtOptions>()
+    ?? throw new InvalidOperationException("The JWT configuration is missing.");
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtOptions.Issuer,
+            ValidateAudience = true,
+            ValidAudience = jwtOptions.Audience,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddScoped<IUploadService, UploadService>();
+builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<ISourceService, SourceService>();
+builder.Services.AddScoped<ITasksService, TasksService>();
+builder.Services.AddScoped<ITasksStatusService, TasksStatusService>();
 builder.Services.AddScoped<ITransactionTypeService, TransactionTypeService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IEntryRepository, EntryRepository>();
 builder.Services.AddScoped<ISourceRepository, SourceRepository>();
@@ -39,6 +80,7 @@ builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<ITasksStatusRepository, TasksStatusRepository>();
 builder.Services.AddScoped<ITransactionTypeRepository, TransactionTypeRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher<Domain.Entities.User>, PasswordHasher<Domain.Entities.User>>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
@@ -60,6 +102,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

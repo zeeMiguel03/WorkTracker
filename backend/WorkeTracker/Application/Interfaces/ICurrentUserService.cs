@@ -15,6 +15,8 @@
         /// </exception>
         int GetUserId();
 
+        int? GetUserIdOrNull();
+
         /// <summary>
         /// Gets the name of the currently authenticated user.
         /// </summary>

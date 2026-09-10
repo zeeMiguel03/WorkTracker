@@ -36,6 +36,11 @@ namespace Infrastructure.Services
         private const string SourceFolder = "sources";
 
         /// <summary>
+        /// Directory used to store entry images inside the uploads root.
+        /// </summary>
+        private const string EntryFolder = "entries";
+
+        /// <summary>
         /// Extension used for every processed image.
         /// </summary>
         private const string OutputExtension = ".webp";
@@ -191,6 +196,22 @@ namespace Infrastructure.Services
         public Task<string> UploadSourceImageAsync(IFormFile file, CancellationToken cancellationToken = default)
         {
             return UploadImageAsync(file, SourceFolder, cancellationToken);
+        }
+
+        /// <summary>
+        /// Validates, processes, and stores an entry image.
+        /// </summary>
+        /// <param name="file">Image received from the HTTP request.</param>
+        /// <param name="cancellationToken">
+        /// Token used to cancel the upload and image-processing operation.
+        /// </param>
+        /// <returns>
+        /// A relative path such as
+        /// <c>uploads/entries/identifier.webp</c>.
+        /// </returns>
+        public Task<string> UploadEntryImageAsync(IFormFile file, CancellationToken cancellationToken = default)
+        {
+            return UploadImageAsync(file, EntryFolder, cancellationToken);
         }
 
         /// <summary>

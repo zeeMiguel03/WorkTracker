@@ -81,6 +81,19 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task DeleteTransactionTypeAsync(int idTransactionType, CancellationToken cancellationToken = default)
+        {
+            var transactionType = await ValidatePermissionsAsync(idTransactionType, "You are not allowed to delete this transaction type.", cancellationToken);
+
+            if (await _transactionTypeRepo.HasAssociatedEntriesAsync(transactionType.Id, cancellationToken))
+            {
+                throw new DomainException("TRANSACTION_TYPE_IN_USE", "The transaction type cannot be deleted because it is associated with entries.");
+            }
+
+            _transactionTypeRepo.Remove(transactionType);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
         private async Task<TransactionType> ValidatePermissionsAsync(int id, string exceptionText, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();

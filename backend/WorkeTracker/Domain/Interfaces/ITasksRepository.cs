@@ -8,6 +8,8 @@ namespace Domain.Interfaces
 
         Task<Tasks?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
+        Task<IReadOnlyList<Tasks>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default);
+
         void Update(Tasks tasks);
 
         void Remove(Tasks tasks);

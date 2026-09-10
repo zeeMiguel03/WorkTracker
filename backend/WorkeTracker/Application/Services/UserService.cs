@@ -37,7 +37,12 @@ namespace Application.Services
 
         public async Task CreateUserAsync(CreateUserDTO user, CancellationToken cancellationToken = default)
         {
-            var createdByUserId =  _currentUserService.GetUserId();
+            var createdByUserId = _currentUserService.GetUserIdOrNull();
+
+            if (string.IsNullOrWhiteSpace(user.Password))
+            {
+                throw new DomainException("PASSWORD_REQUIRED", "Password is required.");
+            }
 
             await ValidateUserDoesNotExistAsync(user.Email, cancellationToken);
 
