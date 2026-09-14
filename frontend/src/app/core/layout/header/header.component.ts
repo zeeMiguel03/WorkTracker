@@ -1,0 +1,12 @@
+import { Component, inject } from '@angular/core';
+import { SidebarService } from '../sidebar/sidebar.service';
+
+@Component({
+  imports: [],
+  selector: 'app-header',
+  styleUrl: './header.component.scss',
+  templateUrl: './header.component.html',
+})
+export class Header {
+  protected readonly sidebar = inject(SidebarService);
+}

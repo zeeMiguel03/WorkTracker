@@ -5,10 +5,14 @@ namespace API.Services
         private const string COOKIE_NAME = "refresh_token";
 
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IWebHostEnvironment _environment;
 
-        public RefreshTokenCookieService(IHttpContextAccessor httpContextAccessor)
+        public RefreshTokenCookieService(
+            IHttpContextAccessor httpContextAccessor,
+            IWebHostEnvironment environment)
         {
             _httpContextAccessor = httpContextAccessor;
+            _environment = environment;
         }
 
         public string? Get()
@@ -37,12 +41,12 @@ namespace API.Services
                 ?? throw new InvalidOperationException("HTTP context is not available.");
         }
 
-        private static CookieOptions CreateCookieOptions(DateTime? expiresAt)
+        private CookieOptions CreateCookieOptions(DateTime? expiresAt)
         {
             return new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = !_environment.IsDevelopment(),
                 SameSite = SameSiteMode.Strict,
                 Path = "/",
                 Expires = expiresAt,

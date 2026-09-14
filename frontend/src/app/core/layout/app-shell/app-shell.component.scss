@@ -1,0 +1,5 @@
+:host { display: block; min-height: 100vh; background: #0c111d; color: #f2f4f7; }
+.admin-layout { min-height: 100vh; }
+.workspace { min-height: 100vh; margin-left: 285px; transition: margin-left .3s ease; }
+.workspace--collapsed { margin-left: 88px; }
+@media (max-width: 900px) { .workspace, .workspace--collapsed { margin-left: 0; } }

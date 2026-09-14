@@ -1,0 +1,7 @@
+<div class="admin-layout">
+  <app-sidebar />
+  <div class="workspace" [class.workspace--collapsed]="!sidebar.expanded()">
+    <app-header />
+    <router-outlet />
+  </div>
+</div>

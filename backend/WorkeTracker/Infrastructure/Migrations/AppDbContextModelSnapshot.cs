@@ -31,9 +31,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccountTypeId")
+                    b.Property<int>("AccountType")
                         .HasColumnType("int")
-                        .HasColumnName("account_type_id");
+                        .HasColumnName("account_type");
 
                     b.Property<string>("BankName")
                         .HasMaxLength(150)
@@ -54,10 +54,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("ImageUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasColumnName("image_url");
+                    b.Property<string>("IconKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("icon_key");
 
                     b.Property<string>("Last4")
                         .HasMaxLength(4)
@@ -80,42 +80,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountTypeId");
-
                     b.HasIndex("UserId", "CreatedAt");
 
                     b.ToTable("accounts");
-                });
-
-            modelBuilder.Entity("Domain.Entities.AccountType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("name");
-
-                    b.Property<int?>("UtCreation")
-                        .HasColumnType("int")
-                        .HasColumnName("ut_creation");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("account_types");
                 });
 
             modelBuilder.Entity("Domain.Entities.Entry", b =>
@@ -493,19 +460,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Account", b =>
                 {
-                    b.HasOne("Domain.Entities.AccountType", "AccountType")
-                        .WithMany("Accounts")
-                        .HasForeignKey("AccountTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany("Accounts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("AccountType");
 
                     b.Navigation("User");
                 });
@@ -610,11 +569,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Account", b =>
                 {
                     b.Navigation("Entries");
-                });
-
-            modelBuilder.Entity("Domain.Entities.AccountType", b =>
-                {
-                    b.Navigation("Accounts");
                 });
 
             modelBuilder.Entity("Domain.Entities.Source", b =>

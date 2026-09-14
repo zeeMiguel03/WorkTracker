@@ -1,0 +1,197 @@
+<div class="relative z-1 bg-white p-6 dark:bg-gray-900 sm:p-0">
+  <div class="relative flex h-screen w-full flex-col justify-center dark:bg-gray-900 sm:p-0 lg:flex-row">
+    <section class="no-scrollbar flex w-full flex-1 flex-col overflow-y-auto lg:w-1/2">
+      <div class="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
+        <div>
+          <div class="mb-5 sm:mb-8">
+            <h1 class="mb-2 text-title-sm font-semibold text-gray-800 dark:text-white/90 sm:text-title-md">
+              Sign Up
+            </h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Enter your email and password to sign up!
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
+            <button type="button"
+              class="inline-flex items-center justify-center gap-3 rounded-lg bg-gray-100 px-7 py-3 text-sm font-normal text-gray-700 transition-colors hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path
+                  d="M18.7511 10.1944C18.7511 9.47495 18.6915 8.94995 18.5626 8.40552H10.1797V11.6527H15.1003C15.0011 12.4597 14.4654 13.675 13.2749 14.4916L13.2582 14.6003L15.9087 16.6126L16.0924 16.6305C17.7788 15.1041 18.7511 12.8583 18.7511 10.1944Z"
+                  fill="#4285F4" />
+                <path
+                  d="M10.1788 18.75C12.5895 18.75 14.6133 17.9722 16.0915 16.6305L13.274 14.4916C12.5201 15.0068 11.5081 15.3666 10.1788 15.3666C7.81773 15.3666 5.81379 13.8402 5.09944 11.7305L4.99473 11.7392L2.23868 13.8295L2.20264 13.9277C3.67087 16.786 6.68674 18.75 10.1788 18.75Z"
+                  fill="#34A853" />
+                <path
+                  d="M5.10014 11.7305C4.91165 11.186 4.80257 10.6027 4.80257 9.99992C4.80257 9.3971 4.91165 8.81379 5.09022 8.26935L5.08523 8.1534L2.29464 6.02954L2.20333 6.0721C1.5982 7.25823 1.25098 8.5902 1.25098 9.99992C1.25098 11.4096 1.5982 12.7415 2.20333 13.9277L5.10014 11.7305Z"
+                  fill="#FBBC05" />
+                <path
+                  d="M10.1789 4.63331C11.8554 4.63331 12.9864 5.34303 13.6312 5.93612L16.1511 3.525C14.6035 2.11528 12.5895 1.25 10.1789 1.25C6.68676 1.25 3.67088 3.21387 2.20264 6.07218L5.08953 8.26943C5.81381 6.15972 7.81776 4.63331 10.1789 4.63331Z"
+                  fill="#EB4335" />
+              </svg>
+              Sign up with Google
+            </button>
+            <button type="button"
+              class="inline-flex items-center justify-center gap-3 rounded-lg bg-gray-100 px-7 py-3 text-sm font-normal text-gray-700 transition-colors hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+              <svg class="fill-current" width="21" height="20" viewBox="0 0 21 20" aria-hidden="true">
+                <path
+                  d="M15.6705 1.875H18.4272L12.4047 8.75833L19.4897 18.125H13.9422L9.59717 12.4442L4.62554 18.125H1.86721L8.30887 10.7625L1.51221 1.875H7.20054L11.128 7.0675L15.6705 1.875ZM14.703 16.475H16.2305L6.37054 3.43833H4.73137L14.703 16.475Z" />
+              </svg>
+              Sign up with X
+            </button>
+          </div>
+
+          <div class="relative py-3 sm:py-5">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-gray-200 dark:border-gray-800"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="bg-white p-2 text-gray-400 dark:bg-gray-900 sm:px-5 sm:py-2">Or</span>
+            </div>
+          </div>
+
+          <form (submit)="register($event)">
+            <div class="space-y-5">
+              <div>
+                <label for="name" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Name<span
+                    class="text-error-500">*</span></label>
+                <input id="name" type="text" placeholder="Enter your name" [formField]="registerForm.name"
+                  class="h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" />
+              </div>
+
+              <div>
+                <label for="signup-email"
+                  class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Email <span
+                    class="text-error-500">*</span></label>
+                <input id="signup-email" type="email" [formField]="registerForm.email" placeholder="Enter your email"
+                  class="h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" />
+              </div>
+
+              <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div>
+                  <label for="signup-password"
+                    class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">Password <span
+                      class="text-error-500">*</span></label>
+                  <div class="relative">
+                    <input id="signup-password" [formField]="registerForm.password" type="password"
+                      placeholder="Enter your password"
+                      class="h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" />
+                    <span class="absolute right-4 top-1/2 z-30 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+                      aria-hidden="true">
+                      <svg class="size-5 fill-current" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                          d="M4.638 3.577a.75.75 0 0 0-1.061 1.061l1.276 1.276a8.04 8.04 0 0 0-2.438 3.545.75.75 0 0 0 0 .487c1.08 3.15 4.067 5.416 7.585 5.416 1.255 0 2.442-.288 3.499-.802l1.864 1.863a.75.75 0 0 0 1.06-1.061L4.638 3.577Zm7.723 9.844-1.914-1.913a1.86 1.86 0 0 1-2.258-2.259L5.919 6.98a6.5 6.5 0 0 0-1.996 2.723c.945 2.435 3.31 4.16 6.077 4.16.833 0 1.629-.157 2.361-.442Zm3.716-3.719a6.43 6.43 0 0 1-1.258 2.029l1.062 1.062a8.04 8.04 0 0 0 1.704-2.847.75.75 0 0 0 0-.487C16.505 6.309 13.518 4.043 10 4.043c-.865 0-1.698.137-2.478.39l1.229 1.23A6.6 6.6 0 0 1 10 5.542c2.767 0 5.132 1.725 6.077 4.16Z"
+                          clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <label for="confirm-password"
+                    class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                    Confirm Password <span class="text-error-500">*</span>
+                  </label>
+
+                  <div class="relative">
+                    <input id="confirm-password" type="password" placeholder="Confirm your password"
+                      [formField]="registerForm.confirmPassword"
+                      class="h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/20 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" />
+                    <span class="absolute right-4 top-1/2 z-30 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+                      aria-hidden="true">
+                      <svg class="size-5 fill-current" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                          d="M4.638 3.577a.75.75 0 0 0-1.061 1.061l1.276 1.276a8.04 8.04 0 0 0-2.438 3.545.75.75 0 0 0 0 .487c1.08 3.15 4.067 5.416 7.585 5.416 1.255 0 2.442-.288 3.499-.802l1.864 1.863a.75.75 0 0 0 1.06-1.061L4.638 3.577Zm7.723 9.844-1.914-1.913a1.86 1.86 0 0 1-2.258-2.259L5.919 6.98a6.5 6.5 0 0 0-1.996 2.723c.945 2.435 3.31 4.16 6.077 4.16.833 0 1.629-.157 2.361-.442Zm3.716-3.719a6.43 6.43 0 0 1-1.258 2.029l1.062 1.062a8.04 8.04 0 0 0 1.704-2.847.75.75 0 0 0 0-.487C16.505 6.309 13.518 4.043 10 4.043c-.865 0-1.698.137-2.478.39l1.229 1.23A6.6 6.6 0 0 1 10 5.542c2.767 0 5.132 1.725 6.077 4.16Z"
+                          clip-rule="evenodd" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label for="profileImageUrl" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                  Profile Image
+                  <span class="font-normal text-gray-500 dark:text-gray-500">(optional)</span>
+                </label>
+
+                <input id="profileImageUrl" (change)="selectImage($event)" name="profileImageUrl" type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  class="block h-11 w-full cursor-pointer rounded-lg border border-gray-300 bg-transparent text-sm text-gray-500 shadow-theme-xs
+                  file:mr-4 file:h-full file:cursor-pointer file:border-0 file:border-r file:border-gray-300 file:bg-gray-100 file:px-4 file:text-sm file:font-medium file:text-gray-700
+                  hover:file:bg-gray-200
+                  dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400
+                  dark:file:border-gray-700 dark:file:bg-white/5 dark:file:text-gray-300 dark:hover:file:bg-white/10" />
+
+                <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-500">
+                  PNG, JPG or WEBP.
+                </p>
+              </div>
+
+              <label class="flex cursor-pointer items-center gap-3">
+                <span class="relative size-5 shrink-0">
+                  <input type="checkbox" [formField]="registerForm.acceptTerms"
+                    class="peer size-5 appearance-none rounded-md border border-gray-300 checked:border-transparent checked:bg-brand-500 dark:border-gray-700" />
+                  <svg
+                    class="pointer-events-none absolute left-1/2 top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100"
+                    viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M11.6666 3.5L5.24992 9.91667L2.33325 7" stroke="white" stroke-width="1.94437"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <span class="font-normal text-gray-500 dark:text-gray-400">By creating an account means you agree to the
+                  <span class="text-gray-800 dark:text-white/90">Terms and Conditions,</span> and
+                  our <span class="text-gray-800 dark:text-white">Privacy Policy</span></span>
+              </label>
+
+              @if (errorMessage()) {
+              <p class="text-sm text-error-500" role="alert">
+                {{ errorMessage() }}
+              </p>
+              }
+
+              <button type="submit" [disabled]="submitting()"
+                class="flex w-full items-center justify-center rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50">
+                {{ submitting() ? 'Creating account...' : 'Sign Up' }}
+              </button>
+            </div>
+          </form>
+
+          <div class="mt-5">
+            <p class="text-center text-sm font-normal text-gray-700 dark:text-gray-400 sm:text-start">
+              Already have an account?
+              <a routerLink="/signin" class="text-brand-500 hover:text-brand-600 dark:text-brand-400">Sign In</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="relative hidden h-full w-full items-center bg-brand-950 lg:grid lg:w-1/2 dark:bg-white/5">
+      <img ngSrc="/images/shape/grid-01.svg" width="450" height="254" priority alt=""
+        class="absolute right-0 top-0 z-0 w-full max-w-[450px]" />
+      <img ngSrc="/images/shape/grid-01.svg" width="450" height="254" alt=""
+        class="absolute bottom-0 left-0 z-0 w-full max-w-[450px] rotate-180" />
+      <div class="relative z-10 flex items-center justify-center">
+        <div class="flex max-w-xs flex-col items-center">
+          <a routerLink="/" class="mb-4 block"><img width="231" height="48" ngSrc="/images/logo/auth-logo.svg"
+              alt="TailAdmin" /></a>
+          <p class="text-center text-gray-400 dark:text-white/60">
+            Free and Open-Source Tailwind CSS Admin Dashboard Template
+          </p>
+        </div>
+      </div>
+    </aside>
+
+    <div class="fixed bottom-6 right-6 z-50 hidden sm:block">
+      <button type="button" aria-label="Toggle theme"
+        class="inline-flex size-14 items-center justify-center rounded-full bg-brand-500 text-white transition-colors hover:bg-brand-600">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd"
+            d="M10 1.542a.75.75 0 0 1 .75.75v1.25a.75.75 0 0 1-1.5 0v-1.25a.75.75 0 0 1 .75-.75ZM10 6.793a3.207 3.207 0 1 0 0 6.414 3.207 3.207 0 0 0 0-6.414ZM5.294 10a4.707 4.707 0 1 1 9.414 0 4.707 4.707 0 0 1-9.414 0Zm10.687-4.92a.75.75 0 0 0-1.06-1.06l-.884.884a.75.75 0 1 0 1.06 1.06l.884-.884Zm2.477 4.92a.75.75 0 0 1-.75.75h-1.25a.75.75 0 0 1 0-1.5h1.25a.75.75 0 0 1 .75.75Zm-3.537 5.981a.75.75 0 0 0 1.06-1.061l-.884-.884a.75.75 0 0 0-1.06 1.061l.884.884ZM10 15.709a.75.75 0 0 1 .75.75v1.25a.75.75 0 0 1-1.5 0v-1.25a.75.75 0 0 1 .75-.75Zm-4.036-.612a.75.75 0 0 0-1.061-1.06l-.884.883a.75.75 0 0 0 1.061 1.061l.884-.884ZM4.292 10a.75.75 0 0 1-.75.75h-1.25a.75.75 0 0 1 0-1.5h1.25a.75.75 0 0 1 .75.75Zm.611-4.036a.75.75 0 0 0 1.061-1.06L5.08 4.02a.75.75 0 0 0-1.061 1.061l.884.884Z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

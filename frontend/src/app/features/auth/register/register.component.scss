@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: rgb(255 255 255 / 90%);
+  caret-color: rgb(255 255 255 / 90%);
+  box-shadow: 0 0 0 1000px #101828 inset;
+  transition: background-color 9999s ease-out;
+}
