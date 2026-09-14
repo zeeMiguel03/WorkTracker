@@ -6,15 +6,17 @@ namespace Application.Interfaces
     {
         Task CreateUserAsync(CreateUserDTO user, CancellationToken cancellationToken = default);
 
-        Task UpdateUserAsync(int id, UpdateUserDTO user, CancellationToken cancellationToken = default);
+        Task UpdateUserAsync(UpdateUserDTO user, CancellationToken cancellationToken = default);
 
-        Task ChangePasswordAsync(int id, ChangeUserPasswordDTO password, CancellationToken cancellationToken = default);
+        Task ChangeEmailAsync(ChangeUserEmailDTO email, CancellationToken cancellationToken = default);
 
-        Task DeleteUserAsync(int id, CancellationToken cancellationToken = default);
+        Task ChangePasswordAsync(ChangeUserPasswordDTO password, CancellationToken cancellationToken = default);
 
-        Task<List<GetUserDTO>> GetAllUsersAsync(CancellationToken cancellationToken = default);
+        Task DeleteUserAsync(CancellationToken cancellationToken = default);
 
-        Task<GetUserDTO?> GetUserByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<GetUserDTO?> GetUserByIdAsync(CancellationToken cancellationToken = default);
+
+        Task<Stream?> GetProfileImageAsync(CancellationToken cancellationToken = default);
 
         Task<GetUserDTO?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default);
     }

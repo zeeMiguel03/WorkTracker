@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface ITasksStatusService
     {
-        Task CreateTaskStatusAsync(CreateTaskStatusDTO dto, CancellationToken cancellationToken = default);
+        Task<GetTaskStatusDTO> CreateTaskStatusAsync(CreateTaskStatusDTO dto, CancellationToken cancellationToken = default);
 
         Task UpdateTaskStatusAsync(UpdateTaskStatusDTO dto, CancellationToken cancellationToken = default);
 

@@ -17,6 +17,6 @@ namespace API.Options
         public string Secret { get; init; } = string.Empty;
 
         [Range(1, 1440)]
-        public int ExpirationMinutes { get; init; } = 60;
+        public int ExpirationMinutes { get; init; } = 15;
     }
 }

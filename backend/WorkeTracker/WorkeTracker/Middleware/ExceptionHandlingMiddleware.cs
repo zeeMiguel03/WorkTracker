@@ -12,7 +12,10 @@ namespace API.Middleware
                 "USER_NOT_AUTHENTICATED",
                 "INVALID_USER_ID",
                 "INVALID_PASSWORD",
-                "INVALID_CREDENTIALS"
+                "INVALID_CREDENTIALS",
+                "REFRESH_TOKEN_REQUIRED",
+                "INVALID_REFRESH_TOKEN",
+                "REFRESH_TOKEN_EXPIRED"
             };
 
         private readonly RequestDelegate _next;

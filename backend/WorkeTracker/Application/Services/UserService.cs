@@ -80,16 +80,16 @@ namespace Application.Services
             }
         }
 
-        public async Task UpdateUserAsync(int id, UpdateUserDTO user, CancellationToken cancellationToken = default)
+        public async Task UpdateUserAsync(UpdateUserDTO user, CancellationToken cancellationToken = default)
         {
-            var existingUser = await _userRepo.GetByIdAsync(id, cancellationToken);
+            var currentUser = _currentUserService.GetUserId();
+
+            var existingUser = await _userRepo.GetByIdAsync(currentUser, cancellationToken);
 
             if (existingUser is null)
             {
                 throw new DomainException("USER_NOT_FOUND", "User was not found.");
             }
-
-            await ValidateEmailDoesNotBelongToAnotherUserAsync(id, user.Email, cancellationToken);
 
             var oldProfileImagePath = existingUser.ProfileImageUrl;
 
@@ -104,7 +104,9 @@ namespace Application.Services
 
                 var profileImagePath = newProfileImagePath ?? oldProfileImagePath;
 
-                existingUser.Edit(user.Name, user.Email, profileImagePath);
+                existingUser.Edit(
+                    user.Name,
+                    profileImagePath);
 
                 _userRepo.Update(existingUser);
 
@@ -127,28 +129,58 @@ namespace Application.Services
             }
         }
 
-        public async Task ChangePasswordAsync(int id, ChangeUserPasswordDTO password, CancellationToken cancellationToken = default)
+        public async Task ChangeEmailAsync(ChangeUserEmailDTO email, CancellationToken cancellationToken = default)
         {
-            var myUser = await _userRepo.GetByIdAsync(id, cancellationToken);
+            var currentUser = _currentUserService.GetUserId();
+
+            var myUser = await _userRepo.GetByIdAsync(currentUser, cancellationToken);
 
             if (myUser is null)
             {
                 throw new DomainException("USER_NOT_FOUND", "User was not found.");
             }
 
-            ValidateCurrentPassword(myUser, password.CurrentPassword, cancellationToken);
+            ValidateCurrentPassword(myUser, email.currentPassword);
 
-            var passwordHash = _passwordHasher.HashPassword(myUser, password.NewPassword);
+            await ValidateEmailDoesNotBelongToAnotherUserAsync(currentUser, email.newEmail, cancellationToken);
 
-            myUser.SetPasswordHash(passwordHash);
+            myUser.ChangeEmail(email.newEmail);
+            myUser.InvalidateTokens();
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteUserAsync(int id, CancellationToken cancellationToken = default)
+        public async Task ChangePasswordAsync(ChangeUserPasswordDTO password, CancellationToken cancellationToken = default)
         {
+            var currentUser = _currentUserService.GetUserId();
 
-            var myUser = await _userRepo.GetByIdAsync(id, cancellationToken);
+            var myUser = await _userRepo.GetByIdAsync(currentUser, cancellationToken);
+
+            if (myUser is null)
+            {
+                throw new DomainException("USER_NOT_FOUND", "User was not found.");
+            }
+
+            ValidateCurrentPassword(myUser, password.CurrentPassword);
+
+            if (string.IsNullOrWhiteSpace(password.NewPassword))
+            {
+                throw new DomainException("PASSWORD_REQUIRED", "New password is required.");
+            }
+
+            var passwordHash = _passwordHasher.HashPassword(myUser, password.NewPassword);
+
+            myUser.SetPasswordHash(passwordHash);
+            myUser.InvalidateTokens();
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task DeleteUserAsync(CancellationToken cancellationToken = default)
+        {
+            var currentUser = _currentUserService.GetUserId();
+
+            var myUser = await _userRepo.GetByIdAsync(currentUser, cancellationToken);
 
             if (myUser is null)
             {
@@ -167,17 +199,10 @@ namespace Application.Services
             }
         }
 
-        public async Task<List<GetUserDTO>> GetAllUsersAsync(CancellationToken cancellationToken = default)
-        {
-            var users = await _userRepo.GetAllAsync(cancellationToken);
-
-            return users
-                .Select(MapToGetUserDTO)
-                .ToList();
-        }
-
         public async Task<GetUserDTO?> GetUserByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
+            var currentUserId = _currentUserService.GetUserId();
+
             var user = await _userRepo.GetByEmailAsync(email, cancellationToken);
 
             if (user is null)
@@ -185,12 +210,19 @@ namespace Application.Services
                 throw new DomainException("USER_NOT_FOUND", "User was not found.");
             }
 
+            if (currentUserId != user.Id)
+            {
+                throw new DomainException("FORBIDDEN", "You are not allowed to access this user's information.");
+            }
+
             return MapToGetUserDTO(user);
         }
 
-        public async Task<GetUserDTO?> GetUserByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<GetUserDTO?> GetUserByIdAsync(CancellationToken cancellationToken = default)
         {
-            var user = await _userRepo.GetByIdAsync(id, cancellationToken);
+            var currentUser = _currentUserService.GetUserId();
+
+            var user = await _userRepo.GetByIdAsync(currentUser, cancellationToken);
 
             if (user is null)
             {
@@ -198,6 +230,21 @@ namespace Application.Services
             }
 
             return MapToGetUserDTO(user);
+        }
+
+        public async Task<Stream?> GetProfileImageAsync(CancellationToken cancellationToken = default)
+        {
+            var currentUserId = _currentUserService.GetUserId();
+            var user = await _userRepo.GetByIdAsync(currentUserId, cancellationToken);
+
+            if (user is null)
+            {
+                throw new DomainException("USER_NOT_FOUND", "User was not found.");
+            }
+
+            return string.IsNullOrWhiteSpace(user.ProfileImageUrl)
+                ? null
+                : await _uploadService.ReadUploadAsync(user.ProfileImageUrl, cancellationToken);
         }
 
         private async Task ValidateUserDoesNotExistAsync(string email, CancellationToken cancellationToken = default)
@@ -237,7 +284,7 @@ namespace Application.Services
             }
         }
 
-        private void ValidateCurrentPassword(User user, string password, CancellationToken cancellationToken = default)
+        private void ValidateCurrentPassword(User user, string password)
         {
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
 

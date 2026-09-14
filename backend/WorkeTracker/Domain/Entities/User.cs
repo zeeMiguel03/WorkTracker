@@ -43,11 +43,16 @@ namespace Domain.Entities
         [Column("ut_creation")]
         public int? UtCreation { get; private set; }
 
+        [Required]
+        [Column("token_version")]
+        public int TokenVersion { get; private set; }
+
         public ICollection<TasksStatus> TasksStatus { get; private set; } = new List<TasksStatus>();
         public ICollection<Tasks> Tasks { get; private set; } = new List<Tasks>();
         public ICollection<Account> Accounts { get; private set; } = new List<Account>();
         public ICollection<Source> Sources { get; private set; } = new List<Source>();
         public ICollection<TransactionType> TransactionTypes { get; private set; } = new List<TransactionType>();
+        public ICollection<RefreshToken> RefreshTokens { get; private set; } = new List<RefreshToken>();
 
         private User() { }
 
@@ -58,6 +63,7 @@ namespace Domain.Entities
                 Name = NormalizeAndValidateName(name),
                 Email = NormalizeAndValidateEmail(email),
                 ProfileImageUrl = NormalizeAndValidateProfileImageUrl(profileImageUrl),
+                TokenVersion = 0,
                 UtCreation = utCreation,
                 CreatedAt = DateTime.UtcNow
             };
@@ -65,10 +71,14 @@ namespace Domain.Entities
             return user;
         }
 
-        public void Edit(string name, string email, string? profileImageUrl)
+        public void ChangeEmail(string email)
+        {
+            Email = NormalizeAndValidateEmail(email);
+        }
+
+        public void Edit(string name, string? profileImageUrl)
         {
             Name = NormalizeAndValidateName(name);
-            Email = NormalizeAndValidateEmail(email);
             ProfileImageUrl = NormalizeAndValidateProfileImageUrl(profileImageUrl);
         }
 
@@ -77,6 +87,11 @@ namespace Domain.Entities
             ValidatePasswordHash(passwordHash);
 
             PasswordHash = passwordHash;
+        }
+
+        public void InvalidateTokens()
+        {
+            TokenVersion = checked(TokenVersion + 1);
         }
 
         private static string NormalizeAndValidateEmail(string email)

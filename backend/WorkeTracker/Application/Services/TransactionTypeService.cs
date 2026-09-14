@@ -24,7 +24,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateTransactionTypeAsync(CreateTransactionTypeDTO dto, CancellationToken cancellationToken = default)
+        public async Task<GetTransactionTypeDTO> CreateTransactionTypeAsync(CreateTransactionTypeDTO dto, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
@@ -43,6 +43,8 @@ namespace Application.Services
 
             await _transactionTypeRepo.AddAsync(transactionType, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return MapToGetTransactionTypeDTO(transactionType);
         }
 
         public async Task<GetTransactionTypeDTO> ListTransactionTypeByIdAsync(int idTransactionType, CancellationToken cancellationToken = default)

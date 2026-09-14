@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface IAccountService
     {
-        Task CreateAccountAsync(CreateAccountDTO accountDTO, CancellationToken cancellationToken = default);
+        Task<ListAccountDTO> CreateAccountAsync(CreateAccountDTO accountDTO, CancellationToken cancellationToken = default);
 
         Task UpdateAccountAsync(UpdateAccountDTO accountDTO, CancellationToken cancellationToken = default);
 

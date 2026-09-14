@@ -30,7 +30,7 @@ namespace Application.Services
             _logger = logger;
         }
 
-        public async Task CreateSourceAsync(CreateSourceDTO dto, CancellationToken cancellationToken = default)
+        public async Task<GetSourceDTO> CreateSourceAsync(CreateSourceDTO dto, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
@@ -54,6 +54,8 @@ namespace Application.Services
 
                 await _sourceRepo.AddAsync(source, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return MapToGetSourceDTO(source);
             }
             catch
             {
@@ -144,6 +146,18 @@ namespace Application.Services
             return sources
                 .Select(MapToGetSourceDTO)
                 .ToList();
+        }
+
+        public async Task<Stream?> GetSourceImageAsync(int idSource, CancellationToken cancellationToken = default)
+        {
+            var source = await GetOwnedSourceAsync(
+                idSource,
+                "You do not have permission to access this source image.",
+                cancellationToken);
+
+            return string.IsNullOrWhiteSpace(source.ImageUrl)
+                ? null
+                : await _uploadService.ReadUploadAsync(source.ImageUrl, cancellationToken);
         }
 
         private async Task<Source> GetOwnedSourceAsync(

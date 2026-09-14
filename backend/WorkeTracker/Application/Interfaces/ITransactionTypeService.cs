@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface ITransactionTypeService
     {
-        Task CreateTransactionTypeAsync(CreateTransactionTypeDTO dto, CancellationToken cancellationToken = default);
+        Task<GetTransactionTypeDTO> CreateTransactionTypeAsync(CreateTransactionTypeDTO dto, CancellationToken cancellationToken = default);
 
         Task UpdateTransactionTypeAsync(UpdateTransactionTypeDTO dto, CancellationToken cancellationToken = default);
 

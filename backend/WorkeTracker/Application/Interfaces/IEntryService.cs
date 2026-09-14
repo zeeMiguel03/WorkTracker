@@ -4,7 +4,9 @@ namespace Application.Interfaces
 {
     public interface IEntryService
     {
-        Task CreateEntryAsync(CreateEntryDTO dto, CancellationToken cancellationToken = default);
+        Task<GetEntryDTO> CreateEntryAsync(CreateEntryDTO dto, CancellationToken cancellationToken = default);
+
+        Task<Stream?> GetEntryImageAsync(int idEntry, CancellationToken cancellationToken = default);
 
         Task UpdateEntryAsync(UpdateEntryDTO dto, CancellationToken cancellationToken = default);
 

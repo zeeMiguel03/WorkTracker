@@ -39,7 +39,7 @@ namespace Application.Services
             _logger = logger;
         }
 
-        public async Task CreateEntryAsync(CreateEntryDTO dto, CancellationToken cancellationToken = default)
+        public async Task<GetEntryDTO> CreateEntryAsync(CreateEntryDTO dto, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
@@ -73,6 +73,8 @@ namespace Application.Services
 
                 await _entryRepo.AddAsync(entry, cancellationToken);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                return MapToGetEntryDTO(entry);
             }
             catch
             {
@@ -171,6 +173,18 @@ namespace Application.Services
             return entries
                 .Select(MapToGetEntryDTO)
                 .ToList();
+        }
+
+        public async Task<Stream?> GetEntryImageAsync(int idEntry, CancellationToken cancellationToken = default)
+        {
+            var entry = await GetOwnedEntryAsync(
+                idEntry,
+                "You do not have permission to access this entry image.",
+                cancellationToken);
+
+            return string.IsNullOrWhiteSpace(entry.ImageUrl)
+                ? null
+                : await _uploadService.ReadUploadAsync(entry.ImageUrl, cancellationToken);
         }
 
         private async Task<Entry> GetOwnedEntryAsync(int entryId, string accessDeniedMessage, CancellationToken cancellationToken)

@@ -24,7 +24,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateAccountAsync(CreateAccountDTO accountDTO, CancellationToken cancellationToken = default)
+        public async Task<ListAccountDTO> CreateAccountAsync(CreateAccountDTO accountDTO, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
@@ -42,6 +42,8 @@ namespace Application.Services
             await _accountRepo.AddAsync(account, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return MapToGetAccountDTO(account);
         }
 
         public async Task UpdateAccountAsync(UpdateAccountDTO accountDTO, CancellationToken cancellationToken = default)

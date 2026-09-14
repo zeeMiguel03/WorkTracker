@@ -10,6 +10,7 @@ namespace Infrastructure.Persistence
 
         public DbSet<Account> accounts { get; set; }
         public DbSet<Entry> entries { get; set; }
+        public DbSet<RefreshToken> refresh_tokens { get; set; }
         public DbSet<Source> sources { get; set; } 
         public DbSet<Tasks> tasks { get; set; }
         public DbSet<TasksStatus> task_status { get; set; }
@@ -114,6 +115,19 @@ namespace Infrastructure.Persistence
 
                 e.HasIndex(x => new { x.UserId, x.Name })
                     .IsUnique();
+            });
+
+            modelBuilder.Entity<RefreshToken>(e =>
+            {
+                e.HasOne(x => x.User)
+                    .WithMany(x => x.RefreshTokens)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasIndex(x => x.TokenHash)
+                    .IsUnique();
+
+                e.HasIndex(x => new { x.UserId, x.ExpiresAt });
             });
 
             modelBuilder.Entity<User>(e =>

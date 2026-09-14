@@ -23,7 +23,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateTaskStatusAsync(CreateTaskStatusDTO dto, CancellationToken cancellationToken = default)
+        public async Task<GetTaskStatusDTO> CreateTaskStatusAsync(CreateTaskStatusDTO dto, CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
 
@@ -38,6 +38,8 @@ namespace Application.Services
 
             await _tasksStatusRepo.AddAsync(taskStatus, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return MapToGetTaskStatusDTO(taskStatus);
         }
 
         public async Task UpdateTaskStatusAsync(UpdateTaskStatusDTO dto, CancellationToken cancellationToken = default)

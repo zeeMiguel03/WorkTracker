@@ -4,7 +4,9 @@ namespace Application.Interfaces
 {
     public interface ISourceService
     {
-        Task CreateSourceAsync(CreateSourceDTO dto, CancellationToken cancellationToken = default);
+        Task<GetSourceDTO> CreateSourceAsync(CreateSourceDTO dto, CancellationToken cancellationToken = default);
+
+        Task<Stream?> GetSourceImageAsync(int idSource, CancellationToken cancellationToken = default);
 
         Task UpdateSourceAsync(UpdateSourceDTO dto, CancellationToken cancellationToken = default);
 
