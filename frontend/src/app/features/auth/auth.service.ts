@@ -41,6 +41,13 @@ export class Auth {
             .pipe(tap((response) => this.session.set(response)));
     }
 
+    getProfileImage(): Observable<Blob> {
+        return this.http.get(`${environment.apiUrl}/users/me/image`, {
+            responseType: 'blob',
+            withCredentials: true,
+        });
+    }
+
     ensureSession(): Observable<boolean> {
         if (this.isAuthenticated()) {
             return of(true);
@@ -72,6 +79,30 @@ export class Auth {
                 {},
                 { withCredentials: true },
             )
+            .pipe(tap(() => this.session.set(null)));
+    }
+
+    updateProfile(data: FormData): Observable<void> {
+        return this.http.put<void>(`${environment.apiUrl}/users/me`, data, {
+            withCredentials: true,
+        });
+    }
+
+    changePassword(data: { CurrentPassword: string; NewPassword: string }): Observable<void> {
+        return this.http.patch<void>(`${environment.apiUrl}/users/me/password`, data, {
+            withCredentials: true,
+        });
+    }
+
+    logoutAll(): Observable<void> {
+        return this.http
+            .post<void>(`${environment.apiUrl}/auth/logout-all`, {}, { withCredentials: true })
+            .pipe(tap(() => this.session.set(null)));
+    }
+
+    deleteAccount(): Observable<void> {
+        return this.http
+            .delete<void>(`${environment.apiUrl}/users/me`, { withCredentials: true })
             .pipe(tap(() => this.session.set(null)));
     }
 

@@ -1,1 +1,53 @@
-<p>task-board works!</p>
+<main class="tasks-page">
+  <header class="tasks-page__header">
+    <div>
+      <h1>Tarefas</h1>
+      <nav class="tasks-page__breadcrumb" aria-label="Breadcrumb">
+        <a routerLink="/dashboard">Dashboard</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Tarefas</span>
+      </nav>
+    </div>
+
+    <button class="tasks-page__primary-button" type="button">
+      <span aria-hidden="true">+</span>
+      Nova tarefa
+    </button>
+  </header>
+
+  <section class="tasks-board-shell" aria-labelledby="tasks-board-title">
+    <div class="tasks-board-shell__toolbar">
+      <div>
+        <h2 id="tasks-board-title">Quadro de tarefas</h2>
+        <p>Organiza o trabalho por estado e acompanha o progresso da equipa.</p>
+      </div>
+
+      <div class="tasks-board-shell__actions">
+        <label class="tasks-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input type="search" placeholder="Pesquisar tarefas" />
+        </label>
+        <button class="tasks-filter-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10m-7 6h4"/></svg>
+          Filtros
+        </button>
+      </div>
+    </div>
+
+    <div class="tasks-board" aria-label="Quadro Kanban de tarefas">
+      @for (column of columns; track column.title) {
+        <app-task-column
+          [title]="column.title"
+          [count]="column.tasks.length"
+          [accent]="column.accent"
+          [tasks]="column.tasks"
+        />
+      }
+
+      <button class="tasks-add-column" type="button" aria-label="Adicionar coluna">
+        <span class="tasks-add-column__icon" aria-hidden="true">+</span>
+        <span>Adicionar coluna</span>
+      </button>
+    </div>
+  </section>
+</main>

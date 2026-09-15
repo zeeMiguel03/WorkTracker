@@ -1,0 +1,26 @@
+<article class="task-card">
+  <div class="task-card__topline">
+    <span class="task-card__source">{{ task().source }}</span>
+    <button class="task-card__menu" type="button" aria-label="Opções da tarefa">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <h3>{{ task().title }}</h3>
+  <p class="task-card__description">{{ task().description }}</p>
+
+  <div class="task-card__meta">
+    <span class="task-card__priority" [class]="'task-card__priority--' + task().priority.toLowerCase()">
+      <i></i>{{ task().priority }}
+    </span>
+    <span class="task-card__date">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M7 3.5v3M17 3.5v3M3.5 9.5h17"/></svg>
+      {{ task().dueDate }}
+    </span>
+  </div>
+
+  <div class="task-card__footer">
+    <span class="task-card__assignee" [attr.aria-label]="'Responsável: ' + task().assignee">{{ task().initials }}</span>
+    <span class="task-card__assignee-name">{{ task().assignee }}</span>
+  </div>
+</article>

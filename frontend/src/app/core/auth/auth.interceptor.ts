@@ -36,7 +36,8 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
         error instanceof HttpErrorResponse &&
         error.status === 401 &&
         isApiRequest &&
-        !isPublicAuthRequest;
+        !isPublicAuthRequest &&
+        error.error?.code !== 'INVALID_PASSWORD';
 
       if (!shouldRefreshToken) {
         return throwError(() => error);

@@ -1,0 +1,24 @@
+@if (open()) {
+  <div class="ui-modal-backdrop" role="presentation" (click)="requestClose()">
+    <section
+      class="ui-modal"
+      [class.ui-modal--confirmation]="size() === 'confirmation'"
+      [class.ui-modal--success]="size() === 'success'"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="titleId()"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="ui-modal__top">
+        <div class="ui-modal__top-content">
+          <ng-content select="[modal-icon]" />
+          <div class="ui-modal__heading">
+            <ng-content select="[modal-heading]" />
+          </div>
+        </div>
+        <button class="ui-modal__close" type="button" [attr.aria-label]="closeLabel()" (click)="requestClose()">×</button>
+      </div>
+      <ng-content />
+    </section>
+  </div>
+}

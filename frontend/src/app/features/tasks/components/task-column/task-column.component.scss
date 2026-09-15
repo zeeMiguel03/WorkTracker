@@ -1,0 +1,130 @@
+:host {
+  display: flex;
+  min-width: 0;
+  flex: 0 0 320px;
+}
+
+.task-column {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  background: #101828;
+  border: 1px solid #1d2939;
+  border-radius: 14px;
+  box-sizing: border-box;
+}
+
+.task-column__header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 14px 12px;
+}
+
+.task-column__title,
+.task-column__actions {
+  display: flex;
+  align-items: center;
+}
+
+.task-column__title {
+  min-width: 0;
+  gap: 9px;
+}
+
+.task-column__dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 10px;
+  background: var(--task-accent);
+  border-radius: 50%;
+}
+
+.task-column__title h2 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: #f2f4f7;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-column__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  color: #b9c2d0;
+  border: 1px solid #344054;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.task-column__actions {
+  gap: 4px;
+  margin-left: 10px;
+}
+
+.task-column__actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  color: #98a2b3;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.task-column__actions button:hover {
+  color: #f2f4f7;
+  background: #1d2939;
+}
+
+.task-column__cards {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 8px 12px 12px;
+  overflow-y: auto;
+  scrollbar-color: #344054 transparent;
+  scrollbar-width: thin;
+}
+
+.task-column__empty {
+  display: grid;
+  min-height: 120px;
+  margin: 0 12px 12px;
+  place-items: center;
+  color: #667085;
+  border: 1px dashed #344054;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  :host {
+    flex-basis: min(320px, calc(100vw - 52px));
+  }
+}

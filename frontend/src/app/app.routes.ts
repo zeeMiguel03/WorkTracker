@@ -34,6 +34,46 @@ export const routes: Routes = [
           ),
         title: 'Dashboard | WorkTracker',
       },
+      {
+        path: 'entries',
+        loadComponent: () =>
+          import('./features/entries/entry-list/entry-list.component').then(
+            (module) => module.EntryList,
+          ),
+        title: 'Lançamentos | WorkTracker',
+      },
+      {
+        path: 'accounts',
+        loadComponent: () =>
+          import('./features/accounts/account-list/account-list.component').then(
+            (module) => module.AccountList,
+          ),
+        title: 'Contas | WorkTracker',
+      },
+      {
+        path: 'sources',
+        loadComponent: () =>
+          import('./features/sources/source-list/source-list.component').then(
+            (module) => module.SourceList,
+          ),
+        title: 'Fontes de trabalho | WorkTracker',
+      },
+      {
+        path: 'tasks',
+        loadComponent: () =>
+          import('./features/tasks/task-board/task-board.component').then(
+            (module) => module.TaskBoard,
+          ),
+        title: 'Tarefas | WorkTracker',
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/profile/profile/profile.component').then(
+            (module) => module.Profile,
+          ),
+        title: 'Perfil | WorkTracker',
+      },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: '**', redirectTo: 'dashboard' },
     ],

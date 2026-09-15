@@ -16,7 +16,7 @@
       <svg viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.75 2.292C10.75 1.878 10.414 1.542 10 1.542s-.75.336-.75.75v.544a6.38 6.38 0 0 0-5.625 6.331v5.292h-.292a.75.75 0 0 0 0 1.5h13.334a.75.75 0 0 0 0-1.5h-.292V9.167a6.38 6.38 0 0 0-5.625-6.331v-.544Zm4.125 12.167V9.167a4.875 4.875 0 0 0-9.75 0v5.292h9.75ZM8 17.708c0 .414.336.75.75.75h2.5a.75.75 0 0 0 0-1.5h-2.5a.75.75 0 0 0-.75.75Z"/></svg>
     </button>
     <div class="avatar"><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="15" r="8"/><path d="M8 42c1-11 6-17 14-17s13 6 14 17"/></svg></div>
-    <span class="user-name">Musharof</span>
+    <span class="user-name">{{ auth.currentUser()?.name ?? 'Utilizador' }}</span>
     <svg class="user-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m4.79 7.4 5.21 5.2 5.21-5.2"/></svg>
   </div>
 </header>

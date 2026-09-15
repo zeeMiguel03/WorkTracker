@@ -1,1 +1,408 @@
-<p>profile works!</p>
+<main class="profile-page">
+  <header class="profile-page__header">
+    <div>
+      <h1>Perfil</h1>
+    </div>
+    <nav class="profile-breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/dashboard">Dashboard</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">Perfil</span>
+    </nav>
+  </header>
+
+  @if (profileError()) {
+    <p class="profile-alert profile-alert--error" role="alert">{{ profileError() }}</p>
+  }
+
+  @if (user(); as currentUser) {
+    <section class="profile-shell" aria-labelledby="profile-shell-title">
+      <h2 id="profile-shell-title">O meu perfil</h2>
+
+      <article class="profile-card profile-card--identity">
+        <div class="profile-card__heading">
+          <div class="profile-heading__person">
+            @if (profileImageSrc()) {
+              <img
+                class="profile-avatar"
+                [src]="profileImageSrc()!"
+                [alt]="'Fotografia de ' + displayName()"
+              />
+            } @else {
+              <span
+                class="profile-avatar profile-avatar--fallback"
+                aria-label="Sem fotografia de perfil"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="8" r="3.2" />
+                  <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
+                </svg>
+              </span>
+            }
+            <div>
+              <h3>{{ displayName() }}</h3>
+              <p>
+                Utilizador WorkTracker <span aria-hidden="true">|</span> Membro desde
+                {{ memberSince() }}
+              </p>
+            </div>
+          </div>
+          <button
+            class="profile-button profile-button--secondary"
+            type="button"
+            (click)="startEditing()"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m4 16.5-.7 3.7 3.7-.7L18.5 8a2.1 2.1 0 0 0-3-3L4 16.5Z" />
+              <path d="m14 6 4 4" />
+            </svg>
+            Editar
+          </button>
+        </div>
+
+        @if (editingProfile()) {
+          <form class="profile-edit-form" (submit)="saveProfile($event)">
+            <div class="profile-form-field">
+              <label for="profileName">Nome completo</label>
+              <input
+                id="profileName"
+                name="profileName"
+                type="text"
+                [value]="currentUser.name"
+                autocomplete="name"
+              />
+            </div>
+            <div class="profile-form-field">
+              <label for="profileImage">Fotografia de perfil</label>
+              <app-file-picker
+                inputId="profileImage"
+                inputName="profileImage"
+                accept="image/png,image/jpeg,image/webp"
+                (fileSelected)="selectImage($event)"
+              />
+            </div>
+            <div class="profile-edit-form__actions">
+              <button
+                class="profile-button profile-button--ghost"
+                type="button"
+                (click)="cancelEditing()"
+              >
+                Cancelar
+              </button>
+              <button
+                class="profile-button profile-button--primary"
+                type="submit"
+                [disabled]="savingProfile()"
+              >
+                {{ savingProfile() ? 'A guardar...' : 'Guardar alterações' }}
+              </button>
+            </div>
+          </form>
+        } @else {
+          <dl class="profile-details profile-details--identity">
+            <div>
+              <dt>Nome</dt>
+              <dd>{{ displayName() }}</dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <dd>{{ currentUser.email }}</dd>
+            </div>
+            <div>
+              <dt>Perfil</dt>
+              <dd>Utilizador</dd>
+            </div>
+            <div>
+              <dt>Estado</dt>
+              <dd>
+                <span class="profile-status"><i></i> Ativo</span>
+              </dd>
+            </div>
+          </dl>
+        }
+      </article>
+
+      <article class="profile-card">
+        <div class="profile-card__heading">
+          <div>
+            <h3>Morada</h3>
+            <p class="profile-card__hint">A informação de morada ainda não está configurada.</p>
+          </div>
+          <button
+            class="profile-button profile-button--secondary"
+            type="button"
+            disabled
+            title="Disponível numa próxima versão"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m4 16.5-.7 3.7 3.7-.7L18.5 8a2.1 2.1 0 0 0-3-3L4 16.5Z" />
+              <path d="m14 6 4 4" />
+            </svg>
+            Editar
+          </button>
+        </div>
+        <dl class="profile-details profile-details--address">
+          <div>
+            <dt>País</dt>
+            <dd>Não configurado</dd>
+          </div>
+          <div>
+            <dt>Cidade / Estado</dt>
+            <dd>Não configurado</dd>
+          </div>
+          <div>
+            <dt>Código postal</dt>
+            <dd>Não configurado</dd>
+          </div>
+          <div>
+            <dt>Identificação fiscal</dt>
+            <dd>Não configurado</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="profile-card">
+        <div class="profile-card__heading">
+          <div>
+            <h3>Segurança</h3>
+            <p class="profile-card__hint">Gere o acesso e a segurança da tua conta.</p>
+          </div>
+        </div>
+        <div class="security-row">
+          <div>
+            <h4>Alterar password</h4>
+            <p>Atualiza a password da tua conta regularmente.</p>
+          </div>
+          <button
+            class="profile-button profile-button--secondary"
+            type="button"
+            (click)="openPasswordModal()"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m4 16.5-.7 3.7 3.7-.7L18.5 8a2.1 2.1 0 0 0-3-3L4 16.5Z" />
+              <path d="m14 6 4 4" />
+            </svg>
+            Alterar password
+          </button>
+        </div>
+        <div class="security-row security-row--last">
+          <div>
+            <h4>Autenticação de dois fatores (2FA)</h4>
+            <p>Esta opção ficará disponível numa próxima versão.</p>
+          </div>
+          <button
+            class="profile-switch"
+            type="button"
+            role="switch"
+            [attr.aria-checked]="twoFactorEnabled()"
+            disabled
+            aria-label="Autenticação de dois fatores indisponível"
+          >
+            <span></span>
+          </button>
+        </div>
+      </article>
+
+      <article class="profile-card profile-card--danger">
+        <div class="profile-card__heading">
+          <div>
+            <h3>Zona de perigo</h3>
+            <p class="profile-card__hint">Ações permanentes e relacionadas com a sessão.</p>
+          </div>
+        </div>
+        <div class="security-row">
+          <div>
+            <h4>Terminar sessão em todos os dispositivos</h4>
+            <p>Fecha todas as sessões ativas da tua conta.</p>
+          </div>
+          <button
+            class="profile-button profile-button--secondary"
+            type="button"
+            (click)="openConfirmation('logout-all')"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5" />
+              <path d="m14 8 4 4-4 4m-6-4h10" />
+            </svg>
+            Terminar sessões
+          </button>
+        </div>
+        <div class="security-row security-row--last">
+          <div>
+            <h4>Apagar conta</h4>
+            <p>Remove permanentemente a tua conta e os teus dados.</p>
+          </div>
+          <button
+            class="profile-button profile-button--danger"
+            type="button"
+            (click)="openConfirmation('delete-account')"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16m-10 4v6m4-6v6M9 7V4h6v3m-9 0 1 14h10l1-14" />
+            </svg>
+            Apagar conta
+          </button>
+        </div>
+      </article>
+    </section>
+  } @else {
+    <section class="profile-shell profile-empty"><p>A carregar o perfil...</p></section>
+  }
+</main>
+
+@if (passwordModalOpen()) {
+  <app-modal
+    [open]="passwordModalOpen()"
+    titleId="password-modal-title"
+    (closed)="closePasswordModal()"
+  >
+    <div modal-icon class="profile-confirmation-icon profile-confirmation-icon--security">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3 5 6v5c0 4.5 2.9 8.2 7 10 4.1-1.8 7-5.5 7-10V6l-7-3Z" />
+        <path d="m9.5 12 1.7 1.7 3.5-3.5" />
+      </svg>
+    </div>
+    <div modal-heading class="profile-modal__heading">
+      <h2 id="password-modal-title">Alterar password</h2>
+    </div>
+    <div class="profile-modal__body">
+      @if (passwordError()) {
+        <p class="profile-alert profile-alert--error" role="alert">{{ passwordError() }}</p>
+      }
+      <form class="profile-modal__form" (submit)="changePassword($event)">
+        <label
+          >Password atual<input
+            name="currentPassword"
+            type="password"
+            autocomplete="current-password"
+            required
+        /></label>
+        <label
+          >Nova password<input
+            name="newPassword"
+            type="password"
+            autocomplete="new-password"
+            minlength="8"
+            required
+        /></label>
+        <label
+          >Confirmar nova password<input
+            name="confirmPassword"
+            type="password"
+            autocomplete="new-password"
+            minlength="8"
+            required
+        /></label>
+        <div class="profile-modal__actions">
+          <button
+            class="profile-button profile-button--ghost"
+            type="button"
+            [disabled]="changingPassword()"
+            (click)="closePasswordModal()"
+          >
+            Fechar
+          </button>
+          <button
+            class="profile-button profile-button--primary"
+            type="submit"
+            [disabled]="changingPassword()"
+          >
+            {{ changingPassword() ? 'A guardar...' : 'Guardar password' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </app-modal>
+}
+
+@if (confirmationAction(); as action) {
+  <app-modal
+    [open]="true"
+    titleId="confirmation-modal-title"
+    size="confirmation"
+    (closed)="closeConfirmation()"
+  >
+    <div
+      modal-icon
+      class="profile-confirmation-icon"
+      [class.profile-confirmation-icon--danger]="action === 'delete-account'"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        @if (action === 'delete-account') {
+          <path d="M4 7h16m-10 4v6m4-6v6M9 7V4h6v3m-9 0 1 14h10l1-14" />
+        } @else {
+          <path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5" />
+          <path d="m14 8 4 4-4 4m-6-4h10" />
+        }
+      </svg>
+    </div>
+    <div modal-heading class="profile-modal__heading profile-modal__heading--confirmation">
+      <h2 id="confirmation-modal-title">
+        {{ action === 'delete-account' ? 'Apagar conta?' : 'Terminar todas as sessões?' }}
+      </h2>
+      <p>
+        {{
+          action === 'delete-account'
+            ? 'Esta ação é permanente e remove a tua conta e os teus dados. Não pode ser desfeita.'
+            : 'A sessão será terminada em todos os dispositivos onde a tua conta estiver ativa.'
+        }}
+      </p>
+    </div>
+    <div class="profile-modal__body">
+      <div class="profile-modal__actions">
+        <button
+          class="profile-button profile-button--ghost"
+          type="button"
+          [disabled]="confirmingAction()"
+          (click)="closeConfirmation()"
+        >
+          Cancelar
+        </button>
+        <button
+          class="profile-button"
+          type="button"
+          [class.profile-button--danger]="action === 'delete-account'"
+          [class.profile-button--primary]="action !== 'delete-account'"
+          [disabled]="confirmingAction()"
+          (click)="confirmDangerAction()"
+        >
+          {{
+            confirmingAction()
+              ? 'A processar...'
+              : action === 'delete-account'
+                ? 'Apagar conta'
+                : 'Terminar sessões'
+          }}
+        </button>
+      </div>
+    </div>
+  </app-modal>
+}
+
+@if (successModal(); as success) {
+  <app-modal
+    [open]="true"
+    titleId="success-modal-title"
+    size="success"
+    (closed)="closeSuccessModal()"
+  >
+    <div modal-icon class="profile-success-modal__icon" aria-hidden="true">
+      <svg viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r="31" />
+        <path d="m21 36 10 10 21-22" />
+      </svg>
+    </div>
+    <div modal-heading class="profile-success-modal__heading">
+      <h2 id="success-modal-title">{{ success.title }}</h2>
+    </div>
+    <div class="profile-success-modal__body">
+      <p>{{ success.message }}</p>
+      <button
+        class="profile-button profile-button--primary"
+        type="button"
+        (click)="closeSuccessModal()"
+      >
+        {{ success.redirectTo ? 'Continuar para iniciar sessão' : 'Fechar' }}
+      </button>
+    </div>
+  </app-modal>
+}

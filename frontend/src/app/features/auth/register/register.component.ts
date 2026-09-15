@@ -6,9 +6,10 @@ import { finalize } from 'rxjs';
 import { RegisterFormModel } from '../models/register.model';
 import { Auth } from '../auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FilePicker } from '../../../shared/ui/file-picker/file-picker.component';
 
 @Component({
-  imports: [NgOptimizedImage, RouterLink, FormField],
+  imports: [NgOptimizedImage, RouterLink, FormField, FilePicker],
   selector: 'app-register',
   styleUrl: './register.component.scss',
   templateUrl: './register.component.html',
@@ -45,10 +46,8 @@ export class Register {
   });
 
 
-  protected selectImage(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    this.profileImage.set(input.files?.item(0) ?? null);
+  protected selectImage(file: File | null): void {
+    this.profileImage.set(file);
   }
 
   protected register(event: SubmitEvent): void {

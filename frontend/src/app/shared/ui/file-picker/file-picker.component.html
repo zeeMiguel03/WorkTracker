@@ -1,0 +1,14 @@
+<div class="file-picker">
+  <label class="file-picker__button" [for]="inputId()">Escolher ficheiro</label>
+  <span class="file-picker__name" aria-live="polite">
+    {{ selectedFile()?.name ?? placeholder() }}
+  </span>
+  <input
+    class="file-picker__input"
+    [id]="inputId()"
+    [name]="inputName()"
+    type="file"
+    [accept]="accept()"
+    (change)="handleFileChange($event)"
+  />
+</div>
