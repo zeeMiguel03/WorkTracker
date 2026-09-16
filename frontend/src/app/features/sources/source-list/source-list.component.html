@@ -1,1 +1,210 @@
-<p>source-list works!</p>
+<main class="sources-page">
+  <header class="sources-page__header">
+    <div>
+      <h1>Fontes</h1>
+      <nav class="sources-page__breadcrumb" aria-label="Breadcrumb">
+        <a routerLink="/dashboard">Dashboard</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Fontes</span>
+      </nav>
+    </div>
+
+    <button class="sources-page__primary-button" type="button" (click)="openCreateSource()">
+      <span aria-hidden="true">+</span>
+      Nova fonte
+    </button>
+  </header>
+
+  <section class="sources-shell" aria-labelledby="sources-title">
+    <div class="sources-shell__toolbar">
+      <div>
+        <h2 id="sources-title">As minhas fontes</h2>
+        <p>Organiza os sites, serviços e origens dos teus lançamentos.</p>
+      </div>
+
+      <app-source-filters
+        [searchTerm]="searchTerm()"
+        (searchTermChange)="updateSearch($event)"
+      />
+    </div>
+
+    @if (isLoading()) {
+      <p class="sources-page__state">A carregar fontes...</p>
+    } @else if (errorMessage() && sources().length === 0) {
+      <p class="sources-page__state sources-page__state--error" role="alert">
+        {{ errorMessage() }}
+      </p>
+    } @else {
+      <div class="sources-grid">
+        @if (visibleSources().length === 0) {
+          <div class="sources-empty-state" role="status">
+            <div class="sources-empty-state__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="6.5" />
+                <path d="m16 16 4 4" />
+                <path d="M8.5 11h5M11 8.5v5" />
+              </svg>
+            </div>
+            <h3>{{ hasSearch() ? 'Nenhuma fonte encontrada' : 'Ainda não tens fontes' }}</h3>
+            <p>
+              {{ hasSearch()
+                ? 'Não encontrámos fontes com essa pesquisa.'
+                : 'Adiciona a tua primeira fonte para começares.' }}
+            </p>
+            @if (hasSearch()) {
+              <button class="sources-empty-state__clear" type="button" (click)="clearSearch()">
+                Limpar pesquisa
+              </button>
+            } @else {
+              <button class="sources-empty-state__add" type="button" (click)="openCreateSource()">
+                <span aria-hidden="true">+</span>
+                Adicionar fonte
+              </button>
+            }
+          </div>
+        } @else {
+          @for (source of visibleSources(); track source.id) {
+            <app-source-card
+              [source]="source"
+              (editRequested)="openEditSource($event)"
+              (deleteRequested)="openDeleteSource($event)"
+            />
+          }
+        }
+
+      </div>
+
+      @if (!isLoading() && totalPages() > 1) {
+        <nav class="sources-pagination" aria-label="Paginação das fontes">
+          <button
+            class="sources-pagination__control"
+            type="button"
+            aria-label="Ir para a primeira página"
+            [disabled]="page() === 1"
+            (click)="goToPage(1)"
+          >
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m14 4.5-5 5 5 5M10 4.5l-5 5 5 5" /></svg>
+            Primeira
+          </button>
+
+          <button
+            class="sources-pagination__control"
+            type="button"
+            aria-label="Ir para a página anterior"
+            [disabled]="page() === 1"
+            (click)="goToPage(page() - 1)"
+          >
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m12.5 4.5-5 5 5 5" /></svg>
+            Anterior
+          </button>
+
+          <div class="sources-pagination__pages sources-pagination__pages--desktop">
+            @for (pageNumber of pageNumbers(); track pageNumber) {
+              <button
+                type="button"
+                [class.sources-pagination__page--active]="page() === pageNumber"
+                [attr.aria-current]="page() === pageNumber ? 'page' : null"
+                (click)="goToPage(pageNumber)"
+              >
+                {{ pageNumber }}
+              </button>
+            }
+          </div>
+
+          <div class="sources-pagination__pages sources-pagination__pages--mobile">
+            @for (pageNumber of mobilePageNumbers(); track pageNumber) {
+              <button
+                type="button"
+                [class.sources-pagination__page--active]="page() === pageNumber"
+                [attr.aria-current]="page() === pageNumber ? 'page' : null"
+                (click)="goToPage(pageNumber)"
+              >
+                {{ pageNumber }}
+              </button>
+            }
+          </div>
+
+          <button
+            class="sources-pagination__control"
+            type="button"
+            aria-label="Ir para a página seguinte"
+            [disabled]="page() === totalPages()"
+            (click)="goToPage(page() + 1)"
+          >
+            Seguinte
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7.5 4.5 5 5-5 5" /></svg>
+          </button>
+
+          <button
+            class="sources-pagination__control"
+            type="button"
+            aria-label="Ir para a última página"
+            [disabled]="page() === totalPages()"
+            (click)="goToPage(totalPages())"
+          >
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 4.5 5 5-5 5M10 4.5l5 5-5 5" /></svg>
+            Última
+          </button>
+        </nav>
+      }
+    }
+  </section>
+</main>
+
+@if (sourceModalOpen()) {
+  <app-modal
+    [open]="true"
+    titleId="source-modal-title"
+    (closed)="closeSourceModal()"
+  >
+    <div modal-heading class="sources-modal__heading">
+      <h2 id="source-modal-title">{{ selectedSource() ? 'Editar fonte' : 'Nova fonte' }}</h2>
+      <p>Adiciona os detalhes da fonte que queres acompanhar.</p>
+    </div>
+    <app-source-form
+      [source]="selectedSource()"
+      [saving]="isSaving()"
+      [error]="errorMessage()"
+      (submitted)="saveSource($event)"
+      (cancelled)="closeSourceModal()"
+    />
+  </app-modal>
+}
+
+@if (deleteModalOpen()) {
+  @if (selectedSource(); as source) {
+    <app-modal
+      [open]="true"
+      titleId="source-delete-modal-title"
+      size="confirmation"
+      (closed)="closeDeleteModal()"
+    >
+      <div modal-icon class="sources-confirmation-icon" aria-hidden="true">!</div>
+      <div modal-heading class="sources-modal__heading">
+        <h2 id="source-delete-modal-title">Apagar fonte?</h2>
+        <p>Esta ação não pode ser desfeita. A fonte “{{ source.name }}” será removida permanentemente.</p>
+      </div>
+      <div class="sources-modal__actions">
+        <button class="sources-modal__secondary" type="button" (click)="closeDeleteModal()">Cancelar</button>
+        <button
+          class="sources-modal__danger"
+          type="button"
+          [disabled]="isSaving()"
+          (click)="deleteSelectedSource()"
+        >
+          {{ isSaving() ? 'A apagar...' : 'Apagar fonte' }}
+        </button>
+      </div>
+    </app-modal>
+  }
+}
+
+@if (successModal(); as success) {
+  <app-success-modal
+    [open]="true"
+    titleId="source-success-modal-title"
+    [title]="success.title"
+    [message]="success.message"
+    (closed)="closeSuccessModal()"
+  />
+}

@@ -12,6 +12,14 @@ namespace Application.Services
 {
     public class UserService : IUserService
     {
+        private static readonly (string Name, string Color)[] DefaultTaskStatuses =
+        [
+            ("A fazer", "#98A2B3"),
+            ("Em progresso", "#7592FF"),
+            ("Em revisão", "#F79009"),
+            ("Concluídas", "#12B76A")
+        ];
+
         private readonly IUserRepository _userRepo;
         private readonly IUploadService _uploadService;
         private readonly IPasswordHasher<User> _passwordHasher;
@@ -60,6 +68,13 @@ namespace Application.Services
                     user.Email,
                     profileImagePath,
                     createdByUserId);
+
+                for (var index = 0; index < DefaultTaskStatuses.Length; index++)
+                {
+                    var (name, color) = DefaultTaskStatuses[index];
+                    newUser.TasksStatus.Add(
+                        TasksStatus.CreateForUser(newUser, name, color, index));
+                }
 
                 var passwordHash = _passwordHasher.HashPassword(newUser, user.Password);
 

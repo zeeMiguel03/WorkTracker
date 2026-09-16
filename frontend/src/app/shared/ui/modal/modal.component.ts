@@ -10,9 +10,16 @@ export class Modal {
   readonly titleId = input.required<string>();
   readonly size = input<'default' | 'confirmation' | 'success'>('default');
   readonly closeLabel = input('Fechar');
+  readonly closeOnBackdrop = input(true);
   readonly closed = output<void>();
 
   protected requestClose(): void {
     this.closed.emit();
+  }
+
+  protected requestBackdropClose(): void {
+    if (this.closeOnBackdrop()) {
+      this.requestClose();
+    }
   }
 }

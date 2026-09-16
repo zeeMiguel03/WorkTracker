@@ -1,0 +1,87 @@
+.success-modal__icon {
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 22px;
+  color: #32d583;
+}
+
+.success-modal__icon svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.success-modal__icon circle,
+.success-modal__icon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.success-modal__icon circle {
+  stroke-width: 3;
+  stroke-dasharray: 195;
+  stroke-dashoffset: 195;
+  animation: success-modal-circle .55s ease-out forwards;
+}
+
+.success-modal__icon path {
+  stroke-width: 4;
+  stroke-dasharray: 42;
+  stroke-dashoffset: 42;
+  animation: success-modal-check .35s .45s ease-out forwards;
+}
+
+.success-modal__heading h2 {
+  margin: 0;
+  color: #f2f4f7;
+  font-size: 24px;
+}
+
+.success-modal__body {
+  text-align: center;
+}
+
+.success-modal__body p {
+  max-width: 330px;
+  margin: 0 auto 26px;
+  color: #98a2b3;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.success-modal__button {
+  min-width: 116px;
+  min-height: 42px;
+  padding: 0 16px;
+  color: #fff;
+  background: #465fff;
+  border: 1px solid #465fff;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.success-modal__button:hover {
+  background: #3641f5;
+  border-color: #3641f5;
+}
+
+@keyframes success-modal-circle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes success-modal-check {
+  to { stroke-dashoffset: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .success-modal__icon circle,
+  .success-modal__icon path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

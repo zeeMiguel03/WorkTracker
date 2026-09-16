@@ -71,13 +71,15 @@
 }
 
 .ui-modal--success {
+  position: relative;
   width: min(100%, 430px);
   padding: 36px 32px 30px;
   text-align: center;
 }
 
 .ui-modal--success .ui-modal__top {
-  justify-content: center;
+  display: block;
+  margin-bottom: 0;
 }
 
 .ui-modal--success .ui-modal__top-content {
@@ -89,6 +91,12 @@
 
 .ui-modal--success .ui-modal__heading {
   text-align: center;
+}
+
+.ui-modal--success .ui-modal__close {
+  position: absolute;
+  top: 25px;
+  right: 25px;
 }
 
 @media (max-width: 640px) {

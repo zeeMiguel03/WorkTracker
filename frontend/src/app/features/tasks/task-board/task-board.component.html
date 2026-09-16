@@ -9,7 +9,7 @@
       </nav>
     </div>
 
-    <button class="tasks-page__primary-button" type="button">
+    <button class="tasks-page__primary-button" type="button" (click)="openCreateTask()">
       <span aria-hidden="true">+</span>
       Nova tarefa
     </button>
@@ -25,7 +25,7 @@
       <div class="tasks-board-shell__actions">
         <label class="tasks-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-          <input type="search" placeholder="Pesquisar tarefas" />
+          <input type="search" placeholder="Pesquisar tarefas" (input)="updateSearch($event)" />
         </label>
         <button class="tasks-filter-button" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10m-7 6h4"/></svg>
@@ -34,20 +34,133 @@
       </div>
     </div>
 
-    <div class="tasks-board" aria-label="Quadro Kanban de tarefas">
-      @for (column of columns; track column.title) {
-        <app-task-column
-          [title]="column.title"
-          [count]="column.tasks.length"
-          [accent]="column.accent"
-          [tasks]="column.tasks"
-        />
-      }
+    @if (isLoading()) {
+      <div class="tasks-board__state">A carregar tarefas...</div>
+    } @else if (errorMessage() && columns().length === 0) {
+      <div class="tasks-board__state tasks-board__state--error" role="alert">{{ errorMessage() }}</div>
+    } @else {
+      <div class="tasks-board" aria-label="Quadro Kanban de tarefas">
+        <div
+          class="tasks-board__columns"
+          cdkDropList
+          cdkDropListOrientation="horizontal"
+          [cdkDropListData]="columns()"
+          [cdkDropListEnterPredicate]="canDropColumn"
+          (cdkDropListDropped)="handleColumnDrop($event)"
+        >
+          @for (column of columns(); track column.id) {
+            <div
+              class="tasks-board__column-drag"
+              cdkDrag
+              cdkDragLockAxis="x"
+              [cdkDragData]="column"
+            >
+              <app-task-column
+                [columnId]="column.id"
+                [title]="column.title"
+                [count]="taskTotals()[column.id] ?? column.tasks.length"
+                [accent]="column.accent"
+                [tasks]="column.tasks"
+                [hasMoreTasks]="taskHasMore()[column.id] ?? false"
+                [loadingMoreTasks]="loadingMoreTasks()[column.id] ?? false"
+                [taskDropListIds]="taskDropListIds()"
+                (addTaskRequested)="openCreateTask($event)"
+                (editColumnRequested)="openEditStatus($event)"
+                (deleteColumnRequested)="confirmDeleteStatus($event)"
+                (editTaskRequested)="openEditTask($event)"
+                (deleteTaskRequested)="confirmDeleteTask($event)"
+                (completeTaskRequested)="completeTask($event)"
+                (reopenTaskRequested)="reopenTask($event)"
+                (loadMoreRequested)="loadMoreTasks($event)"
+                (taskDropped)="handleTaskDrop($event)"
+              />
+            </div>
+          }
+        </div>
 
-      <button class="tasks-add-column" type="button" aria-label="Adicionar coluna">
-        <span class="tasks-add-column__icon" aria-hidden="true">+</span>
-        <span>Adicionar coluna</span>
-      </button>
-    </div>
+        <button class="tasks-add-column" type="button" aria-label="Adicionar coluna" (click)="openCreateStatus()">
+          <span class="tasks-add-column__icon" aria-hidden="true">+</span>
+          <span>Adicionar coluna</span>
+        </button>
+      </div>
+    }
   </section>
 </main>
+
+@if (errorMessage() && columns().length > 0) {
+  <p class="tasks-page__error" role="alert">{{ errorMessage() }}</p>
+}
+
+@if (successModal(); as success) {
+  <app-success-modal
+    [open]="true"
+    titleId="task-success-modal-title"
+    [title]="success.title"
+    [message]="success.message"
+    (closed)="closeSuccessModal()"
+  />
+}
+
+@if (taskModalOpen()) {
+  <app-modal
+    [open]="true"
+    titleId="task-modal-title"
+    (closed)="closeTaskModal()"
+  >
+    <div modal-heading class="tasks-modal__heading">
+      <h2 id="task-modal-title">{{ selectedTask() ? 'Editar tarefa' : 'Nova tarefa' }}</h2>
+      <p>Preenche os dados da tarefa e escolhe o seu estado.</p>
+    </div>
+    <app-task-form
+      [task]="selectedTask()"
+      [statuses]="statuses()"
+      [sources]="sources()"
+      [defaultStatusId]="defaultStatusId()"
+      [saving]="isSaving()"
+      [error]="errorMessage()"
+      (submitted)="saveTask($event)"
+      (cancelled)="closeTaskModal()"
+    />
+  </app-modal>
+}
+
+@if (statusModalOpen()) {
+  <app-modal
+    [open]="true"
+    titleId="task-status-modal-title"
+    (closed)="closeStatusModal()"
+  >
+    <div modal-heading class="tasks-modal__heading">
+      <h2 id="task-status-modal-title">{{ selectedStatus() ? 'Editar coluna' : 'Nova coluna' }}</h2>
+      <p>Define o nome, a cor e a ordem desta coluna.</p>
+    </div>
+    <app-task-status-form
+      [status]="selectedStatus()"
+      [saving]="isSaving()"
+      [error]="errorMessage()"
+      (submitted)="saveStatus($event)"
+      (cancelled)="closeStatusModal()"
+    />
+  </app-modal>
+}
+
+@if (deleteTarget(); as target) {
+  <app-modal
+    [open]="true"
+    titleId="task-delete-modal-title"
+    size="confirmation"
+    (closed)="closeDeleteModal()"
+  >
+    <div modal-icon class="tasks-confirmation-icon" aria-hidden="true">!</div>
+    <div modal-heading class="tasks-modal__heading">
+      <h2 id="task-delete-modal-title">Apagar {{ target.type === 'task' ? 'tarefa' : 'coluna' }}?</h2>
+      <p>Esta ação não pode ser desfeita. O item “{{ target.label }}” será removido permanentemente.</p>
+    </div>
+    <div class="tasks-modal__actions">
+      <button class="tasks-modal__secondary" type="button" (click)="closeDeleteModal()">Cancelar</button>
+      <button class="tasks-modal__danger" type="button" [disabled]="isSaving()" (click)="deleteSelected()">
+        {{ isSaving() ? 'A apagar...' : 'Apagar' }}
+      </button>
+    </div>
+  </app-modal>
+}

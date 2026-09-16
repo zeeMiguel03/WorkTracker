@@ -1,9 +1,24 @@
 <article class="task-card">
   <div class="task-card__topline">
     <span class="task-card__source">{{ task().source }}</span>
-    <button class="task-card__menu" type="button" aria-label="Opções da tarefa">
+    <button
+      class="task-card__menu"
+      type="button"
+      aria-label="Opções da tarefa"
+      [attr.aria-expanded]="menuOpen()"
+      (click)="toggleMenu(); $event.stopPropagation()"
+    >
       <span></span><span></span><span></span>
     </button>
+    @if (menuOpen()) {
+      <div class="task-card__menu-panel" role="menu">
+        <button type="button" role="menuitem" (click)="edit()">Editar</button>
+        <button type="button" role="menuitem" (click)="toggleCompletion()">
+          {{ task().completed ? 'Reabrir' : 'Concluir' }}
+        </button>
+        <button class="task-card__menu-danger" type="button" role="menuitem" (click)="remove()">Apagar</button>
+      </div>
+    }
   </div>
 
   <h3>{{ task().title }}</h3>
@@ -20,7 +35,13 @@
   </div>
 
   <div class="task-card__footer">
-    <span class="task-card__assignee" [attr.aria-label]="'Responsável: ' + task().assignee">{{ task().initials }}</span>
+    <span class="task-card__assignee" [attr.aria-label]="'Responsável: ' + task().assignee">
+      @if (task().avatarUrl) {
+        <img [src]="task().avatarUrl" alt="" />
+      } @else {
+        {{ task().initials }}
+      }
+    </span>
     <span class="task-card__assignee-name">{{ task().assignee }}</span>
   </div>
 </article>

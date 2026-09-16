@@ -24,6 +24,12 @@
   justify-content: space-between;
   gap: 12px;
   padding: 15px 14px 12px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.task-column__header:active {
+  cursor: grabbing;
 }
 
 .task-column__title,
@@ -99,6 +105,10 @@
   background: #1d2939;
 }
 
+.task-column__actions .task-column__delete:hover {
+  color: #f97066;
+}
+
 .task-column__cards {
   display: flex;
   min-width: 0;
@@ -121,6 +131,44 @@
   border: 1px dashed #344054;
   border-radius: 10px;
   font-size: 12px;
+}
+
+.task-column__load-more {
+  flex: 0 0 auto;
+  min-height: 36px;
+  margin: 0 12px 12px;
+  padding: 0 12px;
+  color: #b9c2d0;
+  background: #151f2e;
+  border: 1px solid #344054;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color .15s ease, background .15s ease, border-color .15s ease;
+}
+
+.task-column__load-more:hover:not(:disabled) {
+  color: #f2f4f7;
+  background: #1d2939;
+  border-color: #7592ff;
+}
+
+.task-column__load-more:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+.task-column__cards.cdk-drop-list-dragging .task-card:not(.cdk-drag-placeholder) {
+  transition: transform 180ms ease;
+}
+
+.task-column__cards .cdk-drag-placeholder {
+  min-height: 156px;
+  background: #151f2e;
+  border: 1px dashed #7592ff;
+  border-radius: 10px;
 }
 
 @media (max-width: 640px) {

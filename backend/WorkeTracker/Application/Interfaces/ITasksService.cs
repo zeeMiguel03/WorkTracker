@@ -1,4 +1,5 @@
 using Application.DTOs.Task;
+using Application.DTOs.Common;
 
 namespace Application.Interfaces
 {
@@ -12,7 +13,12 @@ namespace Application.Interfaces
 
         Task<GetTaskDTO> ListTaskByIdAsync(int idTask, CancellationToken cancellationToken = default);
 
-        Task<List<GetTaskDTO>> ListTasksByUserAsync(CancellationToken cancellationToken = default);
+        Task<PagedResultDTO<GetTaskDTO>> ListTasksByUserAsync(
+            int page,
+            int pageSize,
+            int? taskStatusId,
+            string? search,
+            CancellationToken cancellationToken = default);
 
         Task UpdateTaskStatusAsync(int idTask, int idTaskStatus, CancellationToken cancellationToken = default);
 

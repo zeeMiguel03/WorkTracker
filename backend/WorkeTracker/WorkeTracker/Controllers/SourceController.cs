@@ -1,3 +1,4 @@
+using Application.DTOs.Common;
 using Application.DTOs.Source;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -14,13 +15,20 @@ public sealed class SourceController : ControllerBase
     public SourceController(ISourceService service) => _service = service;
 
     [HttpGet]
-    public async Task<ActionResult<List<GetSourceDTO>>> List(CancellationToken ct)
+    public async Task<ActionResult<PagedResultDTO<GetSourceDTO>>> List(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 6,
+        [FromQuery] string? search = null,
+        CancellationToken ct = default)
     {
-        var sources = await _service.ListSourcesByUserAsync(ct);
+        var result = await _service.ListSourcesByUserAsync(page, pageSize, search, ct);
 
-        sources.ForEach(AddImageUrl);
+        foreach (var source in result.Items)
+        {
+            AddImageUrl(source);
+        }
 
-        return Ok(sources);
+        return Ok(result);
     }
 
     [HttpGet("{id:int}")]

@@ -1,23 +1,51 @@
 <section class="task-column" [style.--task-accent]="accent()">
-  <header class="task-column__header">
+  <header class="task-column__header" cdkDragHandle>
     <div class="task-column__title">
       <span class="task-column__dot"></span>
       <h2>{{ title() }}</h2>
       <span class="task-column__count">{{ count() }}</span>
     </div>
     <div class="task-column__actions">
-      <button type="button" aria-label="Adicionar tarefa">+</button>
-      <button type="button" aria-label="Opções da coluna">···</button>
+      <button type="button" aria-label="Adicionar tarefa" (click)="addTaskRequested.emit(columnId())">+</button>
+      <button type="button" aria-label="Editar coluna" (click)="editColumnRequested.emit(columnId())">···</button>
+      <button class="task-column__delete" type="button" aria-label="Apagar coluna" (click)="deleteColumnRequested.emit(columnId())">×</button>
     </div>
   </header>
 
-  @if (tasks().length === 0) {
-    <div class="task-column__empty">Sem tarefas nesta coluna</div>
-  } @else {
-    <div class="task-column__cards">
+  <div
+    class="task-column__cards"
+    cdkDropList
+    [id]="'task-column-' + columnId()"
+    [cdkDropListData]="tasks()"
+    [cdkDropListConnectedTo]="[...taskDropListIds()]"
+    [cdkDropListEnterPredicate]="canDropTask"
+    (cdkDropListDropped)="drop($event)"
+  >
+    @if (tasks().length === 0) {
+      <div class="task-column__empty">Sem tarefas nesta coluna</div>
+    } @else {
       @for (task of tasks(); track task.id) {
-        <app-task-card [task]="task" />
+        <app-task-card
+          cdkDrag
+          [cdkDragData]="task"
+          [task]="task"
+          (editRequested)="editTaskRequested.emit($event)"
+          (deleteRequested)="deleteTaskRequested.emit($event)"
+          (completionRequested)="completeTaskRequested.emit($event)"
+          (reopenRequested)="reopenTaskRequested.emit($event)"
+        />
       }
-    </div>
+    }
+  </div>
+
+  @if (hasMoreTasks()) {
+    <button
+      class="task-column__load-more"
+      type="button"
+      [disabled]="loadingMoreTasks()"
+      (click)="loadMoreRequested.emit(columnId())"
+    >
+      {{ loadingMoreTasks() ? 'A carregar...' : 'Ver mais' }}
+    </button>
   }
 </section>

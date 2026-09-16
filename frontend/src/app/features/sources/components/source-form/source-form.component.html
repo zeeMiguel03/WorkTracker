@@ -1,0 +1,62 @@
+<form class="source-form" (submit)="submit($event)">
+  <label>
+    <span class="source-form__label-text">Nome da fonte <b>*</b></span>
+    <input
+      name="sourceName"
+      type="text"
+      [value]="source()?.name ?? ''"
+      placeholder="Ex.: Vinted"
+      autocomplete="off"
+      required
+    />
+  </label>
+
+  <label>
+    <span class="source-form__label-text">Imagem da fonte</span>
+    <app-file-picker
+      inputId="source-image"
+      inputName="sourceImage"
+      accept="image/png,image/jpeg,image/webp"
+      placeholder="Nenhuma imagem selecionada"
+      (fileSelected)="handleImageSelected($event)"
+    />
+  </label>
+
+  <label class="source-form__switch-row">
+    <span>
+      <strong>Fonte ativa</strong>
+      <small>As fontes inativas deixam de aparecer nas novas seleções.</small>
+    </span>
+    <span class="source-form__switch" aria-hidden="true">
+      <input
+        name="sourceActive"
+        type="checkbox"
+        [checked]="source()?.isActive ?? true"
+        aria-label="Fonte ativa"
+      />
+      <span class="source-form__switch-track"></span>
+    </span>
+  </label>
+
+  @if (error()) {
+    <p class="source-form__error" role="alert">{{ error() }}</p>
+  }
+
+  <div class="source-form__actions">
+    <button
+      class="source-form__secondary"
+      type="button"
+      [disabled]="saving()"
+      (click)="cancelled.emit()"
+    >
+      Cancelar
+    </button>
+    <button
+      class="source-form__primary"
+      type="submit"
+      [disabled]="saving()"
+    >
+      {{ saving() ? 'A guardar...' : (source() ? 'Guardar alterações' : 'Criar fonte') }}
+    </button>
+  </div>
+</form>

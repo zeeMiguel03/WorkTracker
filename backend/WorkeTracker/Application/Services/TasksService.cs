@@ -1,3 +1,4 @@
+using Application.DTOs.Common;
 using Application.DTOs.Task;
 using Application.Interfaces;
 using Application.Interfaces.Services;
@@ -87,15 +88,37 @@ namespace Application.Services
             return MapToGetTaskDTO(tasks);
         }
 
-        public async Task<List<GetTaskDTO>> ListTasksByUserAsync(CancellationToken cancellationToken = default)
+        public async Task<PagedResultDTO<GetTaskDTO>> ListTasksByUserAsync(
+            int page,
+            int pageSize,
+            int? taskStatusId,
+            string? search,
+            CancellationToken cancellationToken = default)
         {
             var currentUserId = _currentUserService.GetUserId();
+            page = Math.Max(page, 1);
+            pageSize = Math.Clamp(pageSize, 1, 50);
 
-            var tasks = await _tasksRepo.GetByUserIdAsync(currentUserId, cancellationToken);
+            if (taskStatusId is <= 0)
+            {
+                taskStatusId = null;
+            }
 
-            return tasks
-                .Select(MapToGetTaskDTO)
-                .ToList();
+            var (tasks, totalCount) = await _tasksRepo.GetPageByUserIdAsync(
+                currentUserId,
+                page,
+                pageSize,
+                taskStatusId,
+                search,
+                cancellationToken);
+
+            return new PagedResultDTO<GetTaskDTO>
+            {
+                Items = tasks.Select(MapToGetTaskDTO).ToList(),
+                Page = page,
+                PageSize = pageSize,
+                TotalItems = totalCount
+            };
         }
 
         public async Task UpdateTaskStatusAsync(int idTask, int idTaskStatus, CancellationToken cancellationToken = default)

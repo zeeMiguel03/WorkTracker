@@ -63,6 +63,21 @@ namespace Domain.Entities
             return taskStatus;
         }
 
+        public static TasksStatus CreateForUser(User user, string name, string color, int sortOrder)
+        {
+            ArgumentNullException.ThrowIfNull(user);
+
+            return new TasksStatus
+            {
+                Name = NormalizeAndValidateName(name),
+                Color = NormalizeAndValidateColor(color),
+                SortOrder = ValidateSortOrder(sortOrder),
+                User = user,
+                UtCreation = user.Id > 0 ? user.Id : null,
+                CreatedAt = DateTime.UtcNow
+            };
+        }
+
         public void Update(string name, string color, int sortOrder)
         {
             Name = NormalizeAndValidateName(name);

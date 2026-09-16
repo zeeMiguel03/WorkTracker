@@ -1,0 +1,30 @@
+<div class="dropdown" [class.dropdown--open]="isOpen()">
+  <button
+    class="dropdown__trigger"
+    type="button"
+    [id]="triggerId"
+    [attr.aria-expanded]="isOpen()"
+    aria-haspopup="listbox"
+    (click)="toggle($event)"
+  >
+    <span>{{ selectedOption()?.label }}</span>
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5.5 7.5 4.5 4.5 4.5-4.5" /></svg>
+  </button>
+
+  @if (isOpen()) {
+    <div class="dropdown__menu" role="listbox" [attr.aria-labelledby]="triggerId">
+      @for (option of options(); track option.value) {
+        <button
+          class="dropdown__option"
+          type="button"
+          role="option"
+          [class.dropdown__option--selected]="option.value === value()"
+          [attr.aria-selected]="option.value === value()"
+          (click)="choose(option, $event)"
+        >
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  }
+</div>

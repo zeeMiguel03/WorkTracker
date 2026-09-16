@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Source;
+﻿using Application.DTOs.Common;
+using Application.DTOs.Source;
 
 namespace Application.Interfaces
 {
@@ -14,6 +15,10 @@ namespace Application.Interfaces
 
         Task<GetSourceDTO> ListSourceByIdAsync(int idSource, CancellationToken cancellationToken = default);
 
-        Task<List<GetSourceDTO>> ListSourcesByUserAsync(CancellationToken cancellationToken = default);
+        Task<PagedResultDTO<GetSourceDTO>> ListSourcesByUserAsync(
+            int page,
+            int pageSize,
+            string? search,
+            CancellationToken cancellationToken = default);
     }
 }

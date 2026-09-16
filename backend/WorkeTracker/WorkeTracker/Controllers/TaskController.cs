@@ -1,3 +1,4 @@
+using Application.DTOs.Common;
 using Application.DTOs.Task;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -14,9 +15,14 @@ public sealed class TaskController : ControllerBase
     public TaskController(ITasksService service) => _service = service;
 
     [HttpGet]
-    public async Task<ActionResult<List<GetTaskDTO>>> List(CancellationToken ct)
+    public async Task<ActionResult<PagedResultDTO<GetTaskDTO>>> List(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 8,
+        [FromQuery] int? taskStatusId = null,
+        [FromQuery] string? search = null,
+        CancellationToken ct = default)
     {
-        var tasks = await _service.ListTasksByUserAsync(ct);
+        var tasks = await _service.ListTasksByUserAsync(page, pageSize, taskStatusId, search, ct);
 
         return Ok(tasks);
     }

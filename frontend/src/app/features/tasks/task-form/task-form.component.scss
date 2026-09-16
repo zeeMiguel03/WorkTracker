@@ -1,0 +1,127 @@
+.task-form {
+  display: grid;
+  gap: 17px;
+}
+
+.task-form label {
+  display: grid;
+  gap: 7px;
+  color: #b9c2d0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.task-form__label b {
+  color: #f97066;
+}
+
+.task-form input,
+.task-form textarea,
+.task-form select {
+  width: 100%;
+  color: #f2f4f7;
+  background: #101828;
+  border: 1px solid #344054;
+  border-radius: 7px;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+}
+
+.task-form input,
+.task-form select {
+  height: 42px;
+  padding: 0 12px;
+}
+
+.task-form textarea {
+  min-height: 90px;
+  padding: 11px 12px;
+  resize: vertical;
+}
+
+.task-form input:focus,
+.task-form textarea:focus,
+.task-form select:focus {
+  border-color: #7592ff;
+  box-shadow: 0 0 0 3px rgba(70, 95, 255, .16);
+}
+
+.task-form input::placeholder,
+.task-form textarea::placeholder {
+  color: #667085;
+}
+
+.task-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px 14px;
+}
+
+.task-form small {
+  color: #f97066;
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.task-form__error {
+  margin: 0;
+  padding: 10px 12px;
+  color: #fda29b;
+  background: rgba(240, 68, 56, .1);
+  border: 1px solid rgba(240, 68, 56, .4);
+  border-radius: 7px;
+  font-size: 12px;
+}
+
+.task-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  padding-top: 8px;
+}
+
+.task-form__actions button {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.task-form__secondary {
+  color: #b9c2d0;
+  background: #182230;
+  border: 1px solid #344054;
+}
+
+.task-form__primary {
+  color: #fff;
+  background: #465fff;
+  border: 1px solid #465fff;
+}
+
+.task-form__actions button:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.task-form__actions button:disabled {
+  cursor: wait;
+  opacity: .65;
+}
+
+@media (max-width: 560px) {
+  .task-form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .task-form__actions {
+    flex-direction: column-reverse;
+  }
+
+  .task-form__actions button {
+    width: 100%;
+  }
+}

@@ -40,13 +40,35 @@ namespace Infrastructure.Repositories
                 cancellationToken);
         }
 
-        public async Task<IReadOnlyList<Source>> GetByUserIdAsync(int userId, CancellationToken cancellationToken = default)
+        public async Task<(IReadOnlyList<Source> Items, int TotalCount)> GetPageByUserIdAsync(
+            int userId,
+            int page,
+            int pageSize,
+            string? search,
+            CancellationToken cancellationToken = default)
         {
-            return await _context.sources
+            var query = _context.sources
                 .AsNoTracking()
-                .Where(source => source.UserId == userId)
+                .Where(source => source.UserId == userId);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var normalizedSearch = search.Trim();
+
+                query = query.Where(source =>
+                    source.Name.Contains(normalizedSearch));
+            }
+
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            var items = await query
                 .OrderBy(source => source.Name)
+                .ThenBy(source => source.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync(cancellationToken);
+
+            return (items, totalCount);
         }
 
         public void Remove(Source source)

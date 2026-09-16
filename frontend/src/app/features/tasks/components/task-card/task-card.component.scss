@@ -31,6 +31,7 @@
 }
 
 .task-card__topline {
+  position: relative;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 13px;
@@ -74,6 +75,40 @@
   height: 3px;
   border-radius: 50%;
   background: currentColor;
+}
+
+.task-card__menu-panel {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  z-index: 3;
+  display: grid;
+  min-width: 118px;
+  padding: 5px;
+  background: #101828;
+  border: 1px solid #344054;
+  border-radius: 8px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, .28);
+}
+
+.task-card__menu-panel button {
+  padding: 8px 9px;
+  color: #d0d5dd;
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.task-card__menu-panel button:hover {
+  background: #1d2939;
+}
+
+.task-card__menu-panel .task-card__menu-danger {
+  color: #f97066;
 }
 
 .task-card h3 {
@@ -172,6 +207,13 @@
   border-radius: 50%;
   font-size: 9px;
   font-weight: 700;
+}
+
+.task-card__assignee img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .task-card__assignee-name {

@@ -1,0 +1,24 @@
+<app-modal
+  [open]="open()"
+  [titleId]="titleId()"
+  size="success"
+  [closeLabel]="closeLabel()"
+  [closeOnBackdrop]="false"
+  (closed)="closed.emit()"
+>
+  <div modal-icon class="success-modal__icon" aria-hidden="true">
+    <svg viewBox="0 0 72 72">
+      <circle cx="36" cy="36" r="31" />
+      <path d="m21 36 10 10 21-22" />
+    </svg>
+  </div>
+  <div modal-heading class="success-modal__heading">
+    <h2 [id]="titleId()">{{ title() }}</h2>
+  </div>
+  <div class="success-modal__body">
+    <p>{{ message() }}</p>
+    <button class="success-modal__button" type="button" (click)="closed.emit()">
+      {{ closeLabel() }}
+    </button>
+  </div>
+</app-modal>

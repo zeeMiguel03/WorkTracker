@@ -1,3 +1,4 @@
+using Application.DTOs.Common;
 using Application.DTOs.Source;
 using Application.Interfaces;
 using Application.Interfaces.Services;
@@ -138,14 +139,35 @@ namespace Application.Services
             return MapToGetSourceDTO(source);
         }
 
-        public async Task<List<GetSourceDTO>> ListSourcesByUserAsync(CancellationToken cancellationToken = default)
+        public async Task<PagedResultDTO<GetSourceDTO>> ListSourcesByUserAsync(
+            int page,
+            int pageSize,
+            string? search,
+            CancellationToken cancellationToken = default)
         {
-            var currentUserId = _currentUserService.GetUserId();
-            var sources = await _sourceRepo.GetByUserIdAsync(currentUserId, cancellationToken);
+            page = Math.Max(page, 1);
 
-            return sources
-                .Select(MapToGetSourceDTO)
-                .ToList();
+            pageSize = Math.Clamp(pageSize, 1, 50);
+
+            var currentUserId = _currentUserService.GetUserId();
+
+            var result = await _sourceRepo.GetPageByUserIdAsync(
+                currentUserId,
+                page,
+                pageSize,
+                search,
+                cancellationToken);
+
+            return new PagedResultDTO<GetSourceDTO>
+            {
+                Items = result.Items
+                    .Select(MapToGetSourceDTO)
+                    .ToList(),
+
+                Page = page,
+                PageSize = pageSize,
+                TotalItems = result.TotalCount,
+            };
         }
 
         public async Task<Stream?> GetSourceImageAsync(int idSource, CancellationToken cancellationToken = default)
