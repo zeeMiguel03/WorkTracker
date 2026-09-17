@@ -106,6 +106,7 @@ namespace Application.Services
             var account = await ValidatePermissionsAsync(idAccount, "You are not allowed to delete this account.", cancellation);
 
             _accountRepo.Remove(account);
+
             await _unitOfWork.SaveChangesAsync(cancellation);
         }
 

@@ -1,9 +1,13 @@
+using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Infrastructure.Migrations;
 
+[DbContext(typeof(AppDbContext))]
+[Migration("20260916200000_AddAccountPaginationFields")]
 public partial class AddAccountPaginationFields : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)

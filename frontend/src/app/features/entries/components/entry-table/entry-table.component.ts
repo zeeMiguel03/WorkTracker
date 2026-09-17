@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 import { EntryListItem, EntrySortField } from '../../models/entry-list.model';
 
@@ -15,24 +15,8 @@ export class EntryTable {
   readonly editRequested = output<number>();
   readonly deleteRequested = output<number>();
 
-  protected readonly menuOpen = signal<number | null>(null);
-
-  protected toggleMenu(entryId: number): void {
-    this.menuOpen.update((openId) => (openId === entryId ? null : entryId));
-  }
-
-  protected closeMenu(): void {
-    this.menuOpen.set(null);
-  }
-
   protected requestSort(field: EntrySortField): void {
     this.sortRequested.emit(field);
-  }
-
-  protected formatQuantity(quantity: number): string {
-    return new Intl.NumberFormat('pt-PT', {
-      maximumFractionDigits: 2,
-    }).format(quantity);
   }
 
   protected formatValue(value: number): string {

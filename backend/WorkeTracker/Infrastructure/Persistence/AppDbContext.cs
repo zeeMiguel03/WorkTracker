@@ -10,6 +10,9 @@ namespace Infrastructure.Persistence
 
         public DbSet<Account> accounts { get; set; }
         public DbSet<Entry> entries { get; set; }
+        public DbSet<Product> products { get; set; }
+        public DbSet<ProductImage> product_images { get; set; }
+        public DbSet<PurchaseOrder> purchase_orders { get; set; }
         public DbSet<RefreshToken> refresh_tokens { get; set; }
         public DbSet<Source> sources { get; set; } 
         public DbSet<Tasks> tasks { get; set; }
@@ -55,6 +58,85 @@ namespace Infrastructure.Persistence
                 e.HasIndex(x => new { x.AccountId, x.TransactionTypeId });
 
                 e.HasIndex(x => new { x.AccountId, x.SourceId });
+            });
+
+            modelBuilder.Entity<PurchaseOrder>(e =>
+            {
+                e.Property(x => x.Status)
+                    .HasConversion<string>()
+                    .HasMaxLength(30);
+
+                e.HasOne(x => x.User)
+                    .WithMany(x => x.PurchaseOrders)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(x => x.Source)
+                    .WithMany()
+                    .HasForeignKey(x => x.SourceId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(x => x.Entry)
+                    .WithOne()
+                    .HasForeignKey<PurchaseOrder>(x => x.EntryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasIndex(x => new { x.UserId, x.Status, x.CreatedAt, x.Id });
+                e.HasIndex(x => new { x.UserId, x.CreatedAt, x.Id });
+                e.HasIndex(x => x.EntryId).IsUnique();
+            });
+
+            modelBuilder.Entity<Product>(e =>
+            {
+                e.Property(x => x.Status)
+                    .HasConversion<string>()
+                    .HasMaxLength(20);
+
+                e.Property(x => x.Condition)
+                    .HasConversion<string>()
+                    .HasMaxLength(30);
+
+                e.HasOne(x => x.User)
+                    .WithMany(x => x.Products)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasOne(x => x.PurchaseOrder)
+                    .WithMany(x => x.Products)
+                    .HasForeignKey(x => x.PurchaseOrderId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(x => x.SaleEntry)
+                    .WithOne()
+                    .HasForeignKey<Product>(x => x.SaleEntryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(x => x.SaleSource)
+                    .WithMany()
+                    .HasForeignKey(x => x.SaleSourceId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasIndex(x => new { x.UserId, x.Status, x.CreatedAt, x.Id });
+                e.HasIndex(x => new { x.UserId, x.CreatedAt, x.Id });
+                e.HasIndex(x => x.PurchaseOrderId);
+                e.HasIndex(x => x.SaleEntryId).IsUnique();
+                e.HasIndex(x => x.SaleSourceId);
+            });
+
+            modelBuilder.Entity<ProductImage>(e =>
+            {
+                e.HasOne(x => x.Product)
+                    .WithMany(x => x.Images)
+                    .HasForeignKey(x => x.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasIndex(x => new { x.ProductId, x.DisplayOrder })
+                    .IsUnique();
+
+                e.HasIndex(x => x.ProductId)
+                    .HasDatabaseName("UX_product_images_cover")
+                    .HasFilter("[is_cover] = 1")
+                    .IsUnique();
             });
 
             modelBuilder.Entity<Source>(e =>

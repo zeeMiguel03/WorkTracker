@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj": {}
+    "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj": {
+    "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj",
+        "projectUniqueName": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\Miguel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\obj\\",
+        "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\win11\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Miguel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\win11\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -33,8 +34,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj"
+              "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj"
               }
             }
           }
@@ -85,7 +86,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -363,20 +364,20 @@
         }
       }
     },
-    "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj": {
+    "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\Miguel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\obj\\",
+        "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\win11\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Miguel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\win11\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -385,6 +386,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -426,7 +428,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -704,20 +706,20 @@
         }
       }
     },
-    "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj": {
+    "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\Miguel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\win11\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Miguel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\win11\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -726,6 +728,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -733,11 +736,11 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj"
+              "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj"
               },
-              "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj"
+              "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Domain\\Domain.csproj"
               }
             }
           }
@@ -803,7 +806,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",
@@ -1221,20 +1224,20 @@
         }
       }
     },
-    "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj": {
+    "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj",
+        "projectUniqueName": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj",
-        "packagesPath": "C:\\Users\\Miguel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\obj\\",
+        "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\API.csproj",
+        "packagesPath": "C:\\Users\\win11\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Miguel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\win11\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -1243,6 +1246,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -1250,11 +1254,11 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj"
+              "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Application.csproj"
               },
-              "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "C:\\Users\\Miguel\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj"
+              "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
@@ -1310,7 +1314,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.400/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.401/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

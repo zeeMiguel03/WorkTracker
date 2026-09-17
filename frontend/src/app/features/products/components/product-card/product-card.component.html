@@ -1,0 +1,34 @@
+<article
+  class="product-card"
+  [class.product-card--purchased]="product().status === 'purchased'"
+  [class.product-card--sold]="product().status === 'sold'"
+  [class.product-card--draft]="product().status === 'draft'"
+  tabindex="0"
+  (click)="selected.emit(product().id)"
+  (keydown.enter)="selected.emit(product().id)"
+>
+  <div class="product-card__image" [class.product-card__image--empty]="!imageSrc() || imageFailed()">
+    @if (imageSrc() && !imageFailed()) {
+      <img [src]="imageSrc()!" [alt]="'Fotografia de ' + product().name" (error)="handleImageError()" />
+    }
+    <span class="product-card__status">
+      @switch (product().status) {
+        @case ('active') { Ativo }
+        @case ('purchased') { Comprado }
+        @case ('sold') { Vendido }
+        @case ('draft') { Rascunho }
+        @case ('archived') { Arquivado }
+      }
+    </span>
+  </div>
+  <div class="product-card__body">
+    <div class="product-card__heading">
+      <h3>{{ product().name }}</h3>
+      <strong>{{ formatPrice(product().price) }}</strong>
+    </div>
+    <div class="product-card__meta">
+      <span>{{ product().category }}</span>
+      <span>{{ product().status === 'sold' ? 'Vendido' : product().status === 'draft' ? 'Em rascunho' : 'Disponível' }}</span>
+    </div>
+  </div>
+</article>

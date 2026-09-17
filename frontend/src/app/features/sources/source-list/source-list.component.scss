@@ -13,7 +13,7 @@
 
 .sources-page__header {
   justify-content: space-between;
-  max-width: 1440px;
+  max-width: var(--app-content-max-width);
   gap: 24px;
   margin: 0 auto 28px;
 }
@@ -80,7 +80,7 @@
 }
 
 .sources-shell {
-  max-width: 1440px;
+  max-width: var(--app-content-max-width);
   margin: 0 auto;
   padding: 26px 24px 28px;
   background: #101828;

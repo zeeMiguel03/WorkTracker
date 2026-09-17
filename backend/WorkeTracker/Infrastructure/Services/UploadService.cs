@@ -41,6 +41,11 @@ namespace Infrastructure.Services
         private const string EntryFolder = "entries";
 
         /// <summary>
+        /// Directory used to store products images inside the uploads root.
+        /// </summary>
+        private const string ProductsFolder = "products";
+
+        /// <summary>
         /// Extension used for every processed image.
         /// </summary>
         private const string OutputExtension = ".webp";
@@ -212,6 +217,11 @@ namespace Infrastructure.Services
         public Task<string> UploadEntryImageAsync(IFormFile file, CancellationToken cancellationToken = default)
         {
             return UploadImageAsync(file, EntryFolder, cancellationToken);
+        }
+
+        public Task<string> UploadProductImageAsync(IFormFile file, CancellationToken cancellationToken = default)
+        {
+            return UploadImageAsync(file, ProductsFolder, cancellationToken);
         }
 
         /// <summary>

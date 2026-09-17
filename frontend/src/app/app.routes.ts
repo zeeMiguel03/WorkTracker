@@ -40,7 +40,15 @@ export const routes: Routes = [
           import('./features/entries/entry-list/entry-list.component').then(
             (module) => module.EntryList,
           ),
-        title: 'Lançamentos | WorkTracker',
+        title: 'Movimentos | WorkTracker',
+      },
+      {
+        path: 'products',
+        loadComponent: () =>
+          import('./features/products/product-list/product-list.component').then(
+            (module) => module.ProductList,
+          ),
+        title: 'Produtos | WorkTracker',
       },
       {
         path: 'accounts',

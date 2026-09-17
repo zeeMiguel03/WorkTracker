@@ -22,7 +22,7 @@
 
 .entries-page__header {
   justify-content: space-between;
-  max-width: 1440px;
+  max-width: var(--app-content-max-width);
   gap: 24px;
   margin: 0 auto 28px;
 }
@@ -95,7 +95,7 @@
 }
 
 .entries-shell {
-  max-width: 1440px;
+  max-width: var(--app-content-max-width);
   margin: 0 auto;
   overflow: visible;
   background: #101828;

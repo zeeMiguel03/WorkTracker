@@ -1,0 +1,78 @@
+<main class="products-page">
+  <header class="products-page__header">
+    <div>
+      <h1>Produtos</h1>
+      <nav class="products-page__breadcrumb" aria-label="Breadcrumb">
+        <a routerLink="/dashboard">Dashboard</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">Produtos</span>
+      </nav>
+    </div>
+
+    <button class="products-page__primary-button" type="button" (click)="openCreateProduct()">
+      <span aria-hidden="true">+</span>
+      Novo produto
+    </button>
+  </header>
+
+  <section class="products-catalog" aria-labelledby="products-title">
+    <div class="products-catalog__toolbar">
+      <h2 id="products-title">{{ totalItems() }} {{ totalItems() === 1 ? 'artigo' : 'artigos' }}</h2>
+      <div class="products-catalog__filters" aria-label="Filtrar produtos por estado">
+        @for (filter of statusFilters; track filter.value) {
+          <button
+            type="button"
+            [class.products-catalog__filter--active]="selectedStatus() === filter.value"
+            [attr.aria-pressed]="selectedStatus() === filter.value"
+            (click)="selectStatus(filter.value)"
+          >{{ filter.label }}</button>
+        }
+      </div>
+    </div>
+
+    <div class="products-catalog__search">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4 4" /></svg>
+      <input type="search" placeholder="Pesquisar produtos..." [value]="searchTerm()" (input)="updateSearch($event)" />
+    </div>
+
+    @if (isLoading()) {
+      <div class="products-catalog__state">A carregar produtos...</div>
+    } @else if (errorMessage()) {
+      <div class="products-catalog__state products-catalog__state--error">{{ errorMessage() }}</div>
+    } @else if (products().length === 0) {
+      <div class="products-catalog__state">
+        <strong>Ainda não tens produtos</strong>
+        <span>Adiciona o teu primeiro produto para começar.</span>
+      </div>
+    } @else {
+      <div class="products-catalog__grid">
+        @for (product of products(); track product.id) {
+          <app-product-card [product]="product" />
+        }
+      </div>
+
+      @if (totalPages() > 1) {
+        <nav class="products-pagination" aria-label="Paginação de produtos">
+          <button type="button" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Anterior</button>
+          @for (pageNumber of pageNumbers(); track pageNumber) {
+            <button type="button" [class.products-pagination__active]="page() === pageNumber" (click)="goToPage(pageNumber)">{{ pageNumber }}</button>
+          }
+          <button type="button" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Seguinte</button>
+        </nav>
+      }
+    }
+  </section>
+</main>
+
+@if (productModalOpen()) {
+  <app-modal [open]="true" titleId="product-modal-title" size="default" [closeOnBackdrop]="!isSaving()" (closed)="closeProductModal()">
+    <div modal-heading class="products-modal__heading">
+      <h2 id="product-modal-title">Adicionar produto</h2>
+      <p>Regista o essencial e adiciona fotografias quando quiseres.</p>
+    </div>
+    <app-product-form
+      (submitted)="saveProduct($event)"
+      (cancelled)="closeProductModal()"
+    />
+  </app-modal>
+}

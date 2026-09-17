@@ -1,5 +1,15 @@
 <div class="entry-table-scroll">
   <table class="entry-table">
+    <colgroup>
+      <col class="entry-table__col-check" />
+      <col class="entry-table__col-entry" />
+      <col class="entry-table__col-source" />
+      <col class="entry-table__col-type" />
+      <col class="entry-table__col-account" />
+      <col class="entry-table__col-value" />
+      <col class="entry-table__col-date" />
+      <col class="entry-table__col-actions" />
+    </colgroup>
     <thead>
       <tr>
         <th class="entry-table__check-column"><input type="checkbox" aria-label="Selecionar todos os movimentos" /></th>
@@ -15,10 +25,7 @@
         <th>
           <button type="button" (click)="requestSort('account')">Conta <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('account')">↕</span></button>
         </th>
-        <th>
-          <button type="button" (click)="requestSort('quantity')">Quantidade <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('quantity')">↕</span></button>
-        </th>
-        <th>
+        <th class="entry-table__value-heading">
           <button type="button" (click)="requestSort('value')">Valor <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('value')">↕</span></button>
         </th>
         <th>
@@ -34,37 +41,46 @@
             <input type="checkbox" [attr.aria-label]="'Selecionar ' + entry.name" />
           </td>
           <td class="entry-table__entry-cell" data-label="Movimento">
-            @if (entry.imageUrl) {
-              <img class="entry-table__avatar" [src]="entry.imageUrl" [alt]="'Imagem de ' + entry.name" />
-            } @else {
-              <span class="entry-table__avatar" [style.--entry-color]="entry.color">{{ getInitials(entry.name) }}</span>
-            }
-            <span class="entry-table__entry-copy">
-              <strong>{{ entry.name }}</strong>
-              <small>{{ entry.transactionType }}</small>
-            </span>
+            <div class="entry-table__entry-content">
+              @if (entry.imageUrl) {
+                <img class="entry-table__avatar" [src]="entry.imageUrl" [alt]="'Imagem de ' + entry.name" />
+              } @else {
+                <span class="entry-table__avatar" [style.--entry-color]="entry.color">{{ getInitials(entry.name) }}</span>
+              }
+              <span class="entry-table__entry-copy">
+                <strong>{{ entry.name }}</strong>
+              </span>
+            </div>
           </td>
           <td data-label="Fonte"><span class="entry-table__muted">{{ entry.source }}</span></td>
           <td data-label="Tipo"><span class="entry-table__tag">{{ entry.transactionType }}</span></td>
           <td data-label="Conta"><span class="entry-table__muted">{{ entry.account }}</span></td>
-          <td data-label="Quantidade"><span class="entry-table__muted">{{ formatQuantity(entry.quantity) }}</span></td>
           <td class="entry-table__value" data-label="Valor">{{ formatValue(entry.value) }}</td>
           <td data-label="Data"><span class="entry-table__muted">{{ formatDate(entry.date) }}</span></td>
           <td class="entry-table__actions-column">
-            <div class="entry-table__menu-wrap">
+            <div class="entry-table__actions">
               <button
-                class="entry-table__menu-button"
+                class="entry-table__action-button entry-table__action-button--edit"
                 type="button"
-                aria-label="Opções do movimento"
-                [attr.aria-expanded]="menuOpen() === entry.id"
-                (click)="toggleMenu(entry.id)"
-              ><span></span><span></span><span></span></button>
-              @if (menuOpen() === entry.id) {
-                <div class="entry-table__menu">
-                  <button type="button" (click)="editRequested.emit(entry.id); closeMenu()">Editar</button>
-                  <button type="button" (click)="deleteRequested.emit(entry.id); closeMenu()">Apagar</button>
-                </div>
-              }
+                title="Editar movimento"
+                [attr.aria-label]="'Editar ' + entry.name"
+                (click)="editRequested.emit(entry.id)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M13.5 6.5 17.5 10.5M4 20l4.5-1 10-10a2.83 2.83 0 0 0-4-4l-10 10L4 20Z" />
+                </svg>
+              </button>
+              <button
+                class="entry-table__action-button entry-table__action-button--delete"
+                type="button"
+                title="Apagar movimento"
+                [attr.aria-label]="'Apagar ' + entry.name"
+                (click)="deleteRequested.emit(entry.id)"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v5m4-5v5" />
+                </svg>
+              </button>
             </div>
           </td>
         </tr>

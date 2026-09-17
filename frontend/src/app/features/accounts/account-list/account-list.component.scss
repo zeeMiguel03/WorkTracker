@@ -23,7 +23,7 @@
 .accounts-page__header {
   justify-content: space-between;
   gap: 24px;
-  max-width: 1440px;
+  max-width: var(--app-content-max-width);
   margin: 0 auto 28px;
 }
 
@@ -91,7 +91,7 @@
 }
 
 .accounts-page__shell {
-  max-width: 1440px;
+  max-width: var(--app-content-max-width);
   margin: 0 auto;
   padding: 26px 24px 28px;
   background: #0f1726;

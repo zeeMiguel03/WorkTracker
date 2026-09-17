@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-export type SidebarIconName = 'dashboard' | 'entries' | 'accounts' | 'sources' | 'tasks' | 'profile';
+export type SidebarIconName = 'dashboard' | 'entries' | 'products' | 'accounts' | 'sources' | 'tasks' | 'profile';
 
 @Component({
   selector: 'app-sidebar-icon',
@@ -13,6 +13,9 @@ export type SidebarIconName = 'dashboard' | 'entries' | 'accounts' | 'sources' |
         }
         @case ('entries') {
           <path d="M7 3.5h8l4 4V21H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z"/><path d="M15 3.5v5h4M9 13h6m-6 4h4"/>
+        }
+        @case ('products') {
+          <path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="m4 7 8 4 8-4v10l-8 4-8-4V7Z"/><path d="M12 11v10"/>
         }
         @case ('accounts') {
           <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/>
