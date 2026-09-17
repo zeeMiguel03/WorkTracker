@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+
+.entry-filters {
+  border-top: 1px solid #253044;
+}
+
+.entry-filters__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.entry-filters__search {
+  display: flex;
+  width: min(375px, 100%);
+  height: 44px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  color: #98a2b3;
+  background: #0f1726;
+  border: 1px solid #344054;
+  border-radius: 8px;
+}
+
+.entry-filters__search:focus-within {
+  border-color: #7592ff;
+  box-shadow: 0 0 0 3px rgba(70, 95, 255, .14);
+}
+
+.entry-filters__search svg,
+.entry-filters__button svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.entry-filters__search input {
+  width: 100%;
+  min-width: 0;
+  color: #f2f4f7;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 13px;
+}
+
+.entry-filters__search input::placeholder {
+  color: #667085;
+}
+
+.entry-filters__button {
+  display: inline-flex;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 16px;
+  color: #d0d5dd;
+  background: #182230;
+  border: 1px solid #475467;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color .15s ease, background .15s ease, border-color .15s ease;
+}
+
+.entry-filters__button:hover,
+.entry-filters__button[aria-expanded='true'] {
+  color: #fff;
+  background: #253044;
+  border-color: #7592ff;
+}
+
+.entry-filters__panel {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  padding: 0 24px 20px;
+}
+
+.entry-filters__field {
+  display: grid;
+  gap: 7px;
+}
+
+.entry-filters__field > span {
+  color: #98a2b3;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+@media (max-width: 620px) {
+  .entry-filters__toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .entry-filters__search,
+  .entry-filters__button {
+    width: 100%;
+  }
+
+  .entry-filters__panel {
+    grid-template-columns: 1fr;
+    padding: 0 16px 16px;
+  }
+}

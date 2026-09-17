@@ -17,5 +17,9 @@ namespace Application.DTOs.Account
         public string? IconKey { get; set; }
 
         public string? Color { get; set; }
+
+        public decimal InitialBalance { get; set; }
+
+        public bool IncludeInTotal { get; set; } = true;
     }
 }

@@ -26,12 +26,36 @@ namespace Infrastructure.Repositories
                 cancellationToken);
         }
 
-        public Task<List<Account>> GetUserAccountsAsync(int idUser, CancellationToken cancellationToken = default)
+        public async Task<(IReadOnlyList<Account> Items, int TotalCount)> GetPageByUserIdAsync(
+            int idUser,
+            int page,
+            int pageSize,
+            string? search,
+            CancellationToken cancellationToken = default)
         {
-            return _context.accounts
-                .Where(account => account.UserId == idUser)
+            var query = _context.accounts
+                .AsNoTracking()
+                .Where(account => account.UserId == idUser);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var normalizedSearch = search.Trim();
+
+                query = query.Where(account =>
+                    account.Name.Contains(normalizedSearch) ||
+                    (account.BankName != null && account.BankName.Contains(normalizedSearch)));
+            }
+
+            var totalCount = await query.CountAsync(cancellationToken);
+
+            var items = await query
                 .OrderBy(account => account.Name)
+                .ThenBy(account => account.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync(cancellationToken);
+
+            return (items, totalCount);
         }
 
         public void Remove(Account account)

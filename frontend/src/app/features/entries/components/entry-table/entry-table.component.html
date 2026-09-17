@@ -1,0 +1,74 @@
+<div class="entry-table-scroll">
+  <table class="entry-table">
+    <thead>
+      <tr>
+        <th class="entry-table__check-column"><input type="checkbox" aria-label="Selecionar todos os movimentos" /></th>
+        <th>
+          <button type="button" (click)="requestSort('name')">Movimento <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('name')">↕</span></button>
+        </th>
+        <th>
+          <button type="button" (click)="requestSort('source')">Fonte <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('source')">↕</span></button>
+        </th>
+        <th>
+          <button type="button" (click)="requestSort('transactionType')">Tipo <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('transactionType')">↕</span></button>
+        </th>
+        <th>
+          <button type="button" (click)="requestSort('account')">Conta <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('account')">↕</span></button>
+        </th>
+        <th>
+          <button type="button" (click)="requestSort('quantity')">Quantidade <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('quantity')">↕</span></button>
+        </th>
+        <th>
+          <button type="button" (click)="requestSort('value')">Valor <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('value')">↕</span></button>
+        </th>
+        <th>
+          <button type="button" (click)="requestSort('date')">Data <span class="entry-table__sort" [class.entry-table__sort--active]="isSorted('date')">↕</span></button>
+        </th>
+        <th class="entry-table__actions-column"><span class="visually-hidden">Ações</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (entry of entries(); track entry.id) {
+        <tr>
+          <td class="entry-table__check-column" data-label="Selecionar">
+            <input type="checkbox" [attr.aria-label]="'Selecionar ' + entry.name" />
+          </td>
+          <td class="entry-table__entry-cell" data-label="Movimento">
+            @if (entry.imageUrl) {
+              <img class="entry-table__avatar" [src]="entry.imageUrl" [alt]="'Imagem de ' + entry.name" />
+            } @else {
+              <span class="entry-table__avatar" [style.--entry-color]="entry.color">{{ getInitials(entry.name) }}</span>
+            }
+            <span class="entry-table__entry-copy">
+              <strong>{{ entry.name }}</strong>
+              <small>{{ entry.transactionType }}</small>
+            </span>
+          </td>
+          <td data-label="Fonte"><span class="entry-table__muted">{{ entry.source }}</span></td>
+          <td data-label="Tipo"><span class="entry-table__tag">{{ entry.transactionType }}</span></td>
+          <td data-label="Conta"><span class="entry-table__muted">{{ entry.account }}</span></td>
+          <td data-label="Quantidade"><span class="entry-table__muted">{{ formatQuantity(entry.quantity) }}</span></td>
+          <td class="entry-table__value" data-label="Valor">{{ formatValue(entry.value) }}</td>
+          <td data-label="Data"><span class="entry-table__muted">{{ formatDate(entry.date) }}</span></td>
+          <td class="entry-table__actions-column">
+            <div class="entry-table__menu-wrap">
+              <button
+                class="entry-table__menu-button"
+                type="button"
+                aria-label="Opções do movimento"
+                [attr.aria-expanded]="menuOpen() === entry.id"
+                (click)="toggleMenu(entry.id)"
+              ><span></span><span></span><span></span></button>
+              @if (menuOpen() === entry.id) {
+                <div class="entry-table__menu">
+                  <button type="button" (click)="editRequested.emit(entry.id); closeMenu()">Editar</button>
+                  <button type="button" (click)="deleteRequested.emit(entry.id); closeMenu()">Apagar</button>
+                </div>
+              }
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

@@ -8,7 +8,12 @@ namespace Domain.Interfaces
 
         Task<Account?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
 
-        Task<List<Account>> GetUserAccountsAsync(int idUser, CancellationToken cancellationToken = default);
+        Task<(IReadOnlyList<Account> Items, int TotalCount)> GetPageByUserIdAsync(
+            int idUser,
+            int page,
+            int pageSize,
+            string? search,
+            CancellationToken cancellationToken = default);
 
         void Update(Account account);   
 

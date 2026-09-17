@@ -1,0 +1,238 @@
+:host {
+  display: block;
+}
+
+.account-form {
+  display: grid;
+  gap: 18px;
+}
+
+.account-form__field {
+  display: grid;
+  gap: 7px;
+}
+
+.account-form__field label,
+.account-form__colors legend {
+  color: #d0d5dd;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.account-form__field input,
+.account-form__fixed-field {
+  width: 100%;
+  min-height: 43px;
+  padding: 0 12px;
+  color: #f2f4f7;
+  background: #151f2e;
+  border: 1px solid #253044;
+  border-radius: 8px;
+  outline: 0;
+  font: inherit;
+  font-size: 13px;
+}
+
+.account-form__fixed-field {
+  display: flex;
+  align-items: center;
+  color: #98a2b3;
+}
+
+.account-form__field input:focus {
+  border-color: #7592ff;
+  box-shadow: 0 0 0 3px rgba(70, 95, 255, .15);
+}
+
+.account-form__field input::placeholder {
+  color: #667085;
+}
+
+.account-form__field input:-webkit-autofill,
+.account-form__field input:-webkit-autofill:hover,
+.account-form__field input:-webkit-autofill:focus,
+.account-form__field input:-webkit-autofill:active {
+  -webkit-text-fill-color: #f2f4f7;
+  caret-color: #f2f4f7;
+  box-shadow: 0 0 0 1000px #151f2e inset;
+  transition: background-color 9999s ease-out;
+}
+
+.account-form__field input:autofill {
+  color: #f2f4f7;
+  background-color: #151f2e;
+}
+
+.account-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.account-form__input-prefix {
+  position: relative;
+}
+
+.account-form__input-prefix span {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  color: #98a2b3;
+  font-size: 13px;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.account-form__input-prefix input {
+  padding-left: 27px;
+}
+
+.account-form__input-prefix input[type='number'] {
+  appearance: textfield;
+}
+
+.account-form__input-prefix input[type='number']::-webkit-inner-spin-button,
+.account-form__input-prefix input[type='number']::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.account-form__colors {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+  border: 0;
+}
+
+.account-form__colors legend {
+  float: left;
+  margin-right: 16px;
+}
+
+.account-form__color-list {
+  display: flex;
+  gap: 9px;
+}
+
+.account-form__color {
+  width: 21px;
+  height: 21px;
+  padding: 0;
+  background: var(--account-color);
+  border: 3px solid #151f2e;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px transparent;
+  cursor: pointer;
+}
+
+.account-form__color--selected {
+  box-shadow: 0 0 0 1px #f2f4f7;
+}
+
+.account-form__toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.account-form__toggle input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.account-form__switch {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  flex: 0 0 34px;
+  background: #344054;
+  border-radius: 999px;
+  transition: background .15s ease;
+}
+
+.account-form__switch::after {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  background: #f2f4f7;
+  border-radius: 50%;
+  content: '';
+  transition: transform .15s ease;
+}
+
+.account-form__toggle input:checked + .account-form__switch {
+  background: #465fff;
+}
+
+.account-form__toggle input:checked + .account-form__switch::after {
+  transform: translateX(14px);
+}
+
+.account-form__toggle strong,
+.account-form__toggle small {
+  display: block;
+}
+
+.account-form__toggle strong {
+  color: #d0d5dd;
+  font-size: 12px;
+}
+
+.account-form__toggle small {
+  margin-top: 3px;
+  color: #667085;
+  font-size: 11px;
+}
+
+.account-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 8px;
+}
+
+.account-form__actions button {
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.account-form__cancel {
+  color: #b9c2d0;
+  background: #182230;
+  border: 1px solid #344054;
+}
+
+.account-form__submit {
+  color: #fff;
+  background: #465fff;
+  border: 1px solid #465fff;
+}
+
+.account-form__actions button:hover {
+  filter: brightness(1.1);
+}
+
+@media (max-width: 540px) {
+  .account-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .account-form__actions {
+    flex-direction: column-reverse;
+  }
+
+  .account-form__actions button {
+    width: 100%;
+  }
+}

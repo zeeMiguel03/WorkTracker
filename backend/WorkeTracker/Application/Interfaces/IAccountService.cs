@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Account;
+using Application.DTOs.Account;
+using Application.DTOs.Common;
 
 namespace Application.Interfaces
 {
@@ -8,7 +9,11 @@ namespace Application.Interfaces
 
         Task UpdateAccountAsync(UpdateAccountDTO accountDTO, CancellationToken cancellationToken = default);
 
-        Task<List<ListAccountDTO>> ListAllAccountsByUserAsync(CancellationToken cancellationToken = default);
+        Task<PagedResultDTO<ListAccountDTO>> ListAccountsByUserAsync(
+            int page,
+            int pageSize,
+            string? search,
+            CancellationToken cancellationToken = default);
 
         Task<ListAccountDTO> ListAccountByIdAsync(int idAccount, CancellationToken cancellationToken = default);
 

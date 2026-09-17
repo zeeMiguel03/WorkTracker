@@ -1,4 +1,4 @@
-import { ElementRef, HostListener, Component, computed, input, output, signal } from '@angular/core';
+import { Component, computed, ElementRef, HostBinding, HostListener, input, output, signal } from '@angular/core';
 
 export interface DropdownOption {
   readonly value: string;
@@ -15,10 +15,16 @@ let dropdownId = 0;
 export class Dropdown {
   readonly options = input.required<readonly DropdownOption[]>();
   readonly value = input('');
+  readonly fullWidth = input(false);
   readonly valueChange = output<string>();
 
   protected readonly isOpen = signal(false);
   protected readonly triggerId = `dropdown-trigger-${++dropdownId}`;
+
+  @HostBinding('class.dropdown--full-width')
+  protected get isFullWidth(): boolean {
+    return this.fullWidth();
+  }
 
   protected readonly selectedOption = computed(() =>
     this.options().find((option) => option.value === this.value()) ?? this.options()[0],

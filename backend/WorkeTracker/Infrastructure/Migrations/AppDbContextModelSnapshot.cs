@@ -59,6 +59,14 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasColumnName("icon_key");
 
+                    b.Property<bool>("IncludeInTotal")
+                        .HasColumnType("bit")
+                        .HasColumnName("include_in_total");
+
+                    b.Property<decimal>("InitialBalance")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("initial_balance");
+
                     b.Property<string>("Last4")
                         .HasMaxLength(4)
                         .HasColumnType("nvarchar(4)")
@@ -81,6 +89,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("UserId", "Name", "Id");
 
                     b.ToTable("accounts");
                 });

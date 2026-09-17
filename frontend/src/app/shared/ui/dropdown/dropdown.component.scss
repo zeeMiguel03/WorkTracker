@@ -5,6 +5,11 @@
   min-width: 118px;
 }
 
+:host(.dropdown--full-width) {
+  width: 100%;
+  min-width: 0;
+}
+
 .dropdown {
   position: relative;
   width: 100%;

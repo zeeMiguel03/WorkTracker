@@ -1,0 +1,57 @@
+<div class="entry-filters">
+  <div class="entry-filters__toolbar">
+    <label class="entry-filters__search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input
+        type="search"
+        placeholder="Pesquisar movimentos..."
+        [value]="searchTerm()"
+        (input)="updateSearch($event)"
+      />
+    </label>
+
+    <button
+      class="entry-filters__button"
+      type="button"
+      [attr.aria-expanded]="filtersOpen()"
+      (click)="toggleFilters()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h3M11 17h9M14 4v6M7 14v6"/></svg>
+      Filtros
+    </button>
+  </div>
+
+  @if (filtersOpen()) {
+    <div class="entry-filters__panel">
+      <div class="entry-filters__field">
+        <span>Conta</span>
+        <app-dropdown
+          [fullWidth]="true"
+          [options]="accountOptions()"
+          [value]="accountValue()"
+          (valueChange)="accountValueChange.emit($event)"
+        />
+      </div>
+
+      <div class="entry-filters__field">
+        <span>Fonte</span>
+        <app-dropdown
+          [fullWidth]="true"
+          [options]="sourceOptions()"
+          [value]="sourceValue()"
+          (valueChange)="sourceValueChange.emit($event)"
+        />
+      </div>
+
+      <div class="entry-filters__field">
+        <span>Tipo de transação</span>
+        <app-dropdown
+          [fullWidth]="true"
+          [options]="transactionTypeOptions()"
+          [value]="transactionTypeValue()"
+          (valueChange)="transactionTypeValueChange.emit($event)"
+        />
+      </div>
+    </div>
+  }
+</div>

@@ -22,6 +22,10 @@ namespace Application.DTOs.Account
 
         public string? Color { get; set; }
 
+        public decimal InitialBalance { get; set; }
+
+        public bool IncludeInTotal { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public int? UtCreation { get; set; }

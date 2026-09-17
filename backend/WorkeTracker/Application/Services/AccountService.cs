@@ -1,4 +1,5 @@
 using Application.DTOs.Account;
+using Application.DTOs.Common;
 using Application.Exceptions;
 using Application.Interfaces;
 using Application.Interfaces.Services;
@@ -37,10 +38,11 @@ namespace Application.Services
                 accountDTO.Last4,
                 accountDTO.IconKey,
                 accountDTO.Color,
+                accountDTO.InitialBalance,
+                accountDTO.IncludeInTotal,
                 currentUserId);
 
             await _accountRepo.AddAsync(account, cancellationToken);
-
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return MapToGetAccountDTO(account);
@@ -57,22 +59,39 @@ namespace Application.Services
                 accountDTO.CardBrand,
                 accountDTO.Last4,
                 accountDTO.IconKey,
-                accountDTO.Color);
+                accountDTO.Color,
+                accountDTO.InitialBalance,
+                accountDTO.IncludeInTotal);
 
             _accountRepo.Update(account);
-
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<List<ListAccountDTO>> ListAllAccountsByUserAsync(CancellationToken cancellationToken = default)
+        public async Task<PagedResultDTO<ListAccountDTO>> ListAccountsByUserAsync(
+            int page,
+            int pageSize,
+            string? search,
+            CancellationToken cancellationToken = default)
         {
+            page = Math.Max(page, 1);
+            pageSize = Math.Clamp(pageSize, 1, 50);
+
             var currentUser = _currentUserService.GetUserId();
 
-            var accounts = await _accountRepo.GetUserAccountsAsync(currentUser, cancellationToken);
-            
-            return accounts.Select(
-                MapToGetAccountDTO).
-                ToList();
+            var result = await _accountRepo.GetPageByUserIdAsync(
+                currentUser,
+                page,
+                pageSize,
+                search,
+                cancellationToken);
+
+            return new PagedResultDTO<ListAccountDTO>
+            {
+                Items = result.Items.Select(MapToGetAccountDTO).ToList(),
+                Page = page,
+                PageSize = pageSize,
+                TotalItems = result.TotalCount,
+            };
         }
 
         public async Task<ListAccountDTO> ListAccountByIdAsync(int accountId, CancellationToken cancellationToken = default)
@@ -87,7 +106,6 @@ namespace Application.Services
             var account = await ValidatePermissionsAsync(idAccount, "You are not allowed to delete this account.", cancellation);
 
             _accountRepo.Remove(account);
-
             await _unitOfWork.SaveChangesAsync(cancellation);
         }
 
@@ -123,6 +141,8 @@ namespace Application.Services
                 Last4 = account.Last4,
                 IconKey = account.IconKey,
                 Color = account.Color,
+                InitialBalance = account.InitialBalance,
+                IncludeInTotal = account.IncludeInTotal,
                 CreatedAt = account.CreatedAt,
                 UtCreation = account.UtCreation
             };

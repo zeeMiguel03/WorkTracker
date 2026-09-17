@@ -1,4 +1,5 @@
 using Application.DTOs.Account;
+using Application.DTOs.Common;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,13 @@ public sealed class AccountController : ControllerBase
     public AccountController(IAccountService service) => _service = service;
 
     [HttpGet]
-    public async Task<ActionResult<List<ListAccountDTO>>> List(CancellationToken ct)
+    public async Task<ActionResult<PagedResultDTO<ListAccountDTO>>> List(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 8,
+        [FromQuery] string? search = null,
+        CancellationToken ct = default)
     {
-        var accounts = await _service.ListAllAccountsByUserAsync(ct);
+        var accounts = await _service.ListAccountsByUserAsync(page, pageSize, search, ct);
 
         return Ok(accounts);
     }

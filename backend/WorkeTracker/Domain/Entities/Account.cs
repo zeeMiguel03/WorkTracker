@@ -54,6 +54,14 @@ namespace Domain.Entities
         public string? Color { get; private set; }
 
         [Required]
+        [Column("initial_balance", TypeName = "decimal(18,2)")]
+        public decimal InitialBalance { get; private set; }
+
+        [Required]
+        [Column("include_in_total")]
+        public bool IncludeInTotal { get; private set; }
+
+        [Required]
         [Column("created_at")]
         public DateTime CreatedAt { get; private set; }
 
@@ -76,6 +84,8 @@ namespace Domain.Entities
             string? last4,
             string? iconKey,
             string? color,
+            decimal initialBalance,
+            bool includeInTotal,
             int? utCreation)
         {
             var account = new Account
@@ -88,6 +98,8 @@ namespace Domain.Entities
                 Last4 = NormalizeAndValidateLast4(last4),
                 IconKey = NormalizeAndValidateIconKey(iconKey),
                 Color = NormalizeAndValidateColor(color),
+                InitialBalance = ValidateInitialBalance(initialBalance),
+                IncludeInTotal = includeInTotal,
                 CreatedAt = DateTime.UtcNow,
                 UtCreation = utCreation
             };
@@ -102,7 +114,9 @@ namespace Domain.Entities
             string? cardBrand,
             string? last4,
             string? iconKey,
-            string? color)
+            string? color,
+            decimal initialBalance,
+            bool includeInTotal)
         {
             AccountType = ValidateAccountType(accountType);
             Name = NormalizeAndValidateName(name);
@@ -111,6 +125,8 @@ namespace Domain.Entities
             Last4 = NormalizeAndValidateLast4(last4);
             IconKey = NormalizeAndValidateIconKey(iconKey);
             Color = NormalizeAndValidateColor(color);
+            InitialBalance = ValidateInitialBalance(initialBalance);
+            IncludeInTotal = includeInTotal;
         }
 
         private static string NormalizeAndValidateName(string name)
@@ -228,6 +244,16 @@ namespace Domain.Entities
             }
 
             return userId;
+        }
+
+        private static decimal ValidateInitialBalance(decimal initialBalance)
+        {
+            if (initialBalance < 0)
+            {
+                throw new DomainException("INVALID_INITIAL_BALANCE", "Initial balance cannot be negative.");
+            }
+
+            return decimal.Round(initialBalance, 2, MidpointRounding.ToEven);
         }
 
         private static AccountType ValidateAccountType(AccountType accountType)

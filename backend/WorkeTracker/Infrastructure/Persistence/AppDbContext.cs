@@ -29,6 +29,8 @@ namespace Infrastructure.Persistence
                     .OnDelete(DeleteBehavior.Cascade);
 
                 e.HasIndex(x => new { x.UserId, x.CreatedAt });
+
+                e.HasIndex(x => new { x.UserId, x.Name, x.Id });
             });
 
             modelBuilder.Entity<Entry>(e =>
