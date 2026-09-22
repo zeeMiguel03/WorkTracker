@@ -1,11 +1,12 @@
-import { Component, output } from '@angular/core';
+import { Component, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { Dropdown, DropdownOption } from '../../../shared/ui/dropdown/dropdown.component';
-import { ProductCondition, ProductDraft } from '../models/product.model';
+import { ProductTransactionFields } from '../components/product-transaction-fields/product-transaction-fields.component';
+import { ProductCondition, ProductDraft, ProductStatus } from '../models/product.model';
 
 @Component({
-  imports: [FormsModule, Dropdown],
+  imports: [FormsModule, Dropdown, ProductTransactionFields],
   selector: 'app-product-form',
   styleUrl: './product-form.component.scss',
   templateUrl: './product-form.component.html',
@@ -13,13 +14,41 @@ import { ProductCondition, ProductDraft } from '../models/product.model';
 export class ProductForm {
   private static readonly maxImages = 5;
 
+  protected readonly steps = [
+    { id: 0, label: 'Dados básicos', description: 'Imagem e identificação' },
+    { id: 1, label: 'Características', description: 'Detalhes do produto' },
+    { id: 2, label: 'Compra e preço', description: 'Custos e valores' },
+  ] as const;
+
   readonly submitted = output<ProductDraft>();
   readonly cancelled = output<void>();
+  readonly saving = input(false);
+  readonly errorMessage = input<string | null>(null);
+  readonly sourceOptions = input<readonly DropdownOption[]>([]);
+  readonly accountOptions = input<readonly DropdownOption[]>([]);
+  readonly transactionTypeOptions = input<readonly DropdownOption[]>([]);
+  readonly relationsLoading = input(false);
 
   protected draft: ProductDraft = this.emptyDraft();
   protected selectedFiles: File[] = [];
   protected draggedImageIndex: number | null = null;
   protected dragOverImageIndex: number | null = null;
+  protected readonly validationError = signal<string | null>(null);
+  protected readonly activeStep = signal(0);
+
+  private readonly relationDefaultsEffect = effect(() => {
+    const source = this.sourceOptions()[0];
+    const account = this.accountOptions()[0];
+    const transaction = this.transactionTypeOptions().find((option) => option.label.toLowerCase().includes('compra'))
+      ?? this.transactionTypeOptions()[0];
+
+    this.draft = {
+      ...this.draft,
+      purchaseSourceId: this.draft.purchaseSourceId ?? (source ? Number(source.value) : null),
+      purchaseAccountId: this.draft.purchaseAccountId ?? (account ? Number(account.value) : null),
+      purchaseTransactionTypeId: this.draft.purchaseTransactionTypeId ?? (transaction ? Number(transaction.value) : null),
+    };
+  });
 
   protected readonly conditions: readonly DropdownOption[] = [
     { value: 'new-with-tags', label: 'Novo com etiqueta' },
@@ -29,10 +58,58 @@ export class ProductForm {
     { value: 'satisfactory', label: 'Satisfatório' },
   ];
 
+  protected readonly statuses: readonly DropdownOption[] = [
+    { value: 'draft', label: 'Rascunho' },
+    { value: 'purchased', label: 'Comprado' },
+    { value: 'active', label: 'Ativo' },
+    { value: 'sold', label: 'Vendido' },
+    { value: 'archived', label: 'Arquivado' },
+  ];
+
   protected chooseCondition(value: string): void {
     if (this.conditions.some((option) => option.value === value)) {
       this.draft = { ...this.draft, condition: value as ProductCondition };
     }
+  }
+
+  protected choosePurchaseSource(value: string): void {
+    this.draft = { ...this.draft, purchaseSourceId: Number(value) };
+    this.validationError.set(null);
+  }
+
+  protected choosePurchaseAccount(value: string): void {
+    this.draft = { ...this.draft, purchaseAccountId: Number(value) };
+    this.validationError.set(null);
+  }
+
+  protected chooseStatus(value: string): void {
+    if (this.statuses.some((option) => option.value === value)) {
+      this.draft = { ...this.draft, status: value as ProductStatus };
+    }
+  }
+
+  protected selectStep(step: number): void {
+    if (this.saving() || step < 0 || step >= this.steps.length) {
+      return;
+    }
+
+    this.validationError.set(null);
+    this.activeStep.set(step);
+  }
+
+  protected nextStep(): void {
+    if (this.activeStep() === 0 && !this.draft.name.trim()) {
+      this.validationError.set('Indica o nome do produto antes de continuar.');
+      return;
+    }
+
+    this.validationError.set(null);
+    this.activeStep.update((step) => Math.min(step + 1, this.steps.length - 1));
+  }
+
+  protected previousStep(): void {
+    this.validationError.set(null);
+    this.activeStep.update((step) => Math.max(step - 1, 0));
   }
 
   protected onFilesSelected(event: Event): void {
@@ -116,9 +193,21 @@ export class ProductForm {
   }
 
   protected submit(): void {
-    if (!this.draft.name.trim()) {
+    if (this.saving() || !this.draft.name.trim()) {
       return;
     }
+
+    if (!this.draft.purchaseSourceId || !this.draft.purchaseAccountId || !this.draft.purchaseDate) {
+      this.validationError.set('Seleciona a fonte, a conta e a data da compra.');
+      return;
+    }
+
+    if (!this.draft.purchaseTransactionTypeId) {
+      this.validationError.set('Não foi possível preparar o movimento de compra. Tenta recarregar o formulário.');
+      return;
+    }
+
+    this.validationError.set(null);
 
     this.submitted.emit({
       ...this.draft,
@@ -128,7 +217,12 @@ export class ProductForm {
       brand: this.draft.brand.trim(),
       size: this.draft.size.trim(),
       color: this.draft.color.trim(),
+      notes: this.draft.notes.trim(),
       purchasePrice: Number(this.draft.purchasePrice) || 0,
+      purchaseShippingCost: Number(this.draft.purchaseShippingCost) || 0,
+      purchaseOtherCosts: Number(this.draft.purchaseOtherCosts) || 0,
+      purchaseTrackingNumber: this.draft.purchaseTrackingNumber.trim(),
+      purchaseOrderNotes: this.draft.purchaseOrderNotes.trim(),
       listingPrice: this.draft.listingPrice === null || this.draft.listingPrice === undefined
         ? null
         : Number(this.draft.listingPrice),
@@ -143,14 +237,24 @@ export class ProductForm {
     return {
       name: '',
       description: '',
+      notes: '',
       category: '',
       brand: '',
       size: '',
       color: '',
       condition: 'good',
+      status: 'active',
       purchasePrice: 0,
       listingPrice: null,
       minimumPrice: null,
+      purchaseSourceId: null,
+      purchaseAccountId: null,
+      purchaseTransactionTypeId: null,
+      purchaseDate: new Date().toISOString().slice(0, 10),
+      purchaseTrackingNumber: '',
+      purchaseShippingCost: 0,
+      purchaseOtherCosts: 0,
+      purchaseOrderNotes: '',
       images: [],
     };
   }

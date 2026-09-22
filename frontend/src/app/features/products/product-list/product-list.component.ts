@@ -1,6 +1,6 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 
 import { Modal } from '../../../shared/ui/modal/modal.component';
@@ -8,6 +8,7 @@ import { ProductCard } from '../components/product-card/product-card.component';
 import { ProductForm } from '../product-form/product-form.component';
 import { ProductDraft, ProductListItem, ProductListItemApi, ProductStatus } from '../models/product.model';
 import { CreateProductRequest, ProductService } from '../services/product.service';
+import { ProductRelationOptions, ProductRelationsService } from '../services/product-relations.service';
 
 type ProductFilter = 'all' | ProductStatus;
 
@@ -19,6 +20,8 @@ type ProductFilter = 'all' | ProductStatus;
 })
 export class ProductList {
   private readonly productService = inject(ProductService);
+  private readonly productRelationsService = inject(ProductRelationsService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchChanges = new Subject<string>();
   private requestId = 0;
@@ -29,7 +32,15 @@ export class ProductList {
   protected readonly productModalOpen = signal(false);
   protected readonly isLoading = signal(false);
   protected readonly isSaving = signal(false);
+  protected readonly relationsLoading = signal(false);
+  protected readonly relationOptions = signal<ProductRelationOptions>({
+    sourceOptions: [],
+    accountOptions: [],
+    transactionTypeOptions: [],
+  });
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly deleteProductId = signal<number | null>(null);
+  protected readonly isDeleting = signal(false);
   protected readonly page = signal(1);
   protected readonly totalItems = signal(0);
   protected readonly totalPages = signal(0);
@@ -55,6 +66,7 @@ export class ProductList {
       });
 
     this.loadProducts();
+    this.loadRelationOptions();
   }
 
   protected selectStatus(status: ProductStatus): void {
@@ -71,6 +83,45 @@ export class ProductList {
     this.productModalOpen.set(true);
   }
 
+  protected openProduct(productId: number): void {
+    void this.router.navigate(['/products', productId]);
+  }
+
+  protected openProductForSale(productId: number): void {
+    void this.router.navigate(['/products', productId], { queryParams: { action: 'sell' } });
+  }
+
+  protected openDeleteConfirmation(productId: number): void {
+    if (this.isDeleting() || this.isSaving()) return;
+    this.errorMessage.set(null);
+    this.deleteProductId.set(productId);
+  }
+
+  protected cancelDelete(): void {
+    if (!this.isDeleting()) {
+      this.deleteProductId.set(null);
+      this.errorMessage.set(null);
+    }
+  }
+
+  protected confirmDelete(): void {
+    const productId = this.deleteProductId();
+    if (!productId || this.isDeleting()) return;
+
+    this.isDeleting.set(true);
+    this.errorMessage.set(null);
+
+    this.productService.remove(productId)
+      .pipe(finalize(() => this.isDeleting.set(false)))
+      .subscribe({
+        next: () => {
+          this.deleteProductId.set(null);
+          this.loadProducts();
+        },
+        error: () => this.errorMessage.set('Não foi possível apagar o produto.'),
+      });
+  }
+
   protected closeProductModal(): void {
     if (!this.isSaving()) {
       this.productModalOpen.set(false);
@@ -78,6 +129,10 @@ export class ProductList {
   }
 
   protected saveProduct(draft: ProductDraft): void {
+    if (this.isSaving()) {
+      return;
+    }
+
     this.isSaving.set(true);
     this.errorMessage.set(null);
 
@@ -90,7 +145,23 @@ export class ProductList {
           this.productModalOpen.set(false);
           this.loadProducts(1);
         },
-        error: () => this.errorMessage.set('Não foi possível adicionar o produto.'),
+        error: (error: { error?: { detail?: string; title?: string } }) => {
+          this.errorMessage.set(
+            error.error?.detail
+              ?? error.error?.title
+              ?? 'Não foi possível adicionar o produto.',
+          );
+        },
+      });
+  }
+
+  private loadRelationOptions(): void {
+    this.relationsLoading.set(true);
+    this.productRelationsService.loadOptions()
+      .pipe(finalize(() => this.relationsLoading.set(false)))
+      .subscribe({
+        next: (options) => this.relationOptions.set(options),
+        error: () => this.errorMessage.set('Não foi possível carregar as fontes e contas.'),
       });
   }
 

@@ -10,6 +10,12 @@ namespace Application.Services
 {
     public class TransactionTypeService : ITransactionTypeService
     {
+        private static readonly (string Name, string Color)[] DefaultTransactionTypes =
+        [
+            ("Compra", "#F97066"),
+            ("Venda", "#32D583")
+        ];
+
         private readonly ITransactionTypeRepository _transactionTypeRepo;
         private readonly ICurrentUserService _currentUserService;
         private readonly IUnitOfWork _unitOfWork;
@@ -59,6 +65,23 @@ namespace Application.Services
             var currentUserId = _currentUserService.GetUserId();
 
             var transactionTypes = await _transactionTypeRepo.GetByUserAsync(currentUserId, cancellationToken);
+
+            var missingDefaults = DefaultTransactionTypes
+                .Where(defaultType => transactionTypes.All(type =>
+                    !string.Equals(type.Name, defaultType.Name, StringComparison.OrdinalIgnoreCase)))
+                .ToArray();
+
+            if (missingDefaults.Length > 0)
+            {
+                foreach (var (name, color) in missingDefaults)
+                {
+                    var transactionType = TransactionType.Create(currentUserId, name, color, currentUserId);
+                    await _transactionTypeRepo.AddAsync(transactionType, cancellationToken);
+                    transactionTypes = transactionTypes.Append(transactionType).ToList();
+                }
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            }
 
             return transactionTypes.Select(MapToGetTransactionTypeDTO).ToList();
         }

@@ -1,5 +1,6 @@
 import {
   Component,
+  HostListener,
   inject,
   input,
   OnChanges,
@@ -24,8 +25,11 @@ export class ProductCard implements OnInit, OnChanges, OnDestroy {
 
   readonly product = input.required<ProductListItem>();
   readonly selected = output<number>();
+  readonly sellRequested = output<number>();
+  readonly deleteRequested = output<number>();
   protected readonly imageSrc = signal<string | null>(null);
   protected readonly imageFailed = signal(false);
+  protected readonly menuOpen = signal(false);
 
   private imageObjectUrl: string | null = null;
   private imageSubscription: Subscription | null = null;
@@ -49,6 +53,28 @@ export class ProductCard implements OnInit, OnChanges, OnDestroy {
     this.imageFailed.set(true);
     this.revokeImageUrl();
     this.imageSrc.set(null);
+  }
+
+  @HostListener('document:click')
+  protected closeMenu(): void {
+    this.menuOpen.set(false);
+  }
+
+  protected toggleMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.menuOpen.update((open) => !open);
+  }
+
+  protected requestSell(event: MouseEvent): void {
+    event.stopPropagation();
+    this.menuOpen.set(false);
+    this.sellRequested.emit(this.product().id);
+  }
+
+  protected requestDelete(event: MouseEvent): void {
+    event.stopPropagation();
+    this.menuOpen.set(false);
+    this.deleteRequested.emit(this.product().id);
   }
 
   protected formatPrice(price: number): string {

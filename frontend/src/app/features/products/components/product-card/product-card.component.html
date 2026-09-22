@@ -20,6 +20,36 @@
         @case ('archived') { Arquivado }
       }
     </span>
+    <div class="product-card__menu" [class.product-card__menu--open]="menuOpen()">
+      <button
+        class="product-card__menu-trigger"
+        type="button"
+        aria-label="Ações do produto"
+        title="Ações do produto"
+        [attr.aria-expanded]="menuOpen()"
+        (click)="toggleMenu($event)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="5" r="1.4" />
+          <circle cx="12" cy="12" r="1.4" />
+          <circle cx="12" cy="19" r="1.4" />
+        </svg>
+      </button>
+      @if (menuOpen()) {
+        <div class="product-card__menu-list" role="menu" (click)="$event.stopPropagation()">
+          @if (product().status !== 'sold') {
+            <button type="button" role="menuitem" (click)="requestSell($event)">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 5 5 9-10" /></svg>
+              Marcar como vendido
+            </button>
+          }
+          <button type="button" role="menuitem" class="product-card__menu-item--danger" (click)="requestDelete($event)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6.5 7l.7 13h9.6l.7-13M9 7V4h6v3" /></svg>
+            Apagar produto
+          </button>
+        </div>
+      }
+    </div>
   </div>
   <div class="product-card__body">
     <div class="product-card__heading">

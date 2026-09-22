@@ -14,6 +14,7 @@ public class UpdateProductDTO
     public string? Color { get; set; }
 
     public ProductCondition Condition { get; set; }
+    public ProductStatus? Status { get; set; }
 
     public decimal PurchasePrice { get; set; }
     public decimal AllocatedShippingCost { get; set; }

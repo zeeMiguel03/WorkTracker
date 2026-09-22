@@ -47,7 +47,12 @@
     } @else {
       <div class="products-catalog__grid">
         @for (product of products(); track product.id) {
-          <app-product-card [product]="product" />
+          <app-product-card
+            [product]="product"
+            (selected)="openProduct($event)"
+            (sellRequested)="openProductForSale($event)"
+            (deleteRequested)="openDeleteConfirmation($event)"
+          />
         }
       </div>
 
@@ -68,11 +73,37 @@
   <app-modal [open]="true" titleId="product-modal-title" size="default" [closeOnBackdrop]="!isSaving()" (closed)="closeProductModal()">
     <div modal-heading class="products-modal__heading">
       <h2 id="product-modal-title">Adicionar produto</h2>
-      <p>Regista o essencial e adiciona fotografias quando quiseres.</p>
     </div>
     <app-product-form
+      [saving]="isSaving()"
+      [errorMessage]="errorMessage()"
+      [relationsLoading]="relationsLoading()"
+      [sourceOptions]="relationOptions().sourceOptions"
+      [accountOptions]="relationOptions().accountOptions"
+      [transactionTypeOptions]="relationOptions().transactionTypeOptions"
       (submitted)="saveProduct($event)"
       (cancelled)="closeProductModal()"
     />
+  </app-modal>
+}
+
+@if (deleteProductId()) {
+  <app-modal [open]="true" titleId="list-delete-product-title" size="confirmation" [closeOnBackdrop]="!isDeleting()" (closed)="cancelDelete()">
+    <div modal-heading class="products-modal__heading">
+      <span class="products-modal__eyebrow">Atenção</span>
+      <h2 id="list-delete-product-title">Apagar produto?</h2>
+    </div>
+    <div class="products-delete-modal">
+      <p>Esta ação não pode ser desfeita. O produto e as fotografias associadas serão removidos permanentemente.</p>
+      @if (errorMessage()) {
+        <div class="products-catalog__state products-catalog__state--error">{{ errorMessage() }}</div>
+      }
+      <div class="products-delete-modal__actions">
+        <button class="products-modal__secondary-button" type="button" [disabled]="isDeleting()" (click)="cancelDelete()">Cancelar</button>
+        <button class="products-modal__danger-button" type="button" [disabled]="isDeleting()" (click)="confirmDelete()">
+          {{ isDeleting() ? 'A apagar...' : 'Apagar produto' }}
+        </button>
+      </div>
+    </div>
   </app-modal>
 }

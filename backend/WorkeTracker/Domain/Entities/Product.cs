@@ -131,6 +131,7 @@ namespace Domain.Entities
             string? size,
             string? color,
             ProductCondition condition,
+            ProductStatus status,
             decimal purchasePrice,
             decimal allocatedShippingCost,
             decimal allocatedOtherCosts,
@@ -152,12 +153,12 @@ namespace Domain.Entities
                 Size = NormalizeOptional(size, MAX_LENGTH_SIZE, "size"),
                 Color = NormalizeOptional(color, MAX_LENGTH_COLOR, "color"),
                 Condition = ValidateCondition(condition),
+                Status = ValidateStatus(status),
                 PurchasePrice = ValidateCost(purchasePrice, "purchase price"),
                 AllocatedShippingCost = ValidateCost(allocatedShippingCost, "allocated shipping cost"),
                 AllocatedOtherCosts = ValidateCost(allocatedOtherCosts, "allocated other costs"),
                 ListingPrice = ValidateOptionalCost(listingPrice, "listing price"),
                 MinimumPrice = ValidateOptionalCost(minimumPrice, "minimum price"),
-                Status = ProductStatus.Draft,
                 Notes = NormalizeOptional(notes, MAX_LENGTH_NOTES, "notes"),
                 CreatedAt = now,
                 UpdatedAt = now
@@ -198,23 +199,18 @@ namespace Domain.Entities
 
         public void ChangeStatus(ProductStatus status)
         {
-            if (!Enum.IsDefined(status))
-            {
-                throw new DomainException("INVALID_PRODUCT_STATUS", "Product status is invalid.");
-            }
-
-            Status = status;
+            Status = ValidateStatus(status);
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void RegisterSale(int entryId, int? sourceId, decimal salePrice, decimal? otherCosts, DateTime soldAt)
+        public void RegisterSale(int? entryId, int? sourceId, decimal salePrice, decimal? otherCosts, DateTime soldAt)
         {
             if (Status == ProductStatus.Sold)
             {
                 throw new DomainException("PRODUCT_ALREADY_SOLD", "Product is already sold.");
             }
 
-            SaleEntryId = ValidateRequiredId(entryId, "sale entry");
+            SaleEntryId = ValidateOptionalId(entryId, "sale entry");
             SaleSourceId = ValidateOptionalId(sourceId, "sale source");
             SalePrice = ValidateCost(salePrice, "sale price");
             SaleOtherCosts = ValidateOptionalCost(otherCosts, "sale other costs");
@@ -268,6 +264,16 @@ namespace Domain.Entities
             }
 
             return condition;
+        }
+
+        private static ProductStatus ValidateStatus(ProductStatus status)
+        {
+            if (!Enum.IsDefined(status))
+            {
+                throw new DomainException("INVALID_PRODUCT_STATUS", "Product status is invalid.");
+            }
+
+            return status;
         }
 
         private static DateTime ValidateDate(DateTime value, string field)

@@ -32,17 +32,63 @@ export interface ProductPage {
   readonly hasNext: boolean;
 }
 
+export interface ProductImageApi {
+  readonly id: number;
+  readonly productId: number;
+  readonly imageUrl: string;
+  readonly displayOrder: number;
+  readonly isCover: boolean;
+  readonly createdAt: string;
+}
+
+export interface ProductDetailsApi {
+  readonly id: number;
+  readonly purchaseOrderId: number | null;
+  readonly name: string;
+  readonly description: string | null;
+  readonly category: string | null;
+  readonly brand: string | null;
+  readonly size: string | null;
+  readonly color: string | null;
+  readonly condition: number | string;
+  readonly purchasePrice: number;
+  readonly allocatedShippingCost: number;
+  readonly allocatedOtherCosts: number;
+  readonly listingPrice: number | null;
+  readonly minimumPrice: number | null;
+  readonly status: number | string;
+  readonly saleEntryId: number | null;
+  readonly saleSourceId: number | null;
+  readonly salePrice: number | null;
+  readonly saleOtherCosts: number | null;
+  readonly soldAt: string | null;
+  readonly notes: string | null;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+  readonly images: readonly ProductImageApi[];
+}
+
 export interface ProductDraft {
   readonly name: string;
   readonly description: string;
+  readonly notes: string;
   readonly category: string;
   readonly brand: string;
   readonly size: string;
   readonly color: string;
   readonly condition: ProductCondition;
+  readonly status: ProductStatus;
   readonly purchasePrice: number;
   readonly listingPrice: number | null;
   readonly minimumPrice: number | null;
+  readonly purchaseSourceId: number | null;
+  readonly purchaseAccountId: number | null;
+  readonly purchaseTransactionTypeId: number | null;
+  readonly purchaseDate: string;
+  readonly purchaseTrackingNumber: string;
+  readonly purchaseShippingCost: number;
+  readonly purchaseOtherCosts: number;
+  readonly purchaseOrderNotes: string;
   readonly images: File[];
 }
 

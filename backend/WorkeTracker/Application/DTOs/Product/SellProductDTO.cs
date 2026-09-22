@@ -3,7 +3,7 @@
 public class SellProductDTO
 {
     public int ProductId { get; set; }
-    public int SaleEntryId { get; set; }
+    public int? SaleEntryId { get; set; }
     public int? SaleSourceId { get; set; }
 
     public decimal SalePrice { get; set; }

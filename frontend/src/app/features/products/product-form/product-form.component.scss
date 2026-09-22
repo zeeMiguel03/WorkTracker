@@ -13,13 +13,24 @@
 .product-form__field label { color: #d0d5dd; font-size: 11px; font-weight: 650; }
 .product-form__field label span { color: #f97066; }
 .product-form__field label small { color: #667085; font-size: 10px; font-weight: 500; }
-.product-form__field input { width: 100%; min-height: 40px; padding: 0 11px; color: #f2f4f7; background: #151f2e; border: 1px solid #253044; border-radius: 8px; outline: 0; font: inherit; font-size: 12px; }
-.product-form__field input:focus { border-color: #7592ff; box-shadow: 0 0 0 3px rgba(70,95,255,.15); }
+.product-form__field input, .product-form__field textarea { width: 100%; min-height: 40px; padding: 10px 11px; color: #f2f4f7; background: #151f2e; border: 1px solid #253044; border-radius: 8px; outline: 0; font: inherit; font-size: 12px; resize: vertical; }
+.product-form__field textarea { line-height: 1.5; }
+.product-form__field input:focus, .product-form__field textarea:focus { border-color: #7592ff; box-shadow: 0 0 0 3px rgba(70,95,255,.15); }
+.product-form__field input[type="number"] { appearance: textfield; }
+.product-form__field input[type="number"]::-webkit-inner-spin-button,
+.product-form__field input[type="number"]::-webkit-outer-spin-button { margin: 0; appearance: none; }
 .product-form__field input::placeholder { color: #667085; }
 .product-form__field input:-webkit-autofill,
 .product-form__field input:-webkit-autofill:hover,
 .product-form__field input:-webkit-autofill:focus,
 .product-form__field input:autofill { -webkit-text-fill-color: #f2f4f7; caret-color: #f2f4f7; background-color: #151f2e; box-shadow: 0 0 0 1000px #151f2e inset; transition: background-color 9999s ease-out 0s; }
+.product-form__section { display: grid; gap: 15px; padding: 18px; background: #111a29; border: 1px solid #253044; border-radius: 12px; }
+.product-form__section-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.product-form__section-heading h2 { margin: 4px 0 0; color: #f2f4f7; font-size: 15px; }
+.product-form__section-heading small { color: #667085; font-size: 10px; text-align: right; }
+.product-form__eyebrow { color: #7592ff; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.product-form__relations-state { padding: 12px; color: #98a2b3; background: #151f2e; border: 1px dashed #344054; border-radius: 8px; font-size: 11px; text-align: center; }
+.product-form__error { padding: 11px 12px; color: #fda29b; background: rgba(217,45,32,.1); border: 1px solid rgba(253,162,155,.3); border-radius: 8px; font-size: 11px; }
 .product-form__money-input { position: relative; }
 .product-form__money-input span { position: absolute; top: 50%; left: 11px; color: #98a2b3; font-size: 12px; transform: translateY(-50%); }
 .product-form__money-input input { padding-left: 25px; appearance: textfield; }
@@ -39,7 +50,7 @@
 .product-form__cover-label { position: absolute; left: 7px; bottom: 7px; padding: 4px 7px; color: #344054; background: rgba(255,255,255,.94); border-radius: 6px; font-size: 10px; font-weight: 650; }
 .product-form__remove-image { position: absolute; top: 7px; right: 7px; display: grid; width: 27px; height: 27px; place-items: center; padding: 0; color: #182230; background: rgba(255,255,255,.95); border: 0; border-radius: 7px; font-size: 22px; font-weight: 300; line-height: 1; cursor: pointer; }
 .product-form__remove-image:hover { color: #b42318; background: #fff; }
-.product-form__add-image { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 16px; color: #98a2b3; background: #111a29; border: 1px dashed #667085; text-align: center; cursor: pointer; transition: border-color .15s ease, background .15s ease, color .15s ease; }
+.product-form__add-image { display: flex; flex: 1 1 auto; width: auto; min-width: 144px; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 16px; color: #98a2b3; background: #111a29; border: 1px dashed #667085; text-align: center; cursor: pointer; transition: border-color .15s ease, background .15s ease, color .15s ease; }
 .product-form__add-image:hover { color: #d0d5dd; background: #151f2e; border-color: #7592ff; }
 .product-form__add-image input { display: none; }
 .product-form__add-image-icon { display: grid; width: 34px; height: 34px; place-items: center; color: #98a2b3; }
@@ -50,6 +61,177 @@
 .product-form__actions button { min-height: 40px; padding: 0 15px; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
 .product-form__cancel { color: #b9c2d0; background: #182230; border: 1px solid #344054; }
 .product-form__submit { color: #fff; background: #465fff; border: 1px solid #465fff; }
+.product-form__actions button:disabled { opacity: .6; cursor: wait; }
 .product-form__actions button:hover { filter: brightness(1.1); }
 @media (max-width: 600px) { .product-form__grid, .product-form__grid--prices { grid-template-columns: 1fr 1fr; } .product-form__grid--prices .product-form__field:first-child { grid-column: 1 / -1; } }
 @media (max-width: 430px) { .product-form__grid, .product-form__grid--prices { grid-template-columns: 1fr; } .product-form__actions { flex-direction: column-reverse; } .product-form__actions button { width: 100%; } }
+
+.product-form__steps {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 0;
+  padding: 5px 0 18px;
+  border-bottom: 1px solid #253044;
+}
+
+.product-form__step {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 4px;
+  color: #667085;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  transition: color .15s ease, background .15s ease;
+}
+
+.product-form__step:hover { color: #d0d5dd; background: rgba(117, 146, 255, .06); }
+.product-form__step--active { color: #f2f4f7; }
+.product-form__step--complete { color: #98a2b3; }
+.product-form__step-number { display: grid; width: 27px; height: 27px; flex: 0 0 27px; place-items: center; color: #98a2b3; background: #182230; border: 1px solid #344054; border-radius: 50%; font-size: 11px; font-weight: 750; }
+.product-form__step--active .product-form__step-number { color: #fff; background: #465fff; border-color: #7592ff; box-shadow: 0 0 0 4px rgba(70, 95, 255, .12); }
+.product-form__step--complete .product-form__step-number { color: #fff; background: #344054; border-color: #667085; }
+.product-form__step-copy { display: grid; min-width: 0; gap: 2px; }
+.product-form__step-copy strong { overflow: hidden; color: inherit; font-size: 11px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.product-form__step-copy small { overflow: hidden; color: #667085; font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
+.product-form__step-line { height: 1px; background: #253044; }
+.product-form__step-line--complete { background: #667085; }
+.product-form__step-content { display: grid; gap: 16px; animation: product-step-in .18s ease-out; }
+.product-form__step-heading { display: grid; gap: 4px; padding: 2px 0 3px; }
+.product-form__step-heading h3 { margin: 0; color: #f2f4f7; font-size: 16px; }
+.product-form__step-heading p { margin: 0; color: #667085; font-size: 11px; }
+.product-form__navigation { display: flex; gap: 9px; }
+.product-form__previous, .product-form__next { min-height: 40px; padding: 0 15px; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.product-form__previous { color: #b9c2d0; background: #182230; border: 1px solid #344054; }
+.product-form__next { color: #fff; background: #465fff; border: 1px solid #465fff; }
+.product-form__previous:disabled, .product-form__next:disabled { opacity: .6; cursor: wait; }
+
+@keyframes product-step-in {
+  from { opacity: .55; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .product-form__steps { grid-template-columns: 1fr 16px 1fr 16px 1fr; }
+  .product-form__step { gap: 6px; }
+  .product-form__step-copy small { display: none; }
+}
+
+@media (max-width: 430px) {
+  .product-form__step { justify-content: center; }
+  .product-form__step-copy { display: none; }
+}
+
+/* Stepper polish */
+.product-form__steps {
+  position: relative;
+  column-gap: 10px;
+  margin-bottom: 2px;
+  padding: 10px 12px 12px;
+  background: linear-gradient(135deg, rgba(21, 31, 46, .96), rgba(17, 26, 41, .92));
+  border: 1px solid #253044;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .03);
+}
+
+.product-form__step {
+  position: relative;
+  min-height: 48px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+}
+
+.product-form__step:hover { border-color: rgba(117, 146, 255, .2); }
+.product-form__step--active { background: rgba(70, 95, 255, .12); border-color: rgba(117, 146, 255, .28); box-shadow: 0 8px 18px rgba(0, 0, 0, .12); }
+.product-form__step-number { width: 31px; height: 31px; flex-basis: 31px; color: #b9c2d0; background: #202c40; border-color: #475467; transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease; }
+.product-form__step--active .product-form__step-number { transform: scale(1.04); }
+.product-form__step--complete .product-form__step-number { color: #d1fadf; background: #125c49; border-color: #32d583; font-size: 0; }
+.product-form__step--complete .product-form__step-number::after { content: '✓'; font-size: 13px; }
+.product-form__step-copy strong { font-size: 12px; letter-spacing: -.01em; }
+.product-form__step-copy small { color: #98a2b3; font-size: 10px; }
+.product-form__step--active .product-form__step-copy small { color: #aab9ff; }
+.product-form__step-line { height: 2px; background: #344054; border-radius: 99px; opacity: .9; }
+.product-form__step-line--complete { background: linear-gradient(90deg, #32d583, #7592ff); }
+
+@media (max-width: 600px) {
+  .product-form__steps { column-gap: 5px; padding: 8px 7px 10px; }
+  .product-form__step { padding-inline: 6px; }
+}
+
+/* Keep each connector between the actual step columns. */
+.product-form__steps {
+  display: flex;
+  align-items: flex-start;
+  column-gap: 0;
+}
+
+.product-form__step {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+  text-align: center;
+}
+
+.product-form__step-copy {
+  justify-items: center;
+  text-align: center;
+}
+
+.product-form__step-line {
+  flex: 0 1 72px;
+  width: auto;
+  min-width: 28px;
+  margin-top: 22px;
+}
+
+.product-form__step--complete .product-form__step-number {
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-size: 0;
+  line-height: 1;
+}
+
+.product-form__step--complete .product-form__step-number::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 12px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  content: '';
+  transform: translate(-50%, -58%) rotate(45deg);
+  transform-origin: center;
+}
+
+@media (max-width: 600px) {
+  .product-form__step-line { flex-basis: 32px; }
+}
+
+/* The selected step is highlighted by its circle, not by a surrounding card. */
+.product-form__step,
+.product-form__step:hover,
+.product-form__step--active,
+.product-form__step--active:hover {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+.product-form__step:focus,
+.product-form__step:focus-visible {
+  border-color: transparent;
+  outline: none;
+  box-shadow: none;
+}

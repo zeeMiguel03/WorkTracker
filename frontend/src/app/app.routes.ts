@@ -43,6 +43,14 @@ export const routes: Routes = [
         title: 'Movimentos | WorkTracker',
       },
       {
+        path: 'products/:id',
+        loadComponent: () =>
+          import('./features/products/product-detail/product-detail.component').then(
+            (module) => module.ProductDetail,
+          ),
+        title: 'Detalhe do produto | WorkTracker',
+      },
+      {
         path: 'products',
         loadComponent: () =>
           import('./features/products/product-list/product-list.component').then(

@@ -15,6 +15,7 @@ public class CreateProductDTO
     public string? Color { get; set; }
 
     public ProductCondition Condition { get; set; }
+    public ProductStatus Status { get; set; } = ProductStatus.Draft;
 
     public decimal PurchasePrice { get; set; }
     public decimal AllocatedShippingCost { get; set; }

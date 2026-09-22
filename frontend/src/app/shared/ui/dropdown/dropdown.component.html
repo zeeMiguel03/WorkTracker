@@ -7,7 +7,15 @@
     aria-haspopup="listbox"
     (click)="toggle($event)"
   >
-    <span>{{ selectedOption()?.label }}</span>
+    <span class="dropdown__selected-content">
+      @if (imageUrl(selectedOption())) {
+        <img class="dropdown__avatar" [src]="imageUrl(selectedOption())!" [alt]="''" />
+      }
+      <span class="dropdown__selected-copy">
+        <span>{{ selectedOption()?.label }}</span>
+        @if (selectedOption()?.meta) { <small>{{ selectedOption()?.meta }}</small> }
+      </span>
+    </span>
     <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5.5 7.5 4.5 4.5 4.5-4.5" /></svg>
   </button>
 
@@ -22,7 +30,13 @@
           [attr.aria-selected]="option.value === value()"
           (click)="choose(option, $event)"
         >
-          {{ option.label }}
+          @if (imageUrl(option)) {
+            <img class="dropdown__avatar" [src]="imageUrl(option)!" [alt]="''" />
+          }
+          <span class="dropdown__option-copy">
+            <span>{{ option.label }}</span>
+            @if (option.meta) { <small>{{ option.meta }}</small> }
+          </span>
         </button>
       }
     </div>

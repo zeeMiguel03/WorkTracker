@@ -1,0 +1,252 @@
+<main class="product-detail-page">
+  <a class="product-detail__back" routerLink="/products">
+    <span class="product-detail__back-icon" aria-hidden="true">←</span>
+    <span>Voltar aos produtos</span>
+  </a>
+
+  @if (isLoading()) {
+    <div class="product-detail__state">A carregar produto...</div>
+  } @else if (errorMessage() && !product()) {
+    <div class="product-detail__state product-detail__state--error">{{ errorMessage() }}</div>
+  } @else if (product(); as product) {
+    <header class="product-detail__header">
+      <div>
+        <span class="product-detail__eyebrow">Detalhe do produto</span>
+        <h1>{{ product.name }}</h1>
+        <span class="product-detail__status" [class.product-detail__status--sold]="toStatus(product.status) === 'sold'">
+          {{ statusLabel(product.status) }}
+        </span>
+      </div>
+
+      <div class="product-detail__actions">
+        @if (!isEditing()) {
+          <button class="product-detail__button product-detail__button--icon" type="button" aria-label="Editar produto" title="Editar produto" [disabled]="isSelling() || isDeleting()" (click)="startEditing()">
+            <svg class="product-detail__action-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m4 16.5-.75 3.25L6.5 19l11.2-11.2a2.12 2.12 0 0 0-3-3L3.5 16Z" />
+              <path d="m13.5 6.5 4 4" />
+            </svg>
+          </button>
+          @if (toStatus(product.status) !== 'sold') {
+            <button class="product-detail__button product-detail__button--icon product-detail__button--primary" type="button" aria-label="Marcar como vendido" title="Marcar como vendido" [disabled]="isSelling() || isDeleting()" (click)="openSellForm()">
+              <svg class="product-detail__action-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m5 12.5 5 5 9-10" />
+              </svg>
+            </button>
+          }
+          <button class="product-detail__button product-detail__button--icon product-detail__button--danger" type="button" aria-label="Apagar produto" title="Apagar produto" [disabled]="isDeleting() || isSelling()" (click)="openDeleteConfirmation()">
+            <svg class="product-detail__action-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16M10 11v6M14 11v6M6.5 7l.7 13h9.6l.7-13M9 7V4h6v3" />
+            </svg>
+          </button>
+        }
+      </div>
+    </header>
+
+    @if (errorMessage()) {
+      <div class="product-detail__alert">{{ errorMessage() }}</div>
+    }
+
+    @if (isEditing()) {
+      <form class="product-detail__edit" (ngSubmit)="saveChanges()">
+        <div class="product-detail__section-heading">
+          <div>
+            <span class="product-detail__eyebrow">Editar</span>
+            <h2>Informação do produto</h2>
+          </div>
+          <span class="product-detail__hint">Atualiza os dados e guarda no final.</span>
+        </div>
+
+        <div class="product-detail__form-grid">
+          <label class="product-detail__field product-detail__field--wide">
+            <span>Nome</span>
+            <input name="name" type="text" [(ngModel)]="editDraft.name" required />
+          </label>
+          <label class="product-detail__field">
+            <span>Categoria</span>
+            <input name="category" type="text" [(ngModel)]="editDraft.category" />
+          </label>
+          <label class="product-detail__field">
+            <span>Marca</span>
+            <input name="brand" type="text" [(ngModel)]="editDraft.brand" />
+          </label>
+          <label class="product-detail__field">
+            <span>Tamanho</span>
+            <input name="size" type="text" [(ngModel)]="editDraft.size" />
+          </label>
+          <label class="product-detail__field">
+            <span>Cor</span>
+            <input name="color" type="text" [(ngModel)]="editDraft.color" />
+          </label>
+          <div class="product-detail__field">
+            <span>Estado</span>
+            <app-dropdown [fullWidth]="true" [options]="statuses" [value]="editDraft.status" (valueChange)="chooseStatus($event)" />
+          </div>
+          <div class="product-detail__field">
+            <span>Condição</span>
+            <app-dropdown [fullWidth]="true" [options]="conditions" [value]="editDraft.condition" (valueChange)="chooseCondition($event)" />
+          </div>
+          <label class="product-detail__field">
+            <span>Preço de compra</span>
+            <input name="purchasePrice" type="number" min="0" step="0.01" [(ngModel)]="editDraft.purchasePrice" />
+          </label>
+          <label class="product-detail__field">
+            <span>Preço de venda</span>
+            <input name="listingPrice" type="number" min="0" step="0.01" [(ngModel)]="editDraft.listingPrice" />
+          </label>
+          <label class="product-detail__field product-detail__field--wide">
+            <span>Descrição</span>
+            <textarea name="description" rows="3" [(ngModel)]="editDraft.description"></textarea>
+          </label>
+          <label class="product-detail__field product-detail__field--wide">
+            <span>Notas</span>
+            <textarea name="notes" rows="3" [(ngModel)]="editDraft.notes"></textarea>
+          </label>
+        </div>
+
+        <div class="product-detail__edit-actions">
+          <button class="product-detail__button" type="button" [disabled]="isSaving()" (click)="cancelEditing()">Cancelar</button>
+          <button class="product-detail__button product-detail__button--primary" type="submit" [disabled]="isSaving()">
+            {{ isSaving() ? 'A guardar...' : 'Guardar alterações' }}
+          </button>
+        </div>
+      </form>
+    } @else {
+      <section class="product-detail__hero">
+        <div class="product-detail__gallery">
+          @if (product.images.length) {
+            @for (image of product.images; track image.id) {
+              <div class="product-detail__image" [class.product-detail__image--cover]="image.isCover">
+                @if (imageUrls()[image.id]) {
+                  <img [src]="imageUrls()[image.id]" [alt]="'Fotografia de ' + product.name" />
+                } @else {
+                  <span>A carregar...</span>
+                }
+              </div>
+            }
+          } @else {
+            <div class="product-detail__no-image">Sem fotografias</div>
+          }
+        </div>
+
+        <aside class="product-detail__summary">
+          <div class="product-detail__summary-top">
+            <span class="product-detail__eyebrow">Resumo</span>
+            <strong>{{ formatPrice(sellingPrice(product)) }}</strong>
+          </div>
+          <dl class="product-detail__facts">
+            <div><dt>Categoria</dt><dd>{{ product.category || 'Sem categoria' }}</dd></div>
+            <div><dt>Marca</dt><dd>{{ product.brand || '—' }}</dd></div>
+            <div><dt>Tamanho</dt><dd>{{ product.size || '—' }}</dd></div>
+            <div><dt>Cor</dt><dd>{{ product.color || '—' }}</dd></div>
+            <div><dt>Condição</dt><dd>{{ conditionLabel(product.condition) }}</dd></div>
+            <div><dt>Adicionado em</dt><dd>{{ formatDate(product.createdAt) }}</dd></div>
+            @if (toStatus(product.status) === 'sold') {
+              <div><dt>Vendido em</dt><dd>{{ formatDate(product.soldAt) }}</dd></div>
+            }
+          </dl>
+        </aside>
+      </section>
+
+      <section class="product-detail__content-grid">
+        <article class="product-detail__panel">
+          <div class="product-detail__section-heading">
+            <div><span class="product-detail__eyebrow">Descrição</span><h2>Sobre este produto</h2></div>
+          </div>
+          <p class="product-detail__text">{{ product.description || 'Este produto ainda não tem descrição.' }}</p>
+        </article>
+
+        <article class="product-detail__panel">
+          <div class="product-detail__section-heading">
+            <div><span class="product-detail__eyebrow">Financeiro</span><h2>Valores</h2></div>
+          </div>
+          <dl class="product-detail__facts product-detail__facts--financial">
+            <div><dt>Preço de compra</dt><dd>{{ formatPrice(product.purchasePrice) }}</dd></div>
+            <div><dt>{{ toStatus(product.status) === 'sold' ? 'Preço recebido' : 'Preço anunciado' }}</dt><dd>{{ formatPrice(sellingPrice(product)) }}</dd></div>
+            <div><dt>{{ toStatus(product.status) === 'sold' ? 'Lucro realizado' : 'Lucro estimado' }}</dt><dd>{{ formatPrice(profit(product)) }}</dd></div>
+            @if (toStatus(product.status) === 'sold' && product.saleOtherCosts !== null) {
+              <div><dt>Custos da venda</dt><dd>{{ formatPrice(product.saleOtherCosts) }}</dd></div>
+            }
+            <div><dt>Última atualização</dt><dd>{{ formatDate(product.updatedAt) }}</dd></div>
+          </dl>
+        </article>
+      </section>
+
+      @if (product.notes) {
+        <section class="product-detail__panel product-detail__notes">
+          <span class="product-detail__eyebrow">Notas</span>
+          <p class="product-detail__text">{{ product.notes }}</p>
+        </section>
+      }
+    }
+  }
+</main>
+
+@if (isSellFormOpen()) {
+  <app-modal [open]="true" titleId="sell-product-title" size="default" [closeOnBackdrop]="!isSelling()" (closed)="cancelSell()">
+    <div modal-heading class="product-detail__modal-heading">
+      <span class="product-detail__eyebrow">Registar venda</span>
+      <h2 id="sell-product-title">Marcar produto como vendido</h2>
+    </div>
+
+    <form class="product-detail__sell-form" (ngSubmit)="confirmSale()">
+      <p>Indica os dados da venda para manter o histórico financeiro correto.</p>
+      @if (relationsLoading()) {
+        <div class="product-detail__relations-state">A carregar fontes e contas...</div>
+      } @else {
+        <app-product-transaction-fields
+          [sourceOptions]="relationOptions().sourceOptions"
+          [accountOptions]="relationOptions().accountOptions"
+          [sourceValue]="sellDraft.sourceId"
+          [accountValue]="sellDraft.accountId"
+          sourceLabel="Canal da venda"
+          accountLabel="Conta de recebimento"
+          (sourceValueChange)="chooseSaleSource($event)"
+          (accountValueChange)="chooseSaleAccount($event)"
+        />
+      }
+      <label class="product-detail__field">
+        <span>Preço de venda</span>
+        <input name="salePrice" type="number" min="0" step="0.01" [(ngModel)]="sellDraft.salePrice" required />
+      </label>
+      <label class="product-detail__field">
+        <span>Data da venda</span>
+        <input name="soldAt" type="date" [(ngModel)]="sellDraft.soldAt" required />
+      </label>
+      <label class="product-detail__field">
+        <span>Outros custos <small>(opcional)</small></span>
+        <input name="saleOtherCosts" type="number" min="0" step="0.01" [(ngModel)]="sellDraft.saleOtherCosts" />
+      </label>
+      @if (errorMessage()) {
+        <div class="product-detail__alert">{{ errorMessage() }}</div>
+      }
+      <div class="product-detail__edit-actions">
+        <button class="product-detail__button" type="button" [disabled]="isSelling()" (click)="cancelSell()">Cancelar</button>
+        <button class="product-detail__button product-detail__button--primary" type="submit" [disabled]="isSelling()">
+          {{ isSelling() ? 'A registar...' : 'Confirmar venda' }}
+        </button>
+      </div>
+    </form>
+  </app-modal>
+}
+
+@if (isDeleteConfirmOpen()) {
+  <app-modal [open]="true" titleId="delete-product-title" size="confirmation" [closeOnBackdrop]="!isDeleting()" (closed)="cancelDelete()">
+    <div modal-heading class="product-detail__modal-heading">
+      <span class="product-detail__eyebrow">Atenção</span>
+      <h2 id="delete-product-title">Apagar produto?</h2>
+    </div>
+
+    <div class="product-detail__delete-modal">
+      <p>Esta ação não pode ser desfeita. O produto e as fotografias associadas serão removidos permanentemente.</p>
+      @if (errorMessage()) {
+        <div class="product-detail__alert">{{ errorMessage() }}</div>
+      }
+      <div class="product-detail__edit-actions">
+        <button class="product-detail__button" type="button" [disabled]="isDeleting()" (click)="cancelDelete()">Cancelar</button>
+        <button class="product-detail__button product-detail__button--danger-filled" type="button" [disabled]="isDeleting()" (click)="confirmDelete()">
+          {{ isDeleting() ? 'A apagar...' : 'Apagar produto' }}
+        </button>
+      </div>
+    </div>
+  </app-modal>
+}

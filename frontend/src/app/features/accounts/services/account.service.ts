@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { AccountPage, AccountRequest, AccountApi } from '../models/account.model';
@@ -25,6 +25,10 @@ export class AccountService {
       params,
       withCredentials: true,
     });
+  }
+
+  listAll(): Observable<AccountApi[]> {
+    return this.list(1, 50).pipe(map((response) => response.items));
   }
 
   create(data: AccountRequest): Observable<AccountApi> {

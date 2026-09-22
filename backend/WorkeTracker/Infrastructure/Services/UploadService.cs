@@ -506,6 +506,11 @@ namespace Infrastructure.Services
                     {
                         Quality = _options.WebpQuality,
 
+                        // Product creation favors response time. Keep the
+                        // configured visual quality while using the fastest
+                        // WebP search method instead of the slower default.
+                        Method = WebpEncodingMethod.Fastest,
+
 
                         // Remove EXIF, GPS, XMP, IPTC, and other metadata
                         // supported by the encoder.

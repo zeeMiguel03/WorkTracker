@@ -14,6 +14,7 @@ namespace Application.Services
     public class ProductService : IProductService
     {
         private const int MaxProductImages = 5;
+        private const int MaxConcurrentProductImageUploads = MaxProductImages;
 
         private readonly IProductRepository _productRepository;
         private readonly ICurrentUserService _currentUserService;
@@ -64,6 +65,7 @@ namespace Application.Services
                 dto.Size,
                 dto.Color,
                 dto.Condition,
+                dto.Status,
                 dto.PurchasePrice,
                 dto.AllocatedShippingCost,
                 dto.AllocatedOtherCosts,
@@ -81,19 +83,33 @@ namespace Application.Services
             }
 
             var uploadedImagePaths = new List<string>(dto.Images.Count);
+            using var uploadGate = new SemaphoreSlim(
+                Math.Min(MaxConcurrentProductImageUploads, dto.Images.Count));
+
+            var imageUploadTasks = dto.Images
+                .Select(image => UploadProductImageAsync(image, uploadGate, cancellationToken))
+                .ToArray();
 
             try
             {
-                for (var index = 0; index < dto.Images.Count; index++)
-                {
-                    var imagePath = await UploadAndAttachProductImageAsync(
-                        product,
-                        dto.Images[index],
-                        index,
-                        index == dto.CoverImageIndex,
-                        cancellationToken);
+                // Image validation and processing is CPU-bound. Run a small,
+                // bounded number of uploads in parallel, then attach the
+                // resulting paths to the product in their original order.
+                var imagePaths = await Task.WhenAll(imageUploadTasks);
+                uploadedImagePaths.AddRange(imagePaths);
 
-                    uploadedImagePaths.Add(imagePath);
+                for (var index = 0; index < imagePaths.Length; index++)
+                {
+                    if (index == dto.CoverImageIndex)
+                    {
+                        RemoveCurrentCover(product);
+                    }
+
+                    product.Images.Add(ProductImage.Create(
+                        product.Id,
+                        imagePaths[index],
+                        index,
+                        index == dto.CoverImageIndex));
                 }
 
                 _productRepository.Update(product);
@@ -102,7 +118,14 @@ namespace Application.Services
             }
             catch
             {
-                foreach (var imagePath in uploadedImagePaths)
+                var completedImagePaths = uploadedImagePaths.Count > 0
+                    ? uploadedImagePaths
+                    : imageUploadTasks
+                        .Where(task => task.IsCompletedSuccessfully)
+                        .Select(task => task.Result)
+                        .ToList();
+
+                foreach (var imagePath in completedImagePaths)
                 {
                     await TryDeleteProductImageAsync(imagePath);
                 }
@@ -133,6 +156,11 @@ namespace Application.Services
                 dto.ListingPrice,
                 dto.MinimumPrice,
                 dto.Notes);
+
+            if (dto.Status.HasValue)
+            {
+                product.ChangeStatus(dto.Status.Value);
+            }
 
             _productRepository.Update(product);
 
@@ -493,6 +521,25 @@ namespace Application.Services
                 await TryDeleteProductImageAsync(imagePath);
 
                 throw;
+            }
+        }
+
+        private async Task<string> UploadProductImageAsync(
+            IFormFile imageFile,
+            SemaphoreSlim uploadGate,
+            CancellationToken cancellationToken)
+        {
+            await uploadGate.WaitAsync(cancellationToken);
+
+            try
+            {
+                return await _uploadService.UploadProductImageAsync(
+                    imageFile,
+                    cancellationToken);
+            }
+            finally
+            {
+                uploadGate.Release();
             }
         }
 
