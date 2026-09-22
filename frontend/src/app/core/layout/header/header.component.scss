@@ -13,7 +13,7 @@
 .search-box input::placeholder { color: #667085; }
 .round-button { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; }
 .round-button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-.notification { position: relative; }
+.notification { display: none; }
 .notification svg { fill: currentColor; stroke: none; }
 .notification::after { content: ''; position: absolute; top: 2px; right: 2px; width: 9px; height: 9px; background: #fb6514; border: 2px solid #101828; border-radius: 50%; }
 .avatar { width: 44px; height: 44px; overflow: hidden; color: #d0d5dd; background: #344054; border-radius: 50%; }

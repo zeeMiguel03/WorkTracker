@@ -33,6 +33,20 @@
     } @else if (errorMessage() && accounts().length === 0) {
       <p class="accounts-page__state accounts-page__state--error" role="alert">{{ errorMessage() }}</p>
     } @else {
+      <section class="accounts-overview" aria-label="Resumo financeiro">
+        <app-account-stat-card
+          label="Total atual em caixa"
+          [value]="formatCurrency(totalCash())"
+          [detail]="includedAccounts() + (includedAccounts() === 1 ? ' conta incluída no total' : ' contas incluídas no total')"
+          icon="balance"
+          tone="blue"
+        />
+        <div class="accounts-overview__note">
+          <strong>Saldo disponível</strong>
+          <span>O total considera apenas as contas marcadas para entrar no total.</span>
+        </div>
+      </section>
+
       @if (accounts().length === 0) {
         <div class="accounts-empty">
           <div class="accounts-empty__icon" aria-hidden="true">⌕</div>

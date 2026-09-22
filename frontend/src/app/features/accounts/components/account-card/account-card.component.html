@@ -49,12 +49,12 @@
   </div>
 
   <div class="account-card__balance">
-    <span>Saldo inicial</span>
+    <span>Saldo atual</span>
     <strong>{{ formatBalance(account().balance, account().currency) }}</strong>
   </div>
 
   <div class="account-card__footer">
-    <span>{{ account().detail ?? 'Conta ativa' }}</span>
+    <span>Inicial: {{ formatBalance(account().initialBalance, account().currency) }}</span>
     @if (account().includeInTotal) {
       <span class="account-card__included"><i></i> Incluída no total</span>
     }

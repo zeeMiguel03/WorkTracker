@@ -6,9 +6,10 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { Auth } from '../auth.service';
 import { LoginRequest } from '../models/auth.model';
+import { ThemeToggle } from '../../../shared/ui/theme-toggle/theme-toggle.component';
 
 @Component({
-  imports: [NgOptimizedImage, RouterLink, FormField],
+  imports: [NgOptimizedImage, RouterLink, FormField, ThemeToggle],
   selector: 'app-login',
   styleUrl: './login.component.scss',
   templateUrl: './login.component.html',

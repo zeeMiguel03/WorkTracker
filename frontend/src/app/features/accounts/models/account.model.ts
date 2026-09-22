@@ -11,6 +11,7 @@ export interface Account {
   readonly name: string;
   readonly type: AccountType;
   readonly typeLabel: string;
+  readonly initialBalance: number;
   readonly balance: number;
   readonly currency: string;
   readonly color: string;

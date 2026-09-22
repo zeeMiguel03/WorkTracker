@@ -162,6 +162,35 @@
   margin: 0 0 17px;
 }
 
+.accounts-overview {
+  display: grid;
+  grid-template-columns: minmax(280px, 390px) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.accounts-overview__note {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 18px 20px;
+  background: rgba(70, 95, 255, .06);
+  border: 1px solid rgba(117, 146, 255, .2);
+  border-radius: 13px;
+}
+
+.accounts-overview__note strong {
+  color: #d0d5dd;
+  font-size: 13px;
+}
+
+.accounts-overview__note span {
+  color: #98a2b3;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .accounts-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -363,6 +392,10 @@
   .accounts-section-heading {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .accounts-overview {
+    grid-template-columns: 1fr;
   }
 
   .accounts-pagination {

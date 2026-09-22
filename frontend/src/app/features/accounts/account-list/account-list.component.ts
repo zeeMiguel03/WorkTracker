@@ -5,6 +5,7 @@ import { debounceTime, distinctUntilChanged, finalize, map, Subject } from 'rxjs
 
 import { Modal } from '../../../shared/ui/modal/modal.component';
 import { AccountCard } from '../components/account-card/account-card.component';
+import { AccountStatCard } from '../components/account-stat-card/account-stat-card.component';
 import { AccountForm } from '../account-form/account-form.component';
 import { Account, AccountApi, AccountDraft, AccountRequest, AccountType } from '../models/account.model';
 import { AccountService } from '../services/account.service';
@@ -45,7 +46,7 @@ const ACCOUNT_TYPE_FROM_API: Readonly<Record<string, AccountType>> = {
 };
 
 @Component({
-  imports: [AccountCard, AccountForm, Modal, RouterLink],
+  imports: [AccountCard, AccountForm, AccountStatCard, Modal, RouterLink],
   selector: 'app-account-list',
   styleUrl: './account-list.component.scss',
   templateUrl: './account-list.component.html',
@@ -67,6 +68,13 @@ export class AccountList {
   protected readonly pageSize = 8;
   protected readonly totalItems = signal(0);
   protected readonly totalPages = signal(0);
+
+  protected readonly totalCash = computed(() => this.accounts()
+    .filter((account) => account.includeInTotal)
+    .reduce((total, account) => total + account.balance, 0));
+
+  protected readonly includedAccounts = computed(() => this.accounts()
+    .filter((account) => account.includeInTotal).length);
 
   protected readonly hasSearch = computed(() => this.searchTerm().trim().length > 0);
   protected readonly pageNumbers = computed(() => {
@@ -111,6 +119,14 @@ export class AccountList {
 
   protected clearSearch(): void {
     this.searchChanges.next('');
+  }
+
+  protected formatCurrency(value: number): string {
+    return new Intl.NumberFormat('pt-PT', {
+      style: 'currency',
+      currency: 'EUR',
+      minimumFractionDigits: 2,
+    }).format(value);
   }
 
   protected loadAccounts(page = this.page()): void {
@@ -235,6 +251,7 @@ export class AccountList {
       name: account.name,
       type,
       typeLabel: ACCOUNT_TYPE_LABELS[type],
+      initialBalance: Number(account.initialBalance) || 0,
       balance: Number(account.initialBalance) || 0,
       currency: 'EUR',
       color: account.color || this.getAccountColor(account.id),

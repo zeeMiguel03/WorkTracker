@@ -5,8 +5,770 @@ body {
 
 :root {
   --app-content-max-width: 1720px;
+  --app-bg: #0c111d;
+  --app-surface: #101828;
+  --app-surface-muted: #182230;
+  --app-input: #151f2e;
+  --app-border: #1d2939;
+  --app-border-strong: #344054;
+  --app-text: #f2f4f7;
+  --app-text-secondary: #d0d5dd;
+  --app-text-muted: #98a2b3;
+  --app-text-subtle: #667085;
 }
 
 body {
   margin: 0;
+  background: var(--app-bg);
+  color: var(--app-text);
+  transition: background-color .2s ease, color .2s ease;
+}
+
+html {
+  background: var(--app-bg);
+  color-scheme: dark;
+}
+
+html:not(.dark) {
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-muted: #f2f4f7;
+  --app-input: #ffffff;
+  --app-border: #e4e7ec;
+  --app-border-strong: #d0d5dd;
+  --app-text: #101828;
+  --app-text-secondary: #344054;
+  --app-text-muted: #667085;
+  --app-text-subtle: #98a2b3;
+  color-scheme: light;
+}
+
+html:not(.dark) body,
+html:not(.dark) app-root,
+html:not(.dark) app-shell,
+html:not(.dark) .admin-layout,
+html:not(.dark) .workspace,
+html:not(.dark) .entries-page,
+html:not(.dark) .accounts-page,
+html:not(.dark) .sources-page,
+html:not(.dark) .tasks-page,
+html:not(.dark) .products-page,
+html:not(.dark) .product-detail-page,
+html:not(.dark) .profile-page,
+html:not(.dark) .dashboard-content {
+  background: var(--app-bg) !important;
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .topbar,
+html:not(.dark) .sidebar,
+html:not(.dark) .metric-card,
+html:not(.dark) .panel,
+html:not(.dark) .table-card,
+html:not(.dark) .active-card,
+html:not(.dark) .accounts-page__shell,
+html:not(.dark) .account-card,
+html:not(.dark) .account-stat-card,
+html:not(.dark) .source-card,
+html:not(.dark) .task-column,
+html:not(.dark) .task-card,
+html:not(.dark) .products-catalog,
+html:not(.dark) .product-detail__gallery,
+html:not(.dark) .product-detail__summary,
+html:not(.dark) .product-detail__panel,
+html:not(.dark) .product-detail__edit,
+html:not(.dark) .profile-card,
+html:not(.dark) .profile-shell,
+html:not(.dark) .modal__content,
+html:not(.dark) .dropdown__menu {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .tabs,
+html:not(.dark) .line-preview,
+html:not(.dark) .products-catalog__search,
+html:not(.dark) .entries-page__search,
+html:not(.dark) .accounts-page__search,
+html:not(.dark) .sources-page__search,
+html:not(.dark) .product-form__relations-state,
+html:not(.dark) .product-detail__relations-state,
+html:not(.dark) .product-detail__button,
+html:not(.dark) .product-form__cancel,
+html:not(.dark) .product-form__previous,
+html:not(.dark) .task-card__menu,
+html:not(.dark) .source-card__menu,
+html:not(.dark) .account-card__menu {
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .ui-modal,
+html:not(.dark) .dropdown__trigger,
+html:not(.dark) .dropdown__menu,
+html:not(.dark) .file-picker__button,
+html:not(.dark) .file-picker__name,
+html:not(.dark) .account-form__fixed-field,
+html:not(.dark) .entry-form__operation-option,
+html:not(.dark) .entry-form__input-prefix,
+html:not(.dark) .entry-form__recurring,
+html:not(.dark) .task-form__field input,
+html:not(.dark) .task-form__field textarea,
+html:not(.dark) .task-status-form__field input,
+html:not(.dark) .task-status-form__field textarea,
+html:not(.dark) .source-form__field input,
+html:not(.dark) .source-form__field textarea {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .tasks-board-shell,
+html:not(.dark) .task-column,
+html:not(.dark) .task-card,
+html:not(.dark) .tasks-search,
+html:not(.dark) .tasks-filter-button,
+html:not(.dark) .tasks-add-column {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .tasks-search input {
+  color: var(--app-text) !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html:not(.dark) .tasks-filter-button:hover,
+html:not(.dark) .tasks-add-column:hover,
+html:not(.dark) .task-card:hover,
+html:not(.dark) .task-column__load-more:hover:not(:disabled) {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .tasks-board-shell__toolbar h2,
+html:not(.dark) .task-column__title h2,
+html:not(.dark) .task-card h3,
+html:not(.dark) .tasks-modal__heading h2 {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .tasks-board-shell__toolbar p,
+html:not(.dark) .task-card__source,
+html:not(.dark) .task-card__description,
+html:not(.dark) .task-card__assignee-name,
+html:not(.dark) .task-column__empty,
+html:not(.dark) .tasks-modal__heading p {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .sources-shell,
+html:not(.dark) .source-card,
+html:not(.dark) .source-card__media,
+html:not(.dark) .source-card__menu-panel,
+html:not(.dark) .source-filters__search {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .source-filters__search input {
+  color: var(--app-text) !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+html:not(.dark) .sources-shell__toolbar h2,
+html:not(.dark) .source-card h2,
+html:not(.dark) .source-card__stats strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .sources-shell__toolbar p,
+html:not(.dark) .source-card__eyebrow,
+html:not(.dark) .source-card__stats span,
+html:not(.dark) .sources-page__state {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .source-card__stats,
+html:not(.dark) .source-card__stats > div + div {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .source-card__menu:hover,
+html:not(.dark) .source-card__menu-panel button:hover {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .source-form label {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .source-form input:not([type='checkbox']),
+html:not(.dark) .source-form textarea {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .source-form input::placeholder,
+html:not(.dark) .source-form textarea::placeholder {
+  color: var(--app-text-subtle) !important;
+}
+
+html:not(.dark) .source-form__switch-row {
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .source-form__switch-row strong {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .source-form__switch-row small {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .source-form__switch-track {
+  background: var(--app-border-strong) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .source-form__secondary {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .account-card h3,
+html:not(.dark) .account-card__balance strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .account-card__heading span,
+html:not(.dark) .account-card__balance span,
+html:not(.dark) .account-card__footer,
+html:not(.dark) .account-card__menu-button {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .account-card__footer {
+  border-top-color: var(--app-border) !important;
+}
+
+html:not(.dark) .account-stat-card {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .account-stat-card p {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .account-stat-card strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .account-stat-card span {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .accounts-overview__note {
+  background: rgb(70 95 255 / 5%) !important;
+  border-color: rgb(117 146 255 / 22%) !important;
+}
+
+html:not(.dark) .accounts-overview__note strong {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .accounts-overview__note span {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .account-card__icon {
+  background: color-mix(in srgb, var(--account-accent) 12%, var(--app-surface)) !important;
+  border-color: color-mix(in srgb, var(--account-accent) 28%, var(--app-border)) !important;
+}
+
+html:not(.dark) .account-card__menu-button:hover,
+html:not(.dark) .account-card__menu-button[aria-expanded='true'] {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .accounts-search {
+  color: var(--app-text-muted) !important;
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .accounts-search input {
+  color: var(--app-text) !important;
+  background: transparent !important;
+}
+
+html:not(.dark) .accounts-search input::placeholder {
+  color: var(--app-text-subtle) !important;
+}
+
+html:not(.dark) .products-page {
+  color: var(--app-text) !important;
+  background: var(--app-bg) !important;
+}
+
+html:not(.dark) .products-catalog {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface) !important;
+  border: 1px solid var(--app-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 28px rgb(16 24 40 / 5%) !important;
+  padding: 28px !important;
+}
+
+html:not(.dark) .products-catalog__filters button {
+  color: var(--app-text-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .products-catalog__filters button:hover,
+html:not(.dark) .products-catalog__filters .products-catalog__filter--active {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .products-catalog__search {
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .products-catalog__search svg {
+  stroke: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .products-catalog__search input {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .products-catalog__state {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .products-catalog__state strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .product-form__steps {
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .product-form__step {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .product-form__step--active {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .product-form__step-number {
+  color: var(--app-text-muted) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .product-form__step--active .product-form__step-number {
+  color: #fff !important;
+  background: #465fff !important;
+  border-color: #7592ff !important;
+}
+
+html:not(.dark) .product-form__step-copy small {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .product-form__step--active .product-form__step-copy small {
+  color: #465fff !important;
+}
+
+html:not(.dark) .product-form__step-line {
+  background: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .product-form__step-heading h3,
+html:not(.dark) .product-form__section-heading h2 {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .product-form__field input,
+html:not(.dark) .product-form__field textarea {
+  color: var(--app-text) !important;
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .product-form__section {
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .product-form__add-image,
+html:not(.dark) .product-form__preview {
+  color: var(--app-text-muted) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .product-form__add-image:hover {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+  border-color: #7592ff !important;
+}
+
+html:not(.dark) .product-form__add-image-icon,
+html:not(.dark) .product-form__add-image strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .product-form__add-image small,
+html:not(.dark) .product-form__section-heading small {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .product-form__cancel,
+html:not(.dark) .product-form__previous {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .entries-shell {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface) !important;
+  border: 1px solid var(--app-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 28px rgb(16 24 40 / 5%) !important;
+}
+
+html:not(.dark) .entries-shell__heading h2 {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .entries-shell__heading p,
+html:not(.dark) .entries-shell__footer,
+html:not(.dark) .entries-shell__footer-hint {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .entries-shell__export {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .entries-shell__export:hover {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+  border-color: #7592ff !important;
+}
+
+html:not(.dark) .entry-filters {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .entry-filters__search {
+  color: var(--app-text-muted) !important;
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .entry-filters__search input {
+  color: var(--app-text) !important;
+  background: transparent !important;
+}
+
+html:not(.dark) .entry-filters__search input::placeholder {
+  color: var(--app-text-subtle) !important;
+}
+
+html:not(.dark) .entry-filters__button {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .entry-filters__button:hover,
+html:not(.dark) .entry-filters__button[aria-expanded='true'] {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+  border-color: #7592ff !important;
+}
+
+html:not(.dark) .entry-table {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .entry-table th,
+html:not(.dark) .entry-table td,
+html:not(.dark) .entry-table tbody tr {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .entry-table th {
+  background: var(--app-surface-muted) !important;
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .entry-table th button:hover {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .entry-table tbody tr:hover {
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .entry-table__entry-copy strong,
+html:not(.dark) .entry-table__value {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .entry-table__muted {
+  color: #667085 !important;
+}
+
+html:not(.dark) .entry-table__tag {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .entry-table__avatar {
+  color: var(--app-text) !important;
+  background: color-mix(in srgb, var(--entry-color) 14%, var(--app-surface)) !important;
+  border-color: color-mix(in srgb, var(--entry-color) 40%, var(--app-border)) !important;
+}
+
+html:not(.dark) .entry-table input[type='checkbox'] {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .entries-shell__footer {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .entries-shell__footer strong {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .entry-table th,
+html:not(.dark) .entry-table tbody tr,
+html:not(.dark) .entry-table tbody tr:hover,
+html:not(.dark) .entry-table__tag,
+html:not(.dark) .product-card__menu-list,
+html:not(.dark) .source-card__menu-list,
+html:not(.dark) .task-card__menu-list {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .entry-table th {
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) input,
+html:not(.dark) textarea,
+html:not(.dark) select,
+html:not(.dark) .search-box {
+  color: var(--app-text) !important;
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder,
+html:not(.dark) .search-box input::placeholder {
+  color: var(--app-text-subtle) !important;
+}
+
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) .panel__header h1,
+html:not(.dark) .card-title h2,
+html:not(.dark) .metric-card strong,
+html:not(.dark) .profile-card h3,
+html:not(.dark) .product-detail__header h1,
+html:not(.dark) .product-detail__summary-top strong,
+html:not(.dark) .product-detail__section-heading h2 {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) p,
+html:not(.dark) label,
+html:not(.dark) dt,
+html:not(.dark) .nav-item,
+html:not(.dark) .user-name,
+html:not(.dark) .product-detail__facts dd,
+html:not(.dark) .product-form__field label,
+html:not(.dark) .account-card,
+html:not(.dark) .source-card,
+html:not(.dark) .task-card,
+html:not(.dark) .entry-table {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) small,
+html:not(.dark) .sidebar__label,
+html:not(.dark) .products-page__breadcrumb,
+html:not(.dark) .entries-page__breadcrumb,
+html:not(.dark) .accounts-page__breadcrumb,
+html:not(.dark) .sources-page__breadcrumb,
+html:not(.dark) .tasks-page__breadcrumb,
+html:not(.dark) .profile-breadcrumb,
+html:not(.dark) .product-detail__eyebrow,
+html:not(.dark) .product-detail__hint,
+html:not(.dark) .product-form__step-copy small {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .nav-item:hover,
+html:not(.dark) .nav-item--active {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .sidebar__logo-name,
+html:not(.dark) .product-form__step--active,
+html:not(.dark) .product-form__step--complete {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .sidebar--collapsed .sidebar__label {
+  color: transparent !important;
+}
+
+html:not(.dark) .sidebar--collapsed .sidebar__label::after {
+  color: var(--app-text-subtle) !important;
+}
+
+html:not(.dark) .profile-page,
+html:not(.dark) .profile-shell,
+html:not(.dark) .profile-card,
+html:not(.dark) .profile-card h3,
+html:not(.dark) .profile-card h4,
+html:not(.dark) .profile-details dd,
+html:not(.dark) .profile-heading__person p,
+html:not(.dark) .profile-form-field,
+html:not(.dark) .security-row h4 {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .profile-page,
+html:not(.dark) .profile-shell,
+html:not(.dark) .profile-card {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .profile-card__hint,
+html:not(.dark) .profile-details dt,
+html:not(.dark) .security-row p,
+html:not(.dark) .profile-heading__person p span,
+html:not(.dark) .profile-modal__heading--confirmation p {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .profile-button--secondary {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .profile-button--secondary:hover:not(:disabled) {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .profile-button--ghost {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .profile-button--ghost:hover:not(:disabled) {
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .profile-button--danger {
+  color: #b42318 !important;
+  background: var(--app-surface) !important;
+  border-color: #f04438 !important;
+}
+
+html:not(.dark) .entries-page__table,
+html:not(.dark) .entries-page__table th,
+html:not(.dark) .entries-page__table td,
+html:not(.dark) .bar-chart,
+html:not(.dark) .table-head,
+html:not(.dark) .table-row,
+html:not(.dark) .profile-details,
+html:not(.dark) .security-row {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .dropdown__selected,
+html:not(.dark) .dropdown__option,
+html:not(.dark) .dropdown__option-copy strong,
+html:not(.dark) .dropdown__selected-copy strong,
+html:not(.dark) .file-picker,
+html:not(.dark) .file-picker strong,
+html:not(.dark) .product-form__add-image strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .dropdown__option:hover,
+html:not(.dark) .dropdown__option--selected,
+html:not(.dark) .product-form__add-image:hover {
+  background: var(--app-surface-muted) !important;
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .sidebar-backdrop {
+  background: rgb(16 24 40 / 35%) !important;
+}
+
+html:not(.dark) .auth-page,
+html:not(.dark) .auth-layout,
+html:not(.dark) .auth-visual-panel {
+  background: var(--app-bg) !important;
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) [class$="__shell"],
+html:not(.dark) [class$="__card"],
+html:not(.dark) [class$="__panel"],
+html:not(.dark) [class$="-card"],
+html:not(.dark) [class$="-panel"],
+html:not(.dark) [class$="-column"] {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .topbar input:-webkit-autofill,
+html:not(.dark) input:-webkit-autofill,
+html:not(.dark) input:-webkit-autofill:hover,
+html:not(.dark) input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--app-text) !important;
+  caret-color: var(--app-text) !important;
+  box-shadow: 0 0 0 1000px var(--app-input) inset !important;
 }

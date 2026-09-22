@@ -7,9 +7,10 @@ import { RegisterFormModel } from '../models/register.model';
 import { Auth } from '../auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FilePicker } from '../../../shared/ui/file-picker/file-picker.component';
+import { ThemeToggle } from '../../../shared/ui/theme-toggle/theme-toggle.component';
 
 @Component({
-  imports: [NgOptimizedImage, RouterLink, FormField, FilePicker],
+  imports: [NgOptimizedImage, RouterLink, FormField, FilePicker, ThemeToggle],
   selector: 'app-register',
   styleUrl: './register.component.scss',
   templateUrl: './register.component.html',
