@@ -2,6 +2,7 @@
   <div class="ui-modal-backdrop" role="presentation" (click)="requestBackdropClose()">
     <section
       class="ui-modal"
+      [class.ui-modal--large]="size() === 'large'"
       [class.ui-modal--confirmation]="size() === 'confirmation'"
       [class.ui-modal--success]="size() === 'success'"
       role="dialog"

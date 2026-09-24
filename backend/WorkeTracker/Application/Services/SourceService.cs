@@ -50,6 +50,7 @@ namespace Application.Services
                     currentUserId,
                     dto.Name,
                     sourceImagePath,
+                    dto.Link,
                     true,
                     currentUserId);
 
@@ -90,7 +91,8 @@ namespace Application.Services
 
                 var sourceImagePath = newImagePath ?? oldImagePath;
 
-                source.Update(dto.Name, sourceImagePath, dto.IsActive);
+                source.Update(dto.Name, sourceImagePath, dto.Link, dto.IsActive);
+
                 _sourceRepo.Update(source);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -113,10 +115,7 @@ namespace Application.Services
 
         public async Task DeleteSourceAsync(int idSource, CancellationToken cancellationToken = default)
         {
-            var source = await GetOwnedSourceAsync(
-                idSource,
-                "You do not have permission to delete this source.",
-                cancellationToken);
+            var source = await GetOwnedSourceAsync(idSource, "You do not have permission to delete this source.", cancellationToken);
 
             var sourceImagePath = source.ImageUrl;
 
@@ -131,19 +130,12 @@ namespace Application.Services
 
         public async Task<GetSourceDTO> ListSourceByIdAsync(int idSource, CancellationToken cancellationToken = default)
         {
-            var source = await GetOwnedSourceAsync(
-                idSource,
-                "You do not have permission to access this source.",
-                cancellationToken);
+            var source = await GetOwnedSourceAsync(idSource, "You do not have permission to access this source.", cancellationToken);
 
             return MapToGetSourceDTO(source);
         }
 
-        public async Task<PagedResultDTO<GetSourceDTO>> ListSourcesByUserAsync(
-            int page,
-            int pageSize,
-            string? search,
-            CancellationToken cancellationToken = default)
+        public async Task<PagedResultDTO<GetSourceDTO>> ListSourcesByUserAsync(int page, int pageSize, string? search, CancellationToken cancellationToken = default)
         {
             page = Math.Max(page, 1);
 
@@ -182,12 +174,10 @@ namespace Application.Services
                 : await _uploadService.ReadUploadAsync(source.ImageUrl, cancellationToken);
         }
 
-        private async Task<Source> GetOwnedSourceAsync(
-            int sourceId,
-            string accessDeniedMessage,
-            CancellationToken cancellationToken)
+        private async Task<Source> GetOwnedSourceAsync(int sourceId, string accessDeniedMessage, CancellationToken cancellationToken)
         {
             var currentUserId = _currentUserService.GetUserId();
+
             var source = await _sourceRepo.GetByIdAsync(sourceId, cancellationToken);
 
             if (source is null)
@@ -203,11 +193,7 @@ namespace Application.Services
             return source;
         }
 
-        private async Task ValidateSourceNameAvailableAsync(
-            string name,
-            int userId,
-            int? sourceId,
-            CancellationToken cancellationToken)
+        private async Task ValidateSourceNameAvailableAsync(string name, int userId, int? sourceId, CancellationToken cancellationToken)
         {
             var sourceWithSameName = await _sourceRepo.GetByNameAndUserIdAsync(name, userId, cancellationToken);
 
@@ -242,6 +228,7 @@ namespace Application.Services
                 UserId = source.UserId,
                 Name = source.Name,
                 ImageUrl = source.ImageUrl,
+                Link = source.Link,
                 CreatedAt = source.CreatedAt,
                 IsActive = source.IsActive,
                 UtCreation = source.UtCreation

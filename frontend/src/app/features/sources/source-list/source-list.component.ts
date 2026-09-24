@@ -233,7 +233,7 @@ export class SourceList {
       name: source.name,
       createdAt: source.createdAt,
       imageUrl: source.imageUrl,
-      websiteUrl: null,
+      websiteUrl: source.link ?? null,
       initials: this.getInitials(source.name),
       color: this.getSourceColor(source.id),
       transactions: 0,

@@ -10,6 +10,7 @@ namespace Application.DTOs.Source
 
         public IFormFile? ImageUrl { get; set; }
 
+        public string? Link { get; set; }
         public bool IsActive { get; set; }
     }
 }

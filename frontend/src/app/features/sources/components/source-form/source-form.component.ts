@@ -37,6 +37,7 @@ export class SourceForm {
     const form = event.currentTarget as HTMLFormElement;
     const formData = new FormData(form);
     const name = String(formData.get('sourceName') ?? '').trim();
+    const link = String(formData.get('sourceLink') ?? '').trim();
 
     if (!name) {
       return;
@@ -49,6 +50,7 @@ export class SourceForm {
       this.submitted.emit({
         name,
         imageFile,
+        link,
         isActive: formData.get('sourceActive') === 'on',
       });
 
@@ -58,6 +60,7 @@ export class SourceForm {
     this.submitted.emit({
       name,
       imageFile,
+      link,
     });
   }
 }

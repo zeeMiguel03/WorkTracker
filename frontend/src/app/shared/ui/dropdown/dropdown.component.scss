@@ -80,6 +80,11 @@
   box-shadow: 0 14px 30px rgba(0, 0, 0, .28);
 }
 
+.dropdown--open-up .dropdown__menu {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
 .dropdown__option {
   display: flex;
   align-items: center;

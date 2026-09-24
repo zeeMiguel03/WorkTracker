@@ -324,6 +324,334 @@ html:not(.dark) .products-page {
   background: var(--app-bg) !important;
 }
 
+html:not(.dark) .orders-page {
+  color: var(--app-text) !important;
+  background: var(--app-bg) !important;
+}
+
+html:not(.dark) .stat-card,
+html:not(.dark) .orders-shell,
+html:not(.dark) .order-row__summary,
+html:not(.dark) .order-details,
+html:not(.dark) .order-details__main,
+html:not(.dark) .order-details__aside,
+html:not(.dark) .tracking-card {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .stat-card__icon--blue {
+  color: #465fff !important;
+}
+
+html:not(.dark) .stat-card__icon--amber {
+  color: #dc6803 !important;
+}
+
+html:not(.dark) .stat-card__icon--green {
+  color: #039855 !important;
+}
+
+html:not(.dark) .stat-card__icon--violet {
+  color: #7f56d9 !important;
+}
+
+html:not(.dark) .stat-card__icon {
+  background: transparent !important;
+  border-color: var(--app-border-strong) !important;
+  box-shadow: none !important;
+}
+
+html:not(.dark) .user-menu__panel {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-strong) !important;
+  box-shadow: 0 18px 38px rgb(16 24 40 / 14%);
+}
+
+html:not(.dark) .user-menu__identity strong,
+html:not(.dark) .user-menu__item:hover,
+html:not(.dark) .user-menu__item:focus-visible {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .user-menu__identity small,
+html:not(.dark) .user-menu__item {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .user-menu__divider {
+  background: var(--app-border) !important;
+}
+
+html:not(.dark) .user-menu__item:hover,
+html:not(.dark) .user-menu__item:focus-visible {
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .orders-list__head,
+html:not(.dark) .order-row__summary:hover,
+html:not(.dark) .order-row--expanded > .order-row__summary,
+html:not(.dark) .tracking-card {
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .orders-search {
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .orders-search input,
+html:not(.dark) .order-total,
+html:not(.dark) .stat-card strong,
+html:not(.dark) .orders-toolbar h2,
+html:not(.dark) .order-reference strong,
+html:not(.dark) .order-products-preview strong,
+html:not(.dark) .order-source strong,
+html:not(.dark) .product-line__copy strong,
+html:not(.dark) .product-line__price strong,
+html:not(.dark) .order-details h3 {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .order-row,
+html:not(.dark) .orders-list__head,
+html:not(.dark) .status-tabs,
+html:not(.dark) .orders-footer,
+html:not(.dark) .product-line {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .order-drawer,
+html:not(.dark) .order-drawer__footer {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .draft-product {
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .order-modal__heading h2,
+html:not(.dark) .order-form__intro h3,
+html:not(.dark) .order-delete__heading h2,
+html:not(.dark) .order-form__steps .order-form__step--active strong,
+html:not(.dark) .order-form__steps .order-form__step--complete strong,
+html:not(.dark) .draft-product > header strong,
+html:not(.dark) .order-summary strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .order-modal__heading p,
+html:not(.dark) .order-form__intro p,
+html:not(.dark) .order-delete p,
+html:not(.dark) .draft-product > header small,
+html:not(.dark) .order-summary span {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .task-card__assignee {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-surface) !important;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .12);
+}
+
+html:not(.dark) .form-field,
+html:not(.dark) .order-form__steps strong {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .form-field input,
+html:not(.dark) .form-field textarea {
+  color: var(--app-text) !important;
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .currency-input,
+html:not(.dark) .product-image-field__preview,
+html:not(.dark) .product-image-field__picker {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .currency-input > span {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .product-image-field__picker strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .order-summary,
+html:not(.dark) .order-form__step-number,
+html:not(.dark) .order-form__cancel,
+html:not(.dark) .order-form__previous,
+html:not(.dark) .order-delete button:not(.order-delete__danger) {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .order-form__actions,
+html:not(.dark) .order-form__steps > i,
+html:not(.dark) .order-summary__total {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .orders-shell,
+html:not(.dark) .stat-card {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+  box-shadow: 0 10px 28px rgb(16 24 40 / 5%) !important;
+}
+
+html:not(.dark) .order-row__summary {
+  background: var(--app-surface) !important;
+}
+
+html:not(.dark) .order-row__summary:hover,
+html:not(.dark) .order-row--expanded > .order-row__summary,
+html:not(.dark) .order-details,
+html:not(.dark) .orders-list__head {
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .order-details__main,
+html:not(.dark) .order-details__aside,
+html:not(.dark) .tracking-card {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .orders-toolbar p,
+html:not(.dark) .order-reference small,
+html:not(.dark) .order-products-preview small,
+html:not(.dark) .order-details p,
+html:not(.dark) .product-line__copy small,
+html:not(.dark) .product-line__price small,
+html:not(.dark) .product-line__quantity,
+html:not(.dark) .order-details__aside dl div,
+html:not(.dark) .tracking-card span,
+html:not(.dark) .tracking-card small,
+html:not(.dark) .orders-footer,
+html:not(.dark) .orders-empty p {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .order-details__aside dd,
+html:not(.dark) .summary-total dd,
+html:not(.dark) .tracking-card strong,
+html:not(.dark) .orders-empty strong {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .secondary-button,
+html:not(.dark) .detail-actions button:not(.detail-actions__primary),
+html:not(.dark) .order-drawer__header > button,
+html:not(.dark) .order-drawer__footer > div:last-child > button:not(.primary-button) {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .status-tabs button {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .status-tabs button:hover,
+html:not(.dark) .status-tabs .status-tabs__active {
+  color: var(--app-text) !important;
+  background: #e9edff !important;
+}
+
+html:not(.dark) .order-source > span,
+html:not(.dark) .draft-product__number {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .product-avatars i {
+  border-color: var(--app-surface) !important;
+}
+
+html:not(.dark) .orders-footer button {
+  color: var(--app-text-muted) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .orders-footer .page-active {
+  color: #fff !important;
+  background: #465fff !important;
+  border-color: #465fff !important;
+}
+
+html:not(.dark) .order-drawer__header,
+html:not(.dark) .form-section + .form-section,
+html:not(.dark) .order-drawer__footer {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .fake-select,
+html:not(.dark) .draft-product input,
+html:not(.dark) .order-drawer input,
+html:not(.dark) .order-drawer textarea {
+  color: var(--app-text) !important;
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .fake-select,
+html:not(.dark) .form-grid label,
+html:not(.dark) .draft-product label {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .form-section__heading p,
+html:not(.dark) .form-grid label > span small,
+html:not(.dark) .order-drawer__header p,
+html:not(.dark) .order-drawer__footer span,
+html:not(.dark) .order-drawer__footer small,
+html:not(.dark) .currency-input > span {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .add-product-button,
+html:not(.dark) .order-details__title button {
+  color: #465fff !important;
+  background: rgb(70 95 255 / 4%) !important;
+  border-color: rgb(70 95 255 / 28%) !important;
+}
+
+html:not(.dark) .advanced-filters,
+html:not(.dark) .draft-products__empty {
+  color: var(--app-text-muted) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .advanced-filters select,
+html:not(.dark) .status-select select,
+html:not(.dark) .form-grid select {
+  color: var(--app-text) !important;
+  background: var(--app-input) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .advanced-filters > button,
+html:not(.dark) .draft-products__empty button {
+  color: #465fff !important;
+  border-color: rgb(70 95 255 / 28%) !important;
+}
+
 html:not(.dark) .products-catalog {
   color: var(--app-text-secondary) !important;
   background: var(--app-surface) !important;
@@ -364,43 +692,6 @@ html:not(.dark) .products-catalog__state {
 
 html:not(.dark) .products-catalog__state strong {
   color: var(--app-text) !important;
-}
-
-html:not(.dark) .product-form__steps {
-  background: var(--app-surface-muted) !important;
-  border-color: var(--app-border) !important;
-}
-
-html:not(.dark) .product-form__step {
-  color: var(--app-text-muted) !important;
-}
-
-html:not(.dark) .product-form__step--active {
-  color: var(--app-text) !important;
-}
-
-html:not(.dark) .product-form__step-number {
-  color: var(--app-text-muted) !important;
-  background: var(--app-surface) !important;
-  border-color: var(--app-border-strong) !important;
-}
-
-html:not(.dark) .product-form__step--active .product-form__step-number {
-  color: #fff !important;
-  background: #465fff !important;
-  border-color: #7592ff !important;
-}
-
-html:not(.dark) .product-form__step-copy small {
-  color: var(--app-text-muted) !important;
-}
-
-html:not(.dark) .product-form__step--active .product-form__step-copy small {
-  color: #465fff !important;
-}
-
-html:not(.dark) .product-form__step-line {
-  background: var(--app-border-strong) !important;
 }
 
 html:not(.dark) .product-form__step-heading h3,
@@ -638,8 +929,7 @@ html:not(.dark) .sources-page__breadcrumb,
 html:not(.dark) .tasks-page__breadcrumb,
 html:not(.dark) .profile-breadcrumb,
 html:not(.dark) .product-detail__eyebrow,
-html:not(.dark) .product-detail__hint,
-html:not(.dark) .product-form__step-copy small {
+html:not(.dark) .product-detail__hint {
   color: var(--app-text-muted) !important;
 }
 
@@ -649,9 +939,7 @@ html:not(.dark) .nav-item--active {
   background: var(--app-surface-muted) !important;
 }
 
-html:not(.dark) .sidebar__logo-name,
-html:not(.dark) .product-form__step--active,
-html:not(.dark) .product-form__step--complete {
+html:not(.dark) .sidebar__logo-name {
   color: var(--app-text) !important;
 }
 

@@ -1,0 +1,17 @@
+<nav class="form-stepper" [attr.aria-label]="ariaLabel()">
+  @for (step of steps(); track step.id; let isLast = $last) {
+    <button
+      class="form-stepper__step"
+      type="button"
+      [disabled]="disabled()"
+      [class.form-stepper__step--active]="activeStep() === step.id"
+      [class.form-stepper__step--complete]="activeStep() > step.id"
+      [attr.aria-current]="activeStep() === step.id ? 'step' : null"
+      (click)="select(step.id)"
+    >
+      <span class="form-stepper__number">{{ step.id + 1 }}</span>
+      <span class="form-stepper__copy"><strong>{{ step.label }}</strong><small>{{ step.description }}</small></span>
+    </button>
+    @if (!isLast) { <span class="form-stepper__line" [class.form-stepper__line--complete]="activeStep() > step.id" aria-hidden="true"></span> }
+  }
+</nav>

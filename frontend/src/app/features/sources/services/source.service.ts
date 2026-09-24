@@ -70,6 +70,10 @@ export class SourceService {
 
     formData.append('Name', data.name.trim());
 
+    if (data.link.trim()) {
+      formData.append('Link', data.link.trim());
+    }
+
     if (data.imageFile) {
       formData.append('ImageUrl', data.imageFile, data.imageFile.name);
     }

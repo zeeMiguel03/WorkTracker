@@ -8,7 +8,7 @@ import { Component, input, output } from '@angular/core';
 export class Modal {
   readonly open = input(false);
   readonly titleId = input.required<string>();
-  readonly size = input<'default' | 'confirmation' | 'success'>('default');
+  readonly size = input<'default' | 'large' | 'confirmation' | 'success'>('default');
   readonly closeLabel = input('Fechar');
   readonly closeOnBackdrop = input(true);
   readonly closed = output<void>();

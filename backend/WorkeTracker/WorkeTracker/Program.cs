@@ -24,7 +24,11 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
         "The connection string 'DefaultConnection' is not configured.");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sqlOptions =>
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorNumbersToAdd: null)));
 
 builder.Services.AddScoped<IUnitOfWork>(serviceProvider =>
     serviceProvider.GetRequiredService<AppDbContext>());

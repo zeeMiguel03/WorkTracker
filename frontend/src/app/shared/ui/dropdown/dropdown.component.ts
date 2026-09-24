@@ -26,6 +26,7 @@ export class Dropdown implements OnDestroy {
   readonly options = input.required<readonly DropdownOption[]>();
   readonly value = input('');
   readonly fullWidth = input(false);
+  readonly openUp = input(false);
   readonly valueChange = output<string>();
 
   protected readonly isOpen = signal(false);

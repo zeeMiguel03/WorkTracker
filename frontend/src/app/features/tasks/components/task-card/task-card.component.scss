@@ -3,7 +3,7 @@
 }
 
 .task-card {
-  padding: 17px;
+  padding: 13px 14px 12px;
   color: #f2f4f7;
   background: #182230;
   border: 1px solid #253044;
@@ -34,7 +34,7 @@
   position: relative;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 13px;
+  margin-bottom: 9px;
 }
 
 .task-card__source {
@@ -112,21 +112,21 @@
 }
 
 .task-card h3 {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: #f2f4f7;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   line-height: 1.35;
 }
 
 .task-card__description {
   display: -webkit-box;
-  min-height: 36px;
-  margin: 0 0 17px;
+  min-height: 30px;
+  margin: 0 0 12px;
   overflow: hidden;
   color: #98a2b3;
-  font-size: 12px;
-  line-height: 1.5;
+  font-size: 11px;
+  line-height: 1.4;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
@@ -134,8 +134,8 @@
 .task-card__meta {
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 9px;
-  padding-bottom: 15px;
+  gap: 7px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #253044;
 }
 
@@ -145,7 +145,7 @@
   align-items: center;
   gap: 6px;
   color: #b9c2d0;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
 }
 
@@ -181,8 +181,8 @@
 }
 
 .task-card__date svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
@@ -192,34 +192,39 @@
 
 .task-card__footer {
   gap: 8px;
-  padding-top: 14px;
+  padding-top: 10px;
 }
 
 .task-card__assignee {
   display: inline-grid;
-  width: 27px;
-  height: 27px;
-  flex: 0 0 27px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
   place-items: center;
   color: #dbe4ff;
-  background: #465fff;
-  border: 2px solid #182230;
+  background: #202c40;
+  border: 2px solid #344054;
   border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
   font-size: 9px;
   font-weight: 700;
+  line-height: 1;
+  overflow: hidden;
 }
 
 .task-card__assignee img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  object-position: center 46%;
 }
 
 .task-card__assignee-name {
   overflow: hidden;
   color: #98a2b3;
-  font-size: 11px;
+  font-size: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

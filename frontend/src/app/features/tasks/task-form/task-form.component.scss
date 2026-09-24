@@ -16,8 +16,7 @@
 }
 
 .task-form input,
-.task-form textarea,
-.task-form select {
+.task-form textarea {
   width: 100%;
   color: #f2f4f7;
   background: #101828;
@@ -28,10 +27,13 @@
   font-size: 13px;
 }
 
-.task-form input,
-.task-form select {
+.task-form input {
   height: 42px;
   padding: 0 12px;
+}
+
+.task-form app-dropdown {
+  min-height: 42px;
 }
 
 .task-form textarea {
@@ -41,8 +43,7 @@
 }
 
 .task-form input:focus,
-.task-form textarea:focus,
-.task-form select:focus {
+.task-form textarea:focus {
   border-color: #7592ff;
   box-shadow: 0 0 0 3px rgba(70, 95, 255, .16);
 }

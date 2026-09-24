@@ -2,11 +2,12 @@ import { Component, effect, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { Dropdown, DropdownOption } from '../../../shared/ui/dropdown/dropdown.component';
+import { FormStepper } from '../../../shared/ui/form-stepper/form-stepper.component';
 import { ProductTransactionFields } from '../components/product-transaction-fields/product-transaction-fields.component';
 import { ProductCondition, ProductDraft, ProductStatus } from '../models/product.model';
 
 @Component({
-  imports: [FormsModule, Dropdown, ProductTransactionFields],
+  imports: [FormsModule, Dropdown, FormStepper, ProductTransactionFields],
   selector: 'app-product-form',
   styleUrl: './product-form.component.scss',
   templateUrl: './product-form.component.html',

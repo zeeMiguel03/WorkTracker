@@ -27,6 +27,9 @@ namespace Domain.Entities
         [MaxLength(MAX_LENGTH_IMAGE_URL)]
         public string? ImageUrl { get; private set; }
 
+        [Column("link")]
+        public string? Link { get; private set; }
+
         [Required]
         [Column("created_at")]
         public DateTime CreatedAt { get; private set; }
@@ -48,13 +51,14 @@ namespace Domain.Entities
 
         private Source() { }
 
-        public static Source Create(int userId, string name, string? imageUrl, bool isActive, int? utCreation)
+        public static Source Create(int userId, string name, string? imageUrl, string? link, bool isActive, int? utCreation)
         {
             var source = new Source
             {
                 UserId = ValidateUserId(userId),
                 Name = NormalizeAndValidateName(name),
                 ImageUrl = NormalizeAndValidateImageUrl(imageUrl),
+                Link = link,
                 IsActive = isActive,
                 CreatedAt = DateTime.UtcNow,
                 UtCreation = utCreation
@@ -63,10 +67,11 @@ namespace Domain.Entities
             return source;
         }
 
-        public void Update(string name, string? imageUrl, bool isActive)
+        public void Update(string name, string? imageUrl, string? link, bool isActive)
         {
             Name = NormalizeAndValidateName(name);
             ImageUrl = NormalizeAndValidateImageUrl(imageUrl);
+            Link = link;
             IsActive = isActive;
         }
 

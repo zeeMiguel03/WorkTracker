@@ -1,12 +1,13 @@
-import { Component, effect, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import { Dropdown, DropdownOption } from '../../../shared/ui/dropdown/dropdown.component';
 import { Source } from '../../sources/models/source.model';
 import { CreateTaskRequest, Task } from '../models/task.model';
 import { TaskStatus } from '../models/task-status.model';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [Dropdown, ReactiveFormsModule],
   selector: 'app-task-form',
   styleUrl: './task-form.component.scss',
   templateUrl: './task-form.component.html',
@@ -22,6 +23,23 @@ export class TaskForm {
   readonly error = input<string | null>(null);
   readonly submitted = output<CreateTaskRequest>();
   readonly cancelled = output<void>();
+
+  protected readonly priorityOptions: readonly DropdownOption[] = [
+    { value: '0', label: 'Baixa' },
+    { value: '1', label: 'Média' },
+    { value: '2', label: 'Alta' },
+  ];
+
+  protected readonly statusOptions = computed<readonly DropdownOption[]>(() =>
+    this.statuses().map((status) => ({ value: `${status.id}`, label: status.name })),
+  );
+
+  protected readonly sourceOptions = computed<readonly DropdownOption[]>(() => [
+    { value: '0', label: 'Sem fonte' },
+    ...this.sources()
+      .filter((source) => source.isActive)
+      .map((source) => ({ value: `${source.id}`, label: source.name })),
+  ]);
 
   readonly form = this.formBuilder.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(150)]],
@@ -72,5 +90,29 @@ export class TaskForm {
   protected hasError(controlName: keyof typeof this.form.controls): boolean {
     const control = this.form.controls[controlName];
     return control.invalid && (control.dirty || control.touched);
+  }
+
+  protected chooseStatus(value: string): void {
+    const statusId = Number(value);
+
+    if (this.statuses().some((status) => status.id === statusId)) {
+      this.form.controls.taskStatusId.setValue(statusId);
+    }
+  }
+
+  protected chooseSource(value: string): void {
+    const sourceId = Number(value);
+
+    if (value === '0' || this.sources().some((source) => source.id === sourceId && source.isActive)) {
+      this.form.controls.sourceId.setValue(sourceId);
+    }
+  }
+
+  protected choosePriority(value: string): void {
+    const priority = Number(value);
+
+    if (this.priorityOptions.some((option) => option.value === value)) {
+      this.form.controls.priority.setValue(priority);
+    }
   }
 }

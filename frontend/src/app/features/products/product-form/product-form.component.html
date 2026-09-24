@@ -1,24 +1,5 @@
 <form class="product-form" (ngSubmit)="submit()">
-  <nav class="product-form__steps" aria-label="Etapas do produto">
-    @for (step of steps; track step.id; let isLast = $last) {
-      <button
-        class="product-form__step"
-        type="button"
-        [class.product-form__step--active]="activeStep() === step.id"
-        [class.product-form__step--complete]="activeStep() > step.id"
-        (click)="selectStep(step.id)"
-      >
-        <span class="product-form__step-number">{{ step.id + 1 }}</span>
-        <span class="product-form__step-copy">
-          <strong>{{ step.label }}</strong>
-          <small>{{ step.description }}</small>
-        </span>
-      </button>
-      @if (!isLast) {
-        <span class="product-form__step-line" [class.product-form__step-line--complete]="activeStep() > step.id" aria-hidden="true"></span>
-      }
-    }
-  </nav>
+  <app-form-stepper [steps]="steps" [activeStep]="activeStep()" [disabled]="saving()" ariaLabel="Etapas do produto" (stepSelected)="selectStep($event)" />
 
   @if (activeStep() === 0) {
     <div class="product-form__step-content">

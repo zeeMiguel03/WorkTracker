@@ -86,11 +86,26 @@ namespace API.Middleware
                 ? StatusCodes.Status401Unauthorized
                 : StatusCodes.Status403Forbidden;
 
-            _logger.LogWarning(
-                exception,
-                "Authorization exception while processing {Method} {Path}",
-                context.Request.Method,
-                context.Request.Path);
+            // Missing/expired credentials are expected during session restore
+            // (for example, when a user opens the app without a refresh cookie).
+            // Keep the response as 401, but avoid logging a noisy stack trace as
+            // if this were an application failure.
+            if (statusCode == StatusCodes.Status401Unauthorized)
+            {
+                _logger.LogInformation(
+                    "Authentication rejected for {Method} {Path}: {Code}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    exception.Code);
+            }
+            else
+            {
+                _logger.LogWarning(
+                    exception,
+                    "Authorization exception while processing {Method} {Path}",
+                    context.Request.Method,
+                    context.Request.Path);
+            }
 
             var problem = new ProblemDetails
             {

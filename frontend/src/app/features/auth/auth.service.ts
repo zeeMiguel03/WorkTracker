@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Service, signal } from '@angular/core';
-import { catchError, finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
+import { catchError, finalize, map, Observable, of, shareReplay, tap, timeout } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, LoginRequest } from './models/auth.model';
 
@@ -10,17 +10,24 @@ export class Auth {
 
     private readonly session = signal<AuthResponse | null>(null);
     private sessionRestoreRequest: Observable<boolean> | null = null;
+    private refreshRequest: Observable<AuthResponse> | null = null;
 
     readonly accessToken = computed(() => this.session()?.accessToken ?? null);
     readonly currentUser = computed(() => this.session()?.user ?? null);
     readonly isAuthenticated = computed(() => this.session() !== null);
+    readonly profileImageRevision = signal(0);
 
     register(data: FormData): Observable<AuthResponse> {
         return this.http
             .post<AuthResponse>(`${environment.apiUrl}/auth/register`, data, {
                 withCredentials: true,
             })
-            .pipe(tap((response) => this.session.set(response)));
+            .pipe(
+                tap((response) => {
+                    this.session.set(response);
+                    this.profileImageRevision.update((revision) => revision + 1);
+                }),
+            );
     }
 
     login(data: LoginRequest): Observable<AuthResponse> {
@@ -28,17 +35,37 @@ export class Auth {
             .post<AuthResponse>(`${environment.apiUrl}/auth/login`, data, {
                 withCredentials: true,
             })
-            .pipe(tap((response) => this.session.set(response)));
+            .pipe(
+                tap((response) => {
+                    this.session.set(response);
+                    this.profileImageRevision.update((revision) => revision + 1);
+                }),
+            );
     }
 
     refresh(): Observable<AuthResponse> {
-        return this.http
+        if (this.refreshRequest) {
+            return this.refreshRequest;
+        }
+
+        this.refreshRequest = this.http
             .post<AuthResponse>(
                 `${environment.apiUrl}/auth/refresh`,
                 {},
                 { withCredentials: true },
             )
-            .pipe(tap((response) => this.session.set(response)));
+            .pipe(
+                tap((response) => {
+                    this.session.set(response);
+                    this.profileImageRevision.update((revision) => revision + 1);
+                }),
+                finalize(() => {
+                    this.refreshRequest = null;
+                }),
+                shareReplay({ bufferSize: 1, refCount: false }),
+            );
+
+        return this.refreshRequest;
     }
 
     getProfileImage(): Observable<Blob> {
@@ -58,6 +85,9 @@ export class Auth {
         }
 
         this.sessionRestoreRequest = this.refresh().pipe(
+            // Do not block route activation indefinitely when the API is stopped
+            // or still starting. The sign-in page must remain usable offline.
+            timeout({ first: 5000 }),
             map(() => true),
             catchError(() => {
                 this.clearSession();

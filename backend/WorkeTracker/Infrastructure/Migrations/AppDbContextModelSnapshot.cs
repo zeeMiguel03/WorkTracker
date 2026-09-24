@@ -484,6 +484,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasColumnName("is_active");
 
+                    b.Property<string>("Link")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("link");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)

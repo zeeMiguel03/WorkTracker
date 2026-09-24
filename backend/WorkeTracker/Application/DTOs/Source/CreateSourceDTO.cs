@@ -7,5 +7,7 @@ namespace Application.DTOs.Source
         public string Name { get; set; } = string.Empty;
 
         public IFormFile? ImageUrl { get; set; }
+
+        public string? Link { get; set; }
     }
 }

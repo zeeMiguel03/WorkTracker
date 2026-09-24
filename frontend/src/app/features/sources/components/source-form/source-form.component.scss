@@ -15,6 +15,12 @@
   color: #f97066;
 }
 
+.source-form__label-text small {
+  color: #667085;
+  font-size: 11px;
+  font-weight: 500;
+}
+
 .source-form input:not([type='checkbox']),
 .source-form textarea {
   width: 100%;

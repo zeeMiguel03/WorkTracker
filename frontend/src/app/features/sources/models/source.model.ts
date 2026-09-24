@@ -3,6 +3,7 @@ export interface Source {
   readonly userId: number;
   readonly name: string;
   readonly imageUrl: string | null;
+  readonly link: string | null;
   readonly createdAt: string;
   readonly isActive: boolean;
   readonly utCreation: number | null;
@@ -21,10 +22,12 @@ export interface PaginatedResponse<T> {
 export interface CreateSourceRequest {
   name: string;
   imageFile: File | null;
+  link: string;
 }
 
 export interface UpdateSourceRequest {
   name: string;
   imageFile: File | null;
+  link: string;
   isActive: boolean;
 }

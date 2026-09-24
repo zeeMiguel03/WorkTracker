@@ -59,6 +59,14 @@ export const routes: Routes = [
         title: 'Produtos | WorkTracker',
       },
       {
+        path: 'orders',
+        loadComponent: () =>
+          import('./features/orders/order-list/order-list.component').then(
+            (module) => module.OrderList,
+          ),
+        title: 'Encomendas | WorkTracker',
+      },
+      {
         path: 'accounts',
         loadComponent: () =>
           import('./features/accounts/account-list/account-list.component').then(

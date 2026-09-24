@@ -19,33 +19,33 @@
   <div class="task-form__grid">
     <label>
       <span class="task-form__label">Estado <b>*</b></span>
-      <select formControlName="taskStatusId">
-        <option [ngValue]="0" disabled>Seleciona um estado</option>
-        @for (status of statuses(); track status.id) {
-          <option [ngValue]="status.id">{{ status.name }}</option>
-        }
-      </select>
+      <app-dropdown
+        [fullWidth]="true"
+        [options]="statusOptions()"
+        [value]="form.controls.taskStatusId.value.toString()"
+        (valueChange)="chooseStatus($event)"
+      />
     </label>
 
     <label>
       Fonte
-      <select formControlName="sourceId">
-        <option [ngValue]="0">Sem fonte</option>
-        @for (source of sources(); track source.id) {
-          @if (source.isActive) {
-            <option [ngValue]="source.id">{{ source.name }}</option>
-          }
-        }
-      </select>
+      <app-dropdown
+        [fullWidth]="true"
+        [options]="sourceOptions()"
+        [value]="form.controls.sourceId.value.toString()"
+        (valueChange)="chooseSource($event)"
+      />
     </label>
 
     <label>
       <span class="task-form__label">Prioridade <b>*</b></span>
-      <select formControlName="priority">
-        <option [ngValue]="0">Baixa</option>
-        <option [ngValue]="1">Média</option>
-        <option [ngValue]="2">Alta</option>
-      </select>
+      <app-dropdown
+        [fullWidth]="true"
+        [openUp]="true"
+        [options]="priorityOptions"
+        [value]="form.controls.priority.value.toString()"
+        (valueChange)="choosePriority($event)"
+      />
     </label>
 
     <label>

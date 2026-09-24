@@ -12,6 +12,18 @@
   </label>
 
   <label>
+    <span class="source-form__label-text">Link da fonte <small>(opcional)</small></span>
+    <input
+      name="sourceLink"
+      type="url"
+      [value]="source()?.websiteUrl ?? ''"
+      placeholder="https://exemplo.com"
+      autocomplete="url"
+      inputmode="url"
+    />
+  </label>
+
+  <label>
     <span class="source-form__label-text">Imagem da fonte</span>
     <app-file-picker
       inputId="source-image"

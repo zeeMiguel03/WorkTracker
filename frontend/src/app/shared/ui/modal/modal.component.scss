@@ -35,6 +35,10 @@
   width: min(100%, 590px);
 }
 
+.ui-modal--large {
+  width: min(100%, 920px);
+}
+
 .ui-modal__top {
   display: flex;
   align-items: flex-start;

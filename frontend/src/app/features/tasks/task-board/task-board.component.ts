@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
@@ -11,6 +11,7 @@ import {
   Observable,
   of,
   Subject,
+  Subscription,
   switchMap,
 } from 'rxjs';
 
@@ -79,6 +80,15 @@ export class TaskBoard implements OnDestroy, OnInit {
     readonly message: string;
   } | null>(null);
   private profileImageObjectUrl: string | null = null;
+  private profileImageRequest: Subscription | null = null;
+
+  private readonly profileImageEffect = effect(() => {
+    this.auth.profileImageRevision();
+
+    if (this.auth.isAuthenticated()) {
+      this.loadProfileImage();
+    }
+  });
 
   protected readonly columns = computed<readonly TaskColumnModel[]>(() => {
     const query = this.normalize(this.searchTerm());
@@ -108,7 +118,6 @@ export class TaskBoard implements OnDestroy, OnInit {
   );
 
   ngOnInit(): void {
-    this.loadProfileImage();
     this.searchChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.loadBoard());
@@ -116,6 +125,7 @@ export class TaskBoard implements OnDestroy, OnInit {
   }
 
   ngOnDestroy(): void {
+    this.profileImageRequest?.unsubscribe();
     this.revokeProfileImageUrl();
   }
 
@@ -291,27 +301,34 @@ export class TaskBoard implements OnDestroy, OnInit {
     this.errorMessage.set(null);
 
     const selectedStatus = this.selectedStatus();
-    const request: Observable<unknown> = selectedStatus
-      ? this.taskStatusService.update(selectedStatus.id, data)
-      : this.taskStatusService.create(data);
+    const request: Observable<number> = selectedStatus
+      ? this.taskStatusService
+          .update(selectedStatus.id, data)
+          .pipe(map(() => selectedStatus.id))
+      : this.taskStatusService.create(data).pipe(map((createdStatus) => createdStatus.id));
 
-    request.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.isSaving.set(false);
-        this.statusModalOpen.set(false);
-        this.showSuccess(
-          selectedStatus ? 'Coluna atualizada!' : 'Coluna criada!',
-          selectedStatus
-            ? 'As alterações da coluna foram guardadas com sucesso.'
-            : 'A nova coluna foi criada com sucesso.',
-        );
-        this.loadBoard();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.errorMessage.set(this.getErrorMessage(error, 'Não foi possível guardar a coluna.'));
-        this.isSaving.set(false);
-      },
-    });
+    request
+      .pipe(
+        switchMap((statusId) => this.normalizeStatusOrder(statusId, data.sortOrder)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: () => {
+          this.isSaving.set(false);
+          this.statusModalOpen.set(false);
+          this.showSuccess(
+            selectedStatus ? 'Coluna atualizada!' : 'Coluna criada!',
+            selectedStatus
+              ? 'As alterações da coluna foram guardadas com sucesso.'
+              : 'A nova coluna foi criada com sucesso.',
+          );
+          this.loadBoard();
+        },
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage.set(this.getErrorMessage(error, 'Não foi possível guardar a coluna.'));
+          this.isSaving.set(false);
+        },
+      });
   }
 
   protected confirmDeleteTask(taskId: number): void {
@@ -565,13 +582,14 @@ export class TaskBoard implements OnDestroy, OnInit {
   }
 
   private loadProfileImage(): void {
+    this.profileImageRequest?.unsubscribe();
     this.revokeProfileImageUrl();
 
     if (!this.auth.currentUser()?.profileImageUrl) {
       return;
     }
 
-    this.auth
+    this.profileImageRequest = this.auth
       .getProfileImage()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -583,6 +601,40 @@ export class TaskBoard implements OnDestroy, OnInit {
           this.profileImageObjectUrl = null;
         },
       });
+  }
+
+  private normalizeStatusOrder(statusId: number, requestedOrder: number): Observable<unknown> {
+    return this.taskStatusService.list().pipe(
+      switchMap((statuses) => {
+        const selectedStatus = statuses.find((status) => status.id === statusId);
+
+        if (!selectedStatus) {
+          return of(void 0);
+        }
+
+        const orderedStatuses = statuses
+          .filter((status) => status.id !== statusId)
+          .sort((first, second) => first.sortOrder - second.sortOrder || first.id - second.id);
+        const targetIndex = Math.max(
+          0,
+          Math.min(Math.trunc(requestedOrder), orderedStatuses.length),
+        );
+
+        orderedStatuses.splice(targetIndex, 0, selectedStatus);
+
+        const requests = orderedStatuses.map((status, index) =>
+          status.sortOrder === index
+            ? of(void 0)
+            : this.taskStatusService.update(status.id, {
+                name: status.name,
+                color: status.color,
+                sortOrder: index,
+              }),
+        );
+
+        return requests.length ? forkJoin(requests) : of(void 0);
+      }),
+    );
   }
 
   private revokeProfileImageUrl(): void {
