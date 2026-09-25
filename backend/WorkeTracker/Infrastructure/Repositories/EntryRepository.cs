@@ -30,7 +30,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.entries
                 .AsNoTracking()
-                .Where(entry => entry.Account.UserId == userId)
+                .Where(entry => entry.UserId == userId)
                 .OrderByDescending(entry => entry.Date)
                 .ThenByDescending(entry => entry.Id)
                 .ToListAsync(cancellationToken);

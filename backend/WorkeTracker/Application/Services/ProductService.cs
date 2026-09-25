@@ -18,19 +18,28 @@ namespace Application.Services
 
         private readonly IProductRepository _productRepository;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IPurchaseOrderRepository _purchaseOrderRepository;
+        private readonly IEntryRepository _entryRepository;
+        private readonly ISourceRepository _sourceRepository;
         private readonly IUploadService _uploadService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<ProductService> _logger;
 
         public ProductService(
             IProductRepository productRepository,
-            ICurrentUserService currentUserService, 
+            ICurrentUserService currentUserService,
+            IPurchaseOrderRepository purchaseOrderRepository,
+            IEntryRepository entryRepository,
+            ISourceRepository sourceRepository,
             IUploadService uploadService, 
             IUnitOfWork unitOfWork,
             ILogger<ProductService> logger)
         {
             _productRepository = productRepository;
             _currentUserService = currentUserService;
+            _purchaseOrderRepository = purchaseOrderRepository;
+            _entryRepository = entryRepository;
+            _sourceRepository = sourceRepository;
             _uploadService = uploadService;
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -39,6 +48,11 @@ namespace Application.Services
         public async Task<GetProductDTO> CreateProductAsync(CreateProductDTO dto, CancellationToken cancellationToken = default)
         {
             var userId = _currentUserService.GetUserId();
+
+            if (dto.PurchaseOrderId.HasValue)
+            {
+                await VerifyPurchaseOrder(dto.PurchaseOrderId.Value, userId, cancellationToken);
+            }
 
             if (dto.Images is null)
             {
@@ -255,10 +269,7 @@ namespace Application.Services
             };
         }
 
-        public async Task<Stream?> GetProductImageAsync(
-            int productId,
-            int imageId,
-            CancellationToken cancellationToken = default)
+        public async Task<Stream?> GetProductImageAsync(int productId, int imageId, CancellationToken cancellationToken = default)
         {
             var userId = _currentUserService.GetUserId();
 
@@ -426,6 +437,16 @@ namespace Application.Services
                 includeImages: false,
                 cancellationToken);
 
+            if (dto.SaleEntryId is int saleEntryId)
+            {
+                await ValidateSaleEntryAsync(saleEntryId, userId, cancellationToken);
+            }
+
+            if (dto.SaleSourceId is int saleSourceId)
+            {
+                await ValidateSaleSourceAsync(saleSourceId, userId, cancellationToken);
+            }
+
             product.RegisterSale(
                 dto.SaleEntryId,
                 dto.SaleSourceId,
@@ -434,6 +455,7 @@ namespace Application.Services
                 dto.SoldAt);
 
             _productRepository.Update(product);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
@@ -490,12 +512,7 @@ namespace Application.Services
             }
         }
 
-        private async Task<string> UploadAndAttachProductImageAsync(
-            Product product,
-            IFormFile imageFile,
-            int displayOrder,
-            bool isCover,
-            CancellationToken cancellationToken)
+        private async Task<string> UploadAndAttachProductImageAsync(Product product, IFormFile imageFile, int displayOrder, bool isCover, CancellationToken cancellationToken)
         {
             var imagePath = await _uploadService.UploadProductImageAsync(
                 imageFile,
@@ -524,10 +541,7 @@ namespace Application.Services
             }
         }
 
-        private async Task<string> UploadProductImageAsync(
-            IFormFile imageFile,
-            SemaphoreSlim uploadGate,
-            CancellationToken cancellationToken)
+        private async Task<string> UploadProductImageAsync(IFormFile imageFile, SemaphoreSlim uploadGate, CancellationToken cancellationToken)
         {
             await uploadGate.WaitAsync(cancellationToken);
 
@@ -597,6 +611,36 @@ namespace Application.Services
             catch (Exception exception)
             {
                 _logger.LogWarning(exception, "Failed to delete product image {ImagePath}.", imagePath);
+            }
+        }
+
+        private async Task VerifyPurchaseOrder(int purchaseOrderId, int userId, CancellationToken cancellationToken)
+        {
+            var purchaseOrder = await _purchaseOrderRepository.GetByIdAsync(purchaseOrderId, userId, false, cancellationToken);
+
+            if (purchaseOrder is null || purchaseOrder.UserId != userId)
+            {
+                throw new DomainException("PURCHASE_ORDER_NOT_FOUND", "Purchase order was not found.");
+            }
+        }
+
+        private async Task ValidateSaleEntryAsync(int entryId, int userId, CancellationToken cancellationToken)
+        {
+            var entry = await _entryRepository.GetByIdAsync(entryId, cancellationToken);
+
+            if (entry is null || entry.UserId != userId)
+            {
+                throw new DomainException("ENTRY_NOT_FOUND", "Entry was not found.");
+            }
+        }
+
+        private async Task ValidateSaleSourceAsync(int sourceId, int userId, CancellationToken cancellationToken)
+        {
+            var source = await _sourceRepository.GetByIdAsync(sourceId, cancellationToken);
+
+            if (source is null || source.UserId != userId)
+            {
+                throw new DomainException("SOURCE_NOT_FOUND", "Source was not found.");
             }
         }
     }

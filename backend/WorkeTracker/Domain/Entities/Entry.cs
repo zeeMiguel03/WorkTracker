@@ -16,6 +16,10 @@ namespace Domain.Entities
         public int Id { get; private set; }
 
         [Required]
+        [Column("user_id")]
+        public int UserId { get; private set; }
+
+        [Required]
         [Column("source_id")]
         public int SourceId { get; private set; }
 
@@ -69,13 +73,17 @@ namespace Domain.Entities
         [ForeignKey(nameof(AccountId))]
         public Account Account { get; private set; } = null!;
 
+        [ForeignKey(nameof(UserId))]
+        public User User { get; private set; } = null!;
+
         private Entry() { }
 
-        public static Entry Create(int sourceId, int transactionTypeId, int accountId, string name, string? imageUrl,
+        public static Entry Create(int userId, int sourceId, int transactionTypeId, int accountId, string name, string? imageUrl,
             string? description, decimal quantity, decimal value, DateTime date, int? utCreation)
         {
             var entry = new Entry
             {
+                UserId = ValidateUserId(userId),
                 SourceId = ValidateSourceId(sourceId),
                 TransactionTypeId = ValidateTransactionTypeId(transactionTypeId),
                 AccountId = ValidateAccountId(accountId),
@@ -165,6 +173,16 @@ namespace Domain.Entities
             }
 
             return sourceId;
+        }
+
+        private static int ValidateUserId(int userId)
+        {
+            if (userId <= 0)
+            {
+                throw new DomainException("INVALID_USER_ID", "User id is invalid.");
+            }
+
+            return userId;
         }
 
         private static int ValidateTransactionTypeId(int transactionTypeId)

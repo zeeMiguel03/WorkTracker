@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,13 @@ namespace Infrastructure.Persistence
 
             modelBuilder.Entity<Entry>(e =>
             {
+                e.HasOne(x => x.User)
+                    .WithMany(x => x.Entries)
+                    .HasForeignKey(x => x.UserId)
+                    // Entries are already deleted through Account -> Entries.
+                    // NoAction avoids SQL Server's multiple cascade path restriction.
+                    .OnDelete(DeleteBehavior.NoAction);
+
                 e.HasOne(x => x.Account)
                     .WithMany(x => x.Entries)
                     .HasForeignKey(x => x.AccountId)
@@ -203,6 +211,10 @@ namespace Infrastructure.Persistence
 
             modelBuilder.Entity<RefreshToken>(e =>
             {
+                e.Property(x => x.RowVersion)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
                 e.HasOne(x => x.User)
                     .WithMany(x => x.RefreshTokens)
                     .HasForeignKey(x => x.UserId)
@@ -219,6 +231,18 @@ namespace Infrastructure.Persistence
                 e.HasIndex(x => x.Email)
                     .IsUnique();
             });
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                return await base.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException exception)
+            {
+                throw new ConcurrencyException("The entity was modified by another request.", exception);
+            }
         }
 
     }

@@ -4,6 +4,7 @@ using Application.DTOs.User;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers
 {
@@ -21,6 +22,7 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
+        [EnableRateLimiting("auth-register")]
         [HttpPost("register")]
         public async Task<ActionResult<AuthenticatedUserDTO>> Register([FromForm] CreateUserDTO dto, CancellationToken cancellationToken)
         {
@@ -37,6 +39,7 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
+        [EnableRateLimiting("auth-login")]
         [HttpPost("login")]
         public async Task<ActionResult<AuthenticatedUserDTO>> Login(LoginDTO dto, CancellationToken cancellationToken)
         {
@@ -49,6 +52,7 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
+        [EnableRateLimiting("auth-refresh")]
         [HttpPost("refresh")]
         public async Task<ActionResult<AuthenticatedUserDTO>> Refresh(CancellationToken cancellationToken)
         {

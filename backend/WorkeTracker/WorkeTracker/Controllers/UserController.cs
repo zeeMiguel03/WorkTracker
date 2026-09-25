@@ -3,6 +3,7 @@ using Application.DTOs.User;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers;
 
@@ -40,6 +41,7 @@ public sealed class UserController : ControllerBase
 
     [HttpPut("me")]
     [Consumes("multipart/form-data")]
+    [EnableRateLimiting("uploads")]
     public async Task<IActionResult> Update([FromForm] UpdateUserDTO dto, CancellationToken ct)
     {
         await _service.UpdateUserAsync(dto, ct);

@@ -136,6 +136,24 @@ html:not(.dark) .tasks-add-column {
   border-color: var(--app-border) !important;
 }
 
+html:not(.dark) .task-column__load-more {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .task-column__load-more:hover:not(:disabled) {
+  color: var(--app-text) !important;
+  background: #e4e7ec !important;
+  border-color: #98a2b3 !important;
+}
+
+html:not(.dark) .task-column__count {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
 html:not(.dark) .tasks-search input {
   color: var(--app-text) !important;
   background: transparent !important;

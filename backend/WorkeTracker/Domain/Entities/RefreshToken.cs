@@ -34,6 +34,10 @@ namespace Domain.Entities
         [Column("created_at")]
         public DateTime CreatedAt { get; private set; }
 
+        [Timestamp]
+        [Column("row_version")]
+        public byte[] RowVersion { get; private set; } = [];
+
         [Column("revoked_at")]
         public DateTime? RevokedAt { get; private set; }
 

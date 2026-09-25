@@ -60,6 +60,7 @@ namespace Application.Services
                 }
 
                 var entry = Entry.Create(
+                    currentUserId,
                     dto.SourceId,
                     dto.TransactionTypeId,
                     dto.AccountId,
@@ -197,14 +198,7 @@ namespace Application.Services
                 throw new DomainException("ENTRY_NOT_FOUND", "Entry was not found.");
             }
 
-            var account = await _accountRepo.GetByIdAsync(entry.AccountId, cancellationToken);
-
-            if (account is null)
-            {
-                throw new DomainException("ACCOUNT_NOT_FOUND", "Account was not found.");
-            }
-
-            if (account.UserId != currentUserId)
+            if (entry.UserId != currentUserId)
             {
                 throw new DomainException("ENTRY_ACCESS_DENIED", accessDeniedMessage);
             }

@@ -11,13 +11,32 @@ using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+const long maxMultipartBodySize = 32L * 1024L * 1024L;
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = maxMultipartBodySize;
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    // Product uploads allow up to five 5 MB images. The extra space covers
+    // multipart headers and the remaining form fields.
+    options.MultipartBodyLengthLimit = maxMultipartBodySize;
+    options.MultipartHeadersLengthLimit = 16 * 1024;
+    options.ValueLengthLimit = 1 * 1024 * 1024;
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException(
@@ -116,6 +135,92 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out TimeSpan retryAfter))
+        {
+            context.HttpContext.Response.Headers.RetryAfter =
+                ((int)Math.Ceiling(retryAfter.TotalSeconds)).ToString();
+        }
+
+        await context.HttpContext.Response.WriteAsJsonAsync(
+            new
+            {
+                code = "RATE_LIMITED",
+                message = "Too many requests. Try again later."
+            },
+            cancellationToken);
+    };
+
+    // Limite geral para proteger listagens, pesquisas e endpoints autenticados.
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            GetRateLimitPartitionKey(httpContext),
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 300,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 6,
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+
+    // Login: protege contra brute force e credential stuffing por IP.
+    options.AddPolicy("auth-login", httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            $"auth-login:{GetClientIp(httpContext)}",
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 6,
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+
+    // Registo: impede criação massiva de contas a partir do mesmo IP.
+    options.AddPolicy("auth-register", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            $"auth-register:{GetClientIp(httpContext)}",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 3,
+                Window = TimeSpan.FromHours(1),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+
+    // Refresh: limita abuso e loops de refresh.
+    options.AddPolicy("auth-refresh", httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            $"auth-refresh:{GetClientIp(httpContext)}",
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 20,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 4,
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+
+    // Uploads: limita a frequência por IP. Os limites de tamanho/formato
+    // continuam a ser aplicados pelo UploadService.
+    options.AddPolicy("uploads", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            $"uploads:{GetClientIp(httpContext)}",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 20,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }));
+});
+
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -149,6 +254,20 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+static string GetRateLimitPartitionKey(HttpContext httpContext)
+{
+    var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    return string.IsNullOrWhiteSpace(userId)
+        ? $"ip:{GetClientIp(httpContext)}"
+        : $"user:{userId}";
+}
+
+static string GetClientIp(HttpContext httpContext)
+{
+    return httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+}
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -161,9 +280,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseCors("Frontend");
 
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAuthorization();
 
 app.MapControllers();

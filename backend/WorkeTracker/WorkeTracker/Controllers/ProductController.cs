@@ -4,6 +4,7 @@ using Application.Interfaces;
 using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers;
 
@@ -63,6 +64,7 @@ public sealed class ProductController : ControllerBase
 
     [HttpPost]
     [Consumes("multipart/form-data")]
+    [EnableRateLimiting("uploads")]
     public async Task<IActionResult> Create([FromForm] CreateProductDTO dto, CancellationToken ct)
     {
         var product = await _service.CreateProductAsync(dto, ct);
@@ -109,6 +111,7 @@ public sealed class ProductController : ControllerBase
 
     [HttpPost("{productId:int}/images")]
     [Consumes("multipart/form-data")]
+    [EnableRateLimiting("uploads")]
     public async Task<IActionResult> AddImage(int productId, [FromForm] CreateProductImageDTO dto, CancellationToken ct)
     {
         dto.ProductId = productId;
@@ -120,6 +123,7 @@ public sealed class ProductController : ControllerBase
 
     [HttpPut("{productId:int}/images/{imageId:int}")]
     [Consumes("multipart/form-data")]
+    [EnableRateLimiting("uploads")]
     public async Task<IActionResult> UpdateImage(int productId, int imageId, [FromForm] UpdateProductImageDTO dto, CancellationToken ct)
     {
         dto.ProductId = productId;

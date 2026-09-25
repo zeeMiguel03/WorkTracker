@@ -2,6 +2,7 @@ using Application.DTOs.Entry;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers;
 
@@ -43,6 +44,7 @@ public sealed class EntryController : ControllerBase
 
     [HttpPost]
     [Consumes("multipart/form-data")]
+    [EnableRateLimiting("uploads")]
     public async Task<IActionResult> Create([FromForm] CreateEntryDTO dto, CancellationToken ct)
     {
         var entry = await _service.CreateEntryAsync(dto, ct);
@@ -54,6 +56,7 @@ public sealed class EntryController : ControllerBase
 
     [HttpPut("{id:int}")]
     [Consumes("multipart/form-data")]
+    [EnableRateLimiting("uploads")]
     public async Task<IActionResult> Update(int id, [FromForm] UpdateEntryDTO dto, CancellationToken ct)
     {
         dto.Id = id;

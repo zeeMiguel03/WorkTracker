@@ -3,6 +3,7 @@ using Application.DTOs.Source;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers;
 
@@ -51,6 +52,7 @@ public sealed class SourceController : ControllerBase
 
     [HttpPost]
     [Consumes("multipart/form-data")]
+    [EnableRateLimiting("uploads")]
     public async Task<IActionResult> Create([FromForm] CreateSourceDTO dto, CancellationToken ct)
     {
         var source = await _service.CreateSourceAsync(dto, ct);
@@ -62,6 +64,7 @@ public sealed class SourceController : ControllerBase
 
     [HttpPut("{id:int}")]
     [Consumes("multipart/form-data")]
+    [EnableRateLimiting("uploads")]
     public async Task<IActionResult> Update(int id, [FromForm] UpdateSourceDTO dto, CancellationToken ct)
     {
         dto.Id = id;

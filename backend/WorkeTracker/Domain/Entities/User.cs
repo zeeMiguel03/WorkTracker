@@ -55,6 +55,7 @@ namespace Domain.Entities
         public ICollection<RefreshToken> RefreshTokens { get; private set; } = new List<RefreshToken>();
         public ICollection<PurchaseOrder> PurchaseOrders { get; private set; } = new List<PurchaseOrder>();
         public ICollection<Product> Products { get; private set; } = new List<Product>();
+        public ICollection<Entry> Entries { get; private set; } = new List<Entry>();
 
         private User() { }
 

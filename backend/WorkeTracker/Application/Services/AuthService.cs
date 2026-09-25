@@ -93,6 +93,7 @@ namespace Application.Services
 
             var utcNow = DateTime.UtcNow;
             var tokenHash = HashRefreshToken(refreshToken);
+
             var storedToken = await _refreshTokenRepo.GetByHashAsync(tokenHash, cancellationToken);
 
             if (storedToken is null || !storedToken.IsActive(utcNow))
@@ -107,10 +108,18 @@ namespace Application.Services
                 throw new UnauthorizedException("INVALID_REFRESH_TOKEN", "Refresh token is invalid or expired.");
             }
 
-            storedToken.Revoke(utcNow);
-            _refreshTokenRepo.Update(storedToken);
+            try
+            {
+                storedToken.Revoke(utcNow);
 
-            return await CreateAuthenticatedUserAsync(user, storedToken.ExpiresAt, cancellationToken);
+                _refreshTokenRepo.Update(storedToken);
+
+                return await CreateAuthenticatedUserAsync(user, storedToken.ExpiresAt, cancellationToken);
+            }
+            catch (ConcurrencyException)
+            {
+                throw new UnauthorizedException("INVALID_REFRESH_TOKEN", "Refresh token is invalid or expired.");
+            }
         }
 
         public async Task LogoutAsync(string? refreshToken, CancellationToken cancellationToken = default)
