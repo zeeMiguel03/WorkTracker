@@ -14,7 +14,9 @@ namespace Application.Services
     public class ProductService : IProductService
     {
         private const int MaxProductImages = 5;
-        private const int MaxConcurrentProductImageUploads = MaxProductImages;
+        // Keep memory use predictable when a product has several photos.
+        // Image decoding and WebP encoding are memory-intensive operations.
+        private const int MaxConcurrentProductImageUploads = 2;
 
         private readonly IProductRepository _productRepository;
         private readonly ICurrentUserService _currentUserService;
@@ -139,10 +141,7 @@ namespace Application.Services
                         .Select(task => task.Result)
                         .ToList();
 
-                foreach (var imagePath in completedImagePaths)
-                {
-                    await TryDeleteProductImageAsync(imagePath);
-                }
+                await RollbackFailedProductCreationAsync(product, completedImagePaths);
 
                 throw;
             }
@@ -303,6 +302,15 @@ namespace Application.Services
                 throw new DomainException("TOO_MANY_PRODUCT_IMAGES", $"A product can have a maximum of {MaxProductImages} images.");
             }
 
+            // SQL Server has a filtered unique index that allows only one cover.
+            // Persist the old cover removal separately before inserting the new one.
+            if (dto.IsCover && product.Images.Any(image => image.IsCover))
+            {
+                RemoveCurrentCover(product);
+                _productRepository.Update(product);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            }
+
             var imagePath = await UploadAndAttachProductImageAsync(
                 product,
                 dto.Image,
@@ -347,9 +355,11 @@ namespace Application.Services
                         cancellationToken);
                 }
 
-                if (dto.IsCover)
+                if (dto.IsCover && !image.IsCover)
                 {
                     RemoveCurrentCover(product, image.Id);
+                    _productRepository.Update(product);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
                 }
 
                 image.Update(
@@ -393,6 +403,32 @@ namespace Application.Services
 
             var imagePath = image.ImageUrl;
 
+            var replacementCover = image.IsCover
+                ? product.Images
+                    .Where(candidate => candidate.Id != image.Id)
+                    .OrderBy(candidate => candidate.DisplayOrder)
+                    .FirstOrDefault()
+                : null;
+
+            if (image.IsCover)
+            {
+                // Clear the current cover first so the filtered unique index is
+                // never asked to hold two covers in the same SQL statement.
+                image.Update(image.ImageUrl, image.DisplayOrder, isCover: false);
+                _productRepository.Update(product);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                if (replacementCover is not null)
+                {
+                    replacementCover.Update(
+                        replacementCover.ImageUrl,
+                        replacementCover.DisplayOrder,
+                        isCover: true);
+                    _productRepository.Update(product);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                }
+            }
+
             _productRepository.RemoveImage(image);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -414,6 +450,22 @@ namespace Application.Services
             {
                 throw new DomainException("INVALID_IMAGE_ORDER", "The image order is invalid.");
             }
+
+            // SQL Server enforces the unique (product_id, display_order)
+            // index on every row update. Moving image 0 to position 1 while
+            // image 1 is still there would otherwise cause a transient
+            // duplicate-key error. Move every image to a free temporary range
+            // first, then persist the requested final order.
+            var temporaryOrderStart = images.Max(image => image.DisplayOrder) + images.Count + 1;
+
+            for (var index = 0; index < images.Count; index++)
+            {
+                var image = images[index];
+                image.Update(image.ImageUrl, temporaryOrderStart + index, image.IsCover);
+            }
+
+            _productRepository.Update(product);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             for (var index = 0; index < dto.ImageIds.Count; index++)
             {
@@ -473,7 +525,14 @@ namespace Application.Services
                 throw new DomainException("PRODUCT_IMAGE_NOT_FOUND", "Product image was not found.");
             }
 
-            RemoveCurrentCover(product, image.Id);
+            if (image.IsCover)
+            {
+                // Save the old cover removal separately from the new cover
+                // assignment because UX_product_images_cover is unique.
+                RemoveCurrentCover(product, image.Id);
+                _productRepository.Update(product);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            }
 
             image.Update(image.ImageUrl, image.DisplayOrder, isCover: true);
 
@@ -611,6 +670,33 @@ namespace Application.Services
             catch (Exception exception)
             {
                 _logger.LogWarning(exception, "Failed to delete product image {ImagePath}.", imagePath);
+            }
+        }
+
+        private async Task RollbackFailedProductCreationAsync(
+            Product product,
+            IEnumerable<string> imagePaths)
+        {
+            try
+            {
+                // The product is saved before images so it has an identifier for
+                // ProductImage. If image processing or persistence fails, remove
+                // that partial product before the caller compensates its purchase
+                // order and entry.
+                _productRepository.Remove(product);
+                await _unitOfWork.SaveChangesAsync(CancellationToken.None);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(
+                    exception,
+                    "Failed to remove partially created product {ProductId} after image processing failed.",
+                    product.Id);
+            }
+
+            foreach (var imagePath in imagePaths)
+            {
+                await TryDeleteProductImageAsync(imagePath);
             }
         }
 

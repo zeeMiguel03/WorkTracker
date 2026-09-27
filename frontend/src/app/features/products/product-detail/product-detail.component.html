@@ -12,10 +12,10 @@
     <header class="product-detail__header">
       <div>
         <span class="product-detail__eyebrow">Detalhe do produto</span>
-        <h1>{{ product.name }}</h1>
-        <span class="product-detail__status" [class.product-detail__status--sold]="toStatus(product.status) === 'sold'">
-          {{ statusLabel(product.status) }}
-        </span>
+        <div class="product-detail__title-row">
+          <h1>{{ product.name }}</h1>
+          <span class="product-detail__status">{{ statusLabel(product.status) }}</span>
+        </div>
       </div>
 
       <div class="product-detail__actions">
@@ -56,57 +56,92 @@
           <span class="product-detail__hint">Atualiza os dados e guarda no final.</span>
         </div>
 
-        <div class="product-detail__form-grid">
-          <label class="product-detail__field product-detail__field--wide">
-            <span>Nome</span>
-            <input name="name" type="text" [(ngModel)]="editDraft.name" required />
-          </label>
-          <label class="product-detail__field">
-            <span>Categoria</span>
-            <input name="category" type="text" [(ngModel)]="editDraft.category" />
-          </label>
-          <label class="product-detail__field">
-            <span>Marca</span>
-            <input name="brand" type="text" [(ngModel)]="editDraft.brand" />
-          </label>
-          <label class="product-detail__field">
-            <span>Tamanho</span>
-            <input name="size" type="text" [(ngModel)]="editDraft.size" />
-          </label>
-          <label class="product-detail__field">
-            <span>Cor</span>
-            <input name="color" type="text" [(ngModel)]="editDraft.color" />
-          </label>
-          <div class="product-detail__field">
-            <span>Estado</span>
-            <app-dropdown [fullWidth]="true" [options]="statuses" [value]="editDraft.status" (valueChange)="chooseStatus($event)" />
+        <section class="product-detail__image-manager" aria-labelledby="product-images-title">
+          <div class="product-detail__image-manager-heading">
+            <div><h3 id="product-images-title">Fotografias do produto</h3><span>{{ imageOrder().length }} de 5 fotografias</span></div>
           </div>
-          <div class="product-detail__field">
-            <span>Condição</span>
-            <app-dropdown [fullWidth]="true" [options]="conditions" [value]="editDraft.condition" (valueChange)="chooseCondition($event)" />
-          </div>
-          <label class="product-detail__field">
-            <span>Preço de compra</span>
-            <input name="purchasePrice" type="number" min="0" step="0.01" [(ngModel)]="editDraft.purchasePrice" />
-          </label>
-          <label class="product-detail__field">
-            <span>Preço de venda</span>
-            <input name="listingPrice" type="number" min="0" step="0.01" [(ngModel)]="editDraft.listingPrice" />
-          </label>
-          <label class="product-detail__field product-detail__field--wide">
-            <span>Descrição</span>
-            <textarea name="description" rows="3" [(ngModel)]="editDraft.description"></textarea>
-          </label>
-          <label class="product-detail__field product-detail__field--wide">
-            <span>Notas</span>
-            <textarea name="notes" rows="3" [(ngModel)]="editDraft.notes"></textarea>
-          </label>
+          @if (imageOrder().length) {
+            <div class="product-detail__image-editor-grid">
+              @for (image of imageOrder(); track image.id) {
+                <article class="product-detail__image-editor-item" draggable="true" (dragstart)="startImageDrag(image.id, $event)" (dragover)="$event.preventDefault()" (drop)="reorderImages(image.id, $event)">
+                  <div class="product-detail__image-editor-preview">@if (imageUrls()[image.id]) { <img [src]="imageUrls()[image.id]" [alt]="'Fotografia de ' + product.name" /> } @else { <span>A carregar...</span> }</div>
+                  <div class="product-detail__image-editor-actions">
+                    <span [class.product-detail__cover-label]="image.isCover">{{ image.isCover ? 'Capa' : 'Fotografia ' + (image.displayOrder + 1) }}</span>
+                    <div>
+                      <label class="product-detail__image-action" title="Trocar fotografia" [class.product-detail__image-action--disabled]="isSavingImages()">
+                        <input class="product-detail__add-images-input" type="file" accept="image/jpeg,image/png,image/webp" [disabled]="isSavingImages()" (change)="replaceImage(image, $event)" />
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10l-3-3M17 17H7l3 3" /></svg>
+                      </label>
+                      @if (!image.isCover) {
+                        <button type="button" title="Definir como capa" [disabled]="isSavingImages()" (click)="makeCover(image)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.75 5.57 6.15.9-4.45 4.34 1.05 6.13L12 17.05l-5.5 2.89 1.05-6.13L3.1 9.47l6.15-.9L12 3Z" /></svg></button>
+                      }
+                      <button class="product-detail__image-remove" type="button" title="Remover fotografia" [disabled]="isSavingImages()" [attr.aria-label]="'Remover fotografia ' + (image.displayOrder + 1)" (click)="removeImage(image)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6.5 7l.7 13h9.6l.7-13M9 7V4h6v3" /></svg></button>
+                    </div>
+                  </div>
+                </article>
+              }
+              @if (imageOrder().length < 5) {
+                <label class="product-detail__add-image-tile" [class.product-detail__add-image-tile--disabled]="isSavingImages()">
+                  <input class="product-detail__add-images-input" type="file" accept="image/jpeg,image/png,image/webp" multiple [disabled]="isSavingImages()" (change)="onImagesSelected($event)" />
+                  <span aria-hidden="true">+</span><strong>{{ isSavingImages() ? 'A processar...' : 'Adicionar' }}</strong>
+                </label>
+              }
+            </div>
+          } @else {
+            <label class="product-detail__images-empty" [class.product-detail__add-image-tile--disabled]="isSavingImages()">
+              <input class="product-detail__add-images-input" type="file" accept="image/jpeg,image/png,image/webp" multiple [disabled]="isSavingImages()" (change)="onImagesSelected($event)" />
+              <span aria-hidden="true">+</span><strong>{{ isSavingImages() ? 'A processar imagens...' : 'Adicionar fotografias' }}</strong>
+            </label>
+          }
+        </section>
+
+        <div class="product-detail__form-sections">
+          <section class="product-detail__form-section">
+            <div class="product-detail__form-section-heading"><span>01</span><h3>Dados do produto</h3></div>
+            <div class="product-detail__form-grid product-detail__form-grid--details">
+              <label class="product-detail__field product-detail__field--name">
+                <span>Nome</span>
+                <input name="name" type="text" [(ngModel)]="editDraft.name" required />
+              </label>
+              <label class="product-detail__field"><span>Categoria</span><input name="category" type="text" [(ngModel)]="editDraft.category" /></label>
+              <label class="product-detail__field"><span>Marca</span><input name="brand" type="text" [(ngModel)]="editDraft.brand" /></label>
+              <label class="product-detail__field"><span>Tamanho</span><input name="size" type="text" [(ngModel)]="editDraft.size" /></label>
+              <label class="product-detail__field"><span>Cor</span><input name="color" type="text" [(ngModel)]="editDraft.color" /></label>
+            </div>
+          </section>
+
+          <section class="product-detail__form-section product-detail__form-section--compact">
+            <div class="product-detail__form-section-heading"><span>02</span><h3>Estado</h3></div>
+            <div class="product-detail__form-grid">
+              <div class="product-detail__field"><span>Estado do anúncio</span><app-dropdown [fullWidth]="true" [options]="statuses" [value]="editDraft.status" (valueChange)="chooseStatus($event)" /></div>
+              <div class="product-detail__field"><span>Condição do artigo</span><app-dropdown [fullWidth]="true" [options]="conditions" [value]="editDraft.condition" (valueChange)="chooseCondition($event)" /></div>
+            </div>
+          </section>
+
+          <section class="product-detail__form-section">
+            <div class="product-detail__form-section-heading"><span>03</span><h3>Valores</h3></div>
+            <div class="product-detail__form-grid product-detail__form-grid--prices">
+              <label class="product-detail__field"><span>Preço de compra</span><input name="purchasePrice" type="number" min="0" step="0.01" [(ngModel)]="editDraft.purchasePrice" /></label>
+              <label class="product-detail__field"><span>Portes</span><input name="allocatedShippingCost" type="number" min="0" step="0.01" [(ngModel)]="editDraft.allocatedShippingCost" /></label>
+              <label class="product-detail__field"><span>Outros custos</span><input name="allocatedOtherCosts" type="number" min="0" step="0.01" [(ngModel)]="editDraft.allocatedOtherCosts" /></label>
+              <label class="product-detail__field"><span>Preço de venda</span><input name="listingPrice" type="number" min="0" step="0.01" [(ngModel)]="editDraft.listingPrice" /></label>
+              <label class="product-detail__field"><span>Preço mínimo</span><input name="minimumPrice" type="number" min="0" step="0.01" [(ngModel)]="editDraft.minimumPrice" /></label>
+            </div>
+          </section>
+
+          <section class="product-detail__form-section">
+            <div class="product-detail__form-section-heading"><span>04</span><h3>Informação adicional</h3></div>
+            <div class="product-detail__form-grid">
+              <label class="product-detail__field"><span>Descrição</span><textarea name="description" rows="3" [(ngModel)]="editDraft.description"></textarea></label>
+              <label class="product-detail__field"><span>Notas privadas</span><textarea name="notes" rows="3" [(ngModel)]="editDraft.notes"></textarea></label>
+            </div>
+          </section>
         </div>
 
         <div class="product-detail__edit-actions">
           <button class="product-detail__button" type="button" [disabled]="isSaving()" (click)="cancelEditing()">Cancelar</button>
-          <button class="product-detail__button product-detail__button--primary" type="submit" [disabled]="isSaving()">
-            {{ isSaving() ? 'A guardar...' : 'Guardar alterações' }}
+          <button class="product-detail__button product-detail__button--primary" type="submit" [disabled]="isSaving() || isSavingImages()">
+            {{ isSaving() ? 'A guardar...' : isSavingImages() ? 'A processar imagens...' : 'Guardar alterações' }}
           </button>
         </div>
       </form>
@@ -161,8 +196,11 @@
           </div>
           <dl class="product-detail__facts product-detail__facts--financial">
             <div><dt>Preço de compra</dt><dd>{{ formatPrice(product.purchasePrice) }}</dd></div>
+            <div><dt>Portes atribuídos</dt><dd>{{ formatPrice(product.allocatedShippingCost) }}</dd></div>
+            <div><dt>Outros custos</dt><dd>{{ formatPrice(product.allocatedOtherCosts) }}</dd></div>
             <div><dt>{{ toStatus(product.status) === 'sold' ? 'Preço recebido' : 'Preço anunciado' }}</dt><dd>{{ formatPrice(sellingPrice(product)) }}</dd></div>
-            <div><dt>{{ toStatus(product.status) === 'sold' ? 'Lucro realizado' : 'Lucro estimado' }}</dt><dd>{{ formatPrice(profit(product)) }}</dd></div>
+            <div><dt>{{ toStatus(product.status) === 'sold' ? 'Lucro realizado' : 'Lucro estimado' }}</dt><dd [class.product-detail__value--positive]="financialTone(profit(product)) === 'positive'" [class.product-detail__value--negative]="financialTone(profit(product)) === 'negative'">{{ formatPrice(profit(product)) }}</dd></div>
+            <div><dt>{{ toStatus(product.status) === 'sold' ? 'Margem de lucro' : 'Margem estimada' }}</dt><dd [class.product-detail__value--positive]="financialTone(profit(product)) === 'positive'" [class.product-detail__value--negative]="financialTone(profit(product)) === 'negative'">{{ formatPercentage(profitMargin(product)) }}</dd></div>
             @if (toStatus(product.status) === 'sold' && product.saleOtherCosts !== null) {
               <div><dt>Custos da venda</dt><dd>{{ formatPrice(product.saleOtherCosts) }}</dd></div>
             }
@@ -249,4 +287,14 @@
       </div>
     </div>
   </app-modal>
+}
+
+@if (successModal(); as result) {
+  <app-success-modal
+    [open]="true"
+    titleId="product-success-modal-title"
+    [title]="result.title"
+    [message]="result.message"
+    (closed)="closeSuccessModal()"
+  />
 }

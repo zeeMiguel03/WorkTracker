@@ -8,7 +8,6 @@ import { ProductCard } from '../components/product-card/product-card.component';
 import { ProductForm } from '../product-form/product-form.component';
 import { ProductDraft, ProductListItem, ProductListItemApi, ProductStatus } from '../models/product.model';
 import { CreateProductRequest, ProductService } from '../services/product.service';
-import { ProductRelationOptions, ProductRelationsService } from '../services/product-relations.service';
 
 type ProductFilter = 'all' | ProductStatus;
 
@@ -20,7 +19,6 @@ type ProductFilter = 'all' | ProductStatus;
 })
 export class ProductList {
   private readonly productService = inject(ProductService);
-  private readonly productRelationsService = inject(ProductRelationsService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchChanges = new Subject<string>();
@@ -32,12 +30,6 @@ export class ProductList {
   protected readonly productModalOpen = signal(false);
   protected readonly isLoading = signal(false);
   protected readonly isSaving = signal(false);
-  protected readonly relationsLoading = signal(false);
-  protected readonly relationOptions = signal<ProductRelationOptions>({
-    sourceOptions: [],
-    accountOptions: [],
-    transactionTypeOptions: [],
-  });
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly deleteProductId = signal<number | null>(null);
   protected readonly isDeleting = signal(false);
@@ -66,7 +58,6 @@ export class ProductList {
       });
 
     this.loadProducts();
-    this.loadRelationOptions();
   }
 
   protected selectStatus(status: ProductStatus): void {
@@ -152,16 +143,6 @@ export class ProductList {
               ?? 'Não foi possível adicionar o produto.',
           );
         },
-      });
-  }
-
-  private loadRelationOptions(): void {
-    this.relationsLoading.set(true);
-    this.productRelationsService.loadOptions()
-      .pipe(finalize(() => this.relationsLoading.set(false)))
-      .subscribe({
-        next: (options) => this.relationOptions.set(options),
-        error: () => this.errorMessage.set('Não foi possível carregar as fontes e contas.'),
       });
   }
 

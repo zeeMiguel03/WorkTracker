@@ -6,10 +6,19 @@
   [closeOnBackdrop]="false"
   (closed)="closed.emit()"
 >
-  <div modal-icon class="success-modal__icon" aria-hidden="true">
+  <div
+    modal-icon
+    class="success-modal__icon"
+    [class.success-modal__icon--error]="variant() === 'error'"
+    aria-hidden="true"
+  >
     <svg viewBox="0 0 72 72">
       <circle cx="36" cy="36" r="31" />
-      <path d="m21 36 10 10 21-22" />
+      @if (variant() === 'error') {
+        <path d="m25 25 22 22M47 25 25 47" />
+      } @else {
+        <path d="m21 36 10 10 21-22" />
+      }
     </svg>
   </div>
   <div modal-heading class="success-modal__heading">
@@ -17,7 +26,12 @@
   </div>
   <div class="success-modal__body">
     <p>{{ message() }}</p>
-    <button class="success-modal__button" type="button" (click)="closed.emit()">
+    <button
+      class="success-modal__button"
+      [class.success-modal__button--error]="variant() === 'error'"
+      type="button"
+      (click)="closed.emit()"
+    >
       {{ closeLabel() }}
     </button>
   </div>

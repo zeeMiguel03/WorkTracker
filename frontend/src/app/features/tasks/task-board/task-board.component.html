@@ -91,13 +91,15 @@
   <p class="tasks-page__error" role="alert">{{ errorMessage() }}</p>
 }
 
-@if (successModal(); as success) {
+@if (resultModal(); as result) {
   <app-success-modal
     [open]="true"
-    titleId="task-success-modal-title"
-    [title]="success.title"
-    [message]="success.message"
-    (closed)="closeSuccessModal()"
+    titleId="task-result-modal-title"
+    [title]="result.title"
+    [message]="result.message"
+    [variant]="result.variant"
+    [autoClose]="result.variant === 'success'"
+    (closed)="closeResultModal()"
   />
 }
 

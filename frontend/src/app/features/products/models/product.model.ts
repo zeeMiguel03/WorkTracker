@@ -79,16 +79,10 @@ export interface ProductDraft {
   readonly condition: ProductCondition;
   readonly status: ProductStatus;
   readonly purchasePrice: number;
+  readonly allocatedShippingCost: number;
+  readonly allocatedOtherCosts: number;
   readonly listingPrice: number | null;
   readonly minimumPrice: number | null;
-  readonly purchaseSourceId: number | null;
-  readonly purchaseAccountId: number | null;
-  readonly purchaseTransactionTypeId: number | null;
-  readonly purchaseDate: string;
-  readonly purchaseTrackingNumber: string;
-  readonly purchaseShippingCost: number;
-  readonly purchaseOtherCosts: number;
-  readonly purchaseOrderNotes: string;
   readonly images: File[];
 }
 

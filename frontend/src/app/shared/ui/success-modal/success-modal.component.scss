@@ -5,6 +5,10 @@
   color: #32d583;
 }
 
+.success-modal__icon--error {
+  color: #f04438;
+}
+
 .success-modal__icon svg {
   width: 100%;
   height: 100%;
@@ -68,6 +72,16 @@
 .success-modal__button:hover {
   background: #3641f5;
   border-color: #3641f5;
+}
+
+.success-modal__button--error {
+  background: #d92d20;
+  border-color: #d92d20;
+}
+
+.success-modal__button--error:hover {
+  background: #b42318;
+  border-color: #b42318;
 }
 
 @keyframes success-modal-circle {

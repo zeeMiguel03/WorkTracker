@@ -16,16 +16,10 @@ export interface CreateProductRequest {
   readonly condition: ProductCondition;
   readonly status: ProductStatus;
   readonly purchasePrice: number;
+  readonly allocatedShippingCost: number;
+  readonly allocatedOtherCosts: number;
   readonly listingPrice: number | null;
   readonly minimumPrice: number | null;
-  readonly purchaseSourceId: number | null;
-  readonly purchaseAccountId: number | null;
-  readonly purchaseTransactionTypeId: number | null;
-  readonly purchaseDate: string;
-  readonly purchaseTrackingNumber: string;
-  readonly purchaseShippingCost: number;
-  readonly purchaseOtherCosts: number;
-  readonly purchaseOrderNotes: string;
   readonly images: File[];
 }
 
@@ -39,6 +33,8 @@ export interface UpdateProductRequest {
   readonly condition: ProductCondition;
   readonly status: ProductStatus;
   readonly purchasePrice: number;
+  readonly allocatedShippingCost: number;
+  readonly allocatedOtherCosts: number;
   readonly listingPrice: number | null;
   readonly minimumPrice: number | null;
   readonly notes: string;
@@ -52,6 +48,17 @@ export interface SellProductRequest {
   readonly salePrice: number;
   readonly saleOtherCosts: number | null;
   readonly soldAt: string;
+}
+
+interface CreateEntryRequest {
+  readonly sourceId: number;
+  readonly transactionTypeId: number;
+  readonly accountId: number;
+  readonly name: string;
+  readonly description: string | null;
+  readonly quantity: number;
+  readonly value: number;
+  readonly date: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -85,31 +92,11 @@ export class ProductService {
   }
 
   create(data: CreateProductRequest): Observable<unknown> {
-    if (data.purchaseSourceId && data.purchaseAccountId && data.purchaseTransactionTypeId && data.purchaseDate) {
-      return this.createPurchaseEntry(data).pipe(
-        switchMap((entry) => this.createPurchaseOrder(data, entry.id).pipe(
-          switchMap((purchaseOrder) => this.createProduct(data, purchaseOrder.id).pipe(
-            catchError((error) => this.removePurchaseOrder(purchaseOrder.id).pipe(
-              catchError(() => of(void 0)),
-              switchMap(() => throwError(() => error)),
-            )),
-          )),
-          catchError((error) => this.removeEntry(entry.id).pipe(
-            catchError(() => of(void 0)),
-            switchMap(() => throwError(() => error)),
-          )),
-        )),
-      );
-    }
-
     return this.createProduct(data);
   }
 
-  private createProduct(data: CreateProductRequest, purchaseOrderId: number | null = null): Observable<unknown> {
+  private createProduct(data: CreateProductRequest): Observable<unknown> {
     const formData = new FormData();
-    if (purchaseOrderId) {
-      formData.append('PurchaseOrderId', String(purchaseOrderId));
-    }
     formData.append('Name', data.name.trim());
     formData.append('Description', data.description.trim());
     formData.append('Category', data.category.trim());
@@ -119,8 +106,8 @@ export class ProductService {
     formData.append('Condition', String(this.conditionToApi(data.condition)));
     formData.append('Status', String(this.statusToApi(data.status)));
     formData.append('PurchasePrice', String(data.purchasePrice || 0));
-    formData.append('AllocatedShippingCost', String(data.purchaseShippingCost || 0));
-    formData.append('AllocatedOtherCosts', String(data.purchaseOtherCosts || 0));
+    formData.append('AllocatedShippingCost', String(data.allocatedShippingCost || 0));
+    formData.append('AllocatedOtherCosts', String(data.allocatedOtherCosts || 0));
     formData.append('Notes', data.notes.trim());
 
     if (data.listingPrice !== null) {
@@ -146,10 +133,10 @@ export class ProductService {
       Size: data.size.trim() || null,
       Color: data.color.trim() || null,
       Condition: this.conditionToApi(data.condition),
-      Status: this.statusToApi(data.status),
+      Status: Number(this.statusToApi(data.status)),
       PurchasePrice: data.purchasePrice || 0,
-      AllocatedShippingCost: 0,
-      AllocatedOtherCosts: 0,
+      AllocatedShippingCost: data.allocatedShippingCost || 0,
+      AllocatedOtherCosts: data.allocatedOtherCosts || 0,
       ListingPrice: data.listingPrice,
       MinimumPrice: data.minimumPrice,
       Notes: data.notes.trim() || null,
@@ -185,49 +172,40 @@ export class ProductService {
     );
   }
 
-  private createPurchaseEntry(data: CreateProductRequest): Observable<EntryApi> {
-    return this.http.post<EntryApi>(`${environment.apiUrl}/entries`, {
-      SourceId: data.purchaseSourceId,
-      TransactionTypeId: data.purchaseTransactionTypeId,
-      AccountId: data.purchaseAccountId,
-      Name: `Compra: ${data.name.trim()}`,
-      Description: data.description.trim() || null,
-      Quantity: 1,
-      Value: data.purchasePrice || 0,
-      Date: new Date(`${data.purchaseDate}T12:00:00`).toISOString(),
-    }, { withCredentials: true });
-  }
-
-  private createPurchaseOrder(data: CreateProductRequest, entryId: number): Observable<PurchaseOrderApi> {
-    return this.http.post<PurchaseOrderApi>(`${environment.apiUrl}/purchase-orders`, {
-      EntryId: entryId,
-      SourceId: data.purchaseSourceId,
-      TrackingNumber: data.purchaseTrackingNumber.trim() || null,
-      ShippingCost: data.purchaseShippingCost || 0,
-      OtherCosts: data.purchaseOtherCosts || 0,
-      Notes: data.purchaseOrderNotes.trim() || null,
-    }, { withCredentials: true });
-  }
-
   private createSaleEntry(data: SellProductRequest): Observable<EntryApi> {
-    return this.http.post<EntryApi>(`${environment.apiUrl}/entries`, {
-      SourceId: data.sourceId,
-      TransactionTypeId: data.transactionTypeId,
-      AccountId: data.accountId,
-      Name: `Venda: ${data.productName.trim()}`,
-      Description: `Venda do produto ${data.productName.trim()}`,
-      Quantity: 1,
-      Value: data.salePrice,
-      Date: data.soldAt,
-    }, { withCredentials: true });
+    return this.createEntry({
+      sourceId: data.sourceId,
+      transactionTypeId: data.transactionTypeId,
+      accountId: data.accountId,
+      name: `Venda: ${data.productName.trim()}`,
+      description: `Venda do produto ${data.productName.trim()}`,
+      quantity: 1,
+      value: data.salePrice,
+      date: data.soldAt,
+    });
+  }
+
+  private createEntry(data: CreateEntryRequest): Observable<EntryApi> {
+    const formData = new FormData();
+    formData.append('SourceId', String(data.sourceId));
+    formData.append('TransactionTypeId', String(data.transactionTypeId));
+    formData.append('AccountId', String(data.accountId));
+    formData.append('Name', data.name);
+    formData.append('Quantity', String(data.quantity));
+    formData.append('Value', String(data.value));
+    formData.append('Date', data.date);
+
+    if (data.description) {
+      formData.append('Description', data.description);
+    }
+
+    return this.http.post<EntryApi>(`${environment.apiUrl}/entries`, formData, {
+      withCredentials: true,
+    });
   }
 
   private removeEntry(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/entries/${id}`, { withCredentials: true });
-  }
-
-  private removePurchaseOrder(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/purchase-orders/${id}`, { withCredentials: true });
   }
 
   getImage(productId: number, imageId: number): Observable<Blob> {
@@ -235,6 +213,38 @@ export class ProductService {
       withCredentials: true,
       responseType: 'blob',
     });
+  }
+
+  addImage(productId: number, image: File, displayOrder: number, isCover: boolean): Observable<void> {
+    const formData = new FormData();
+    formData.append('Image', image, image.name);
+    formData.append('DisplayOrder', String(displayOrder));
+    formData.append('IsCover', String(isCover));
+
+    return this.http.post<void>(`${this.endpoint}/${productId}/images`, formData, { withCredentials: true });
+  }
+
+  replaceImage(productId: number, imageId: number, image: File, displayOrder: number, isCover: boolean): Observable<void> {
+    const formData = new FormData();
+    formData.append('Image', image, image.name);
+    formData.append('DisplayOrder', String(displayOrder));
+    formData.append('IsCover', String(isCover));
+
+    return this.http.put<void>(`${this.endpoint}/${productId}/images/${imageId}`, formData, { withCredentials: true });
+  }
+
+  removeImage(productId: number, imageId: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpoint}/${productId}/images/${imageId}`, { withCredentials: true });
+  }
+
+  setCoverImage(productId: number, imageId: number): Observable<void> {
+    return this.http.patch<void>(`${this.endpoint}/${productId}/images/${imageId}/cover`, null, { withCredentials: true });
+  }
+
+  reorderImages(productId: number, imageIds: readonly number[]): Observable<void> {
+    return this.http.patch<void>(`${this.endpoint}/${productId}/images/order`, {
+      ImageIds: imageIds,
+    }, { withCredentials: true });
   }
 
   private statusToApi(status: ProductStatus): string {
@@ -247,9 +257,5 @@ export class ProductService {
 }
 
 interface EntryApi {
-  readonly id: number;
-}
-
-interface PurchaseOrderApi {
   readonly id: number;
 }

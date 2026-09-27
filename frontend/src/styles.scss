@@ -154,6 +154,42 @@ html:not(.dark) .task-column__count {
   border-color: var(--app-border-strong) !important;
 }
 
+html:not(.dark) .task-card__meta {
+  border-bottom-color: var(--app-border) !important;
+}
+
+/* Mantém os scrollbars do quadro de tarefas visíveis, mas suaves, no modo claro. */
+html:not(.dark) .tasks-board,
+html:not(.dark) .task-column__cards {
+  scrollbar-color: #98a2b3 #f2f4f7;
+}
+
+html:not(.dark) .tasks-board::-webkit-scrollbar {
+  height: 9px;
+}
+
+html:not(.dark) .task-column__cards::-webkit-scrollbar {
+  width: 9px;
+}
+
+html:not(.dark) .tasks-board::-webkit-scrollbar-track,
+html:not(.dark) .task-column__cards::-webkit-scrollbar-track {
+  background: #f2f4f7;
+  border-radius: 999px;
+}
+
+html:not(.dark) .tasks-board::-webkit-scrollbar-thumb,
+html:not(.dark) .task-column__cards::-webkit-scrollbar-thumb {
+  background: #98a2b3;
+  border: 2px solid #f2f4f7;
+  border-radius: 999px;
+}
+
+html:not(.dark) .tasks-board::-webkit-scrollbar-thumb:hover,
+html:not(.dark) .task-column__cards::-webkit-scrollbar-thumb:hover {
+  background: #667085;
+}
+
 html:not(.dark) .tasks-search input {
   color: var(--app-text) !important;
   background: transparent !important;
@@ -712,6 +748,179 @@ html:not(.dark) .products-catalog__state strong {
   color: var(--app-text) !important;
 }
 
+/* Products: cards previously retained their dark body in light mode. */
+html:not(.dark) .product-card {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+  box-shadow: 0 5px 14px rgb(16 24 40 / 5%) !important;
+}
+
+html:not(.dark) .product-card:hover {
+  border-color: #98a2b3 !important;
+  box-shadow: 0 14px 28px rgb(16 24 40 / 10%) !important;
+}
+
+html:not(.dark) .product-card__image,
+html:not(.dark) .product-card__image-placeholder {
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .product-card__image-placeholder {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .product-card h3,
+html:not(.dark) .product-card__heading strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .product-card__meta {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .product-card__menu-trigger {
+  color: var(--app-text-secondary) !important;
+  background: rgb(255 255 255 / 90%) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .product-card__menu-list {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+  box-shadow: 0 14px 28px rgb(16 24 40 / 16%) !important;
+}
+
+html:not(.dark) .product-card__menu-list button {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .product-card__menu-list button:hover {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+}
+
+html:not(.dark) .product-detail__summary-top,
+html:not(.dark) .product-detail__facts div {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .product-detail__image-manager,
+html:not(.dark) .product-detail__image-editor-item {
+  background: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .product-detail__add-image-tile,
+html:not(.dark) .product-detail__images-empty {
+  background: linear-gradient(145deg, #eef2ff, #f7f8ff) !important;
+  border-color: #a5b4fc !important;
+}
+
+html:not(.dark) .product-detail__image-editor-preview {
+  background: var(--app-surface) !important;
+}
+
+html:not(.dark) .product-detail__image-editor-actions {
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .product-detail__image-editor-actions button {
+  color: #465fff !important;
+  background: transparent !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .product-detail__image-action {
+  color: var(--app-text-muted) !important;
+  background: transparent !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .product-detail__image-action:hover {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: #98a2b3 !important;
+}
+
+html:not(.dark) .product-detail__image-editor-actions button:hover:not(:disabled) {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: #98a2b3 !important;
+}
+
+html:not(.dark) .product-detail__cover-label {
+  color: #3641d8 !important;
+  background: #eef2ff !important;
+  border-color: #c7d2fe !important;
+}
+
+html:not(.dark) .product-detail__image-editor-actions > span:not(.product-detail__cover-label),
+html:not(.dark) .product-detail__add-image-tile,
+html:not(.dark) .product-detail__images-empty {
+  color: #5261c9 !important;
+}
+
+html:not(.dark) .product-detail__add-image-tile > span,
+html:not(.dark) .product-detail__images-empty > span {
+  color: #fff !important;
+  background: #465fff !important;
+  border-color: #465fff !important;
+}
+
+html:not(.dark) .product-detail__add-image-tile strong,
+html:not(.dark) .product-detail__images-empty strong {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .product-detail__add-image-tile:hover,
+html:not(.dark) .product-detail__images-empty:hover {
+  background: linear-gradient(145deg, #e0e7ff, #f3f4ff) !important;
+  border-color: #7592ff !important;
+}
+
+html:not(.dark) .product-detail__image-editor-actions .product-detail__image-remove {
+  color: #d92d20 !important;
+  background: transparent !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .product-detail__image-editor-actions .product-detail__image-remove:hover:not(:disabled) {
+  color: #b42318 !important;
+  background: #fff1f2 !important;
+  border-color: rgb(180 35 24 / 40%) !important;
+}
+
+html:not(.dark) .product-detail__image-manager h3 {
+  color: var(--app-text) !important;
+}
+
+html:not(.dark) .product-detail__form-section {
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .product-detail__form-section-heading h3,
+html:not(.dark) .product-detail__field > span {
+  color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .product-detail__form-section-heading > span {
+  color: #3641d8 !important;
+  background: #eef2ff !important;
+}
+
+html:not(.dark) .product-detail__field input,
+html:not(.dark) .product-detail__field textarea {
+  color: var(--app-text) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .product-detail__image-manager > p {
+  color: var(--app-text-muted) !important;
+}
+
 html:not(.dark) .product-form__step-heading h3,
 html:not(.dark) .product-form__section-heading h2 {
   color: var(--app-text) !important;
@@ -936,6 +1145,14 @@ html:not(.dark) .source-card,
 html:not(.dark) .task-card,
 html:not(.dark) .entry-table {
   color: var(--app-text-secondary) !important;
+}
+
+html:not(.dark) .product-detail__facts dd.product-detail__value--positive {
+  color: #067647 !important;
+}
+
+html:not(.dark) .product-detail__facts dd.product-detail__value--negative {
+  color: #b42318 !important;
 }
 
 html:not(.dark) small,

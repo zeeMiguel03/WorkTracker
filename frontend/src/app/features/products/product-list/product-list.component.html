@@ -70,17 +70,13 @@
 </main>
 
 @if (productModalOpen()) {
-  <app-modal [open]="true" titleId="product-modal-title" size="default" [closeOnBackdrop]="!isSaving()" (closed)="closeProductModal()">
+  <app-modal [open]="true" titleId="product-modal-title" size="large" [closeOnBackdrop]="!isSaving()" (closed)="closeProductModal()">
     <div modal-heading class="products-modal__heading">
-      <h2 id="product-modal-title">Adicionar produto</h2>
+      <h2 id="product-modal-title">Novo produto</h2>
     </div>
     <app-product-form
       [saving]="isSaving()"
       [errorMessage]="errorMessage()"
-      [relationsLoading]="relationsLoading()"
-      [sourceOptions]="relationOptions().sourceOptions"
-      [accountOptions]="relationOptions().accountOptions"
-      [transactionTypeOptions]="relationOptions().transactionTypeOptions"
       (submitted)="saveProduct($event)"
       (cancelled)="closeProductModal()"
     />

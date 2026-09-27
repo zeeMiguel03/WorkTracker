@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D4933AE0-7A8B-DB9A-6CFF-C0DB8751C78E}|WorkeTracker\\API.csproj|c:\\users\\win11\\desktop\\worktracker\\worktracker\\backend\\worketracker\\worketracker\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D4933AE0-7A8B-DB9A-6CFF-C0DB8751C78E}|WorkeTracker\\API.csproj|solutionrelative:worketracker\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|c:\\users\\win11\\desktop\\worktracker\\worktracker\\backend\\worketracker\\application\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F80C4E72-27A0-12B5-0634-DD5C11CFB0C1}|Application\\Application.csproj|solutionrelative:application\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,14 +35,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\Program.cs",
-              "RelativeDocumentMoniker": "WorkeTracker\\Program.cs",
-              "ToolTip": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\WorkeTracker\\Program.cs",
-              "RelativeToolTip": "WorkeTracker\\Program.cs",
-              "ViewState": "AgIAAN4AAAAAAAAAAAAAAPsAAAAiAAAAAAAAAA==",
+              "Title": "UserService.cs",
+              "DocumentMoniker": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Services\\UserService.cs",
+              "RelativeDocumentMoniker": "Application\\Services\\UserService.cs",
+              "ToolTip": "C:\\Users\\win11\\Desktop\\WorkTracker\\WorkTracker\\backend\\WorkeTracker\\Application\\Services\\UserService.cs",
+              "RelativeToolTip": "Application\\Services\\UserService.cs",
+              "ViewState": "AgIAAJcAAAAAAAAAAAApwLYAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-24T23:59:10.72Z",
+              "WhenOpened": "2026-09-27T22:07:19.565Z",
               "EditorCaption": ""
             }
           ]

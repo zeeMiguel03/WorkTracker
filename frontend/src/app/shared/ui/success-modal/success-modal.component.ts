@@ -17,12 +17,14 @@ export class SuccessModal implements OnDestroy {
   readonly title = input.required<string>();
   readonly message = input.required<string>();
   readonly closeLabel = input('Fechar');
+  readonly variant = input<'success' | 'error'>('success');
+  readonly autoClose = input(true);
   readonly closed = output<void>();
 
   private readonly autoCloseEffect = effect(() => {
     this.clearAutoCloseTimer();
 
-    if (this.open()) {
+    if (this.open() && this.autoClose()) {
       this.autoCloseTimer = setTimeout(() => {
         this.autoCloseTimer = null;
         this.closed.emit();

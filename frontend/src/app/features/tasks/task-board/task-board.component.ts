@@ -75,9 +75,10 @@ export class TaskBoard implements OnDestroy, OnInit {
   protected readonly selectedStatus = signal<TaskStatus | null>(null);
   protected readonly defaultStatusId = signal<number | null>(null);
   protected readonly deleteTarget = signal<DeleteTarget | null>(null);
-  protected readonly successModal = signal<{
+  protected readonly resultModal = signal<{
     readonly title: string;
     readonly message: string;
+    readonly variant: 'success' | 'error';
   } | null>(null);
   private profileImageObjectUrl: string | null = null;
   private profileImageRequest: Subscription | null = null;
@@ -381,8 +382,14 @@ export class TaskBoard implements OnDestroy, OnInit {
         this.loadBoard();
       },
       error: (error: HttpErrorResponse) => {
-        this.errorMessage.set(this.getErrorMessage(error, 'Não foi possível concluir a operação.'));
         this.isSaving.set(false);
+        this.deleteTarget.set(null);
+        this.showError(
+          target.type === 'status' && error.error?.code === 'TASK_STATUS_IN_USE'
+            ? 'Não é possível apagar a coluna'
+            : 'Não foi possível concluir a operação',
+          this.getDeleteErrorMessage(error, target),
+        );
       },
     });
   }
@@ -483,8 +490,8 @@ export class TaskBoard implements OnDestroy, OnInit {
     return this.isColumnData(drag.data);
   }
 
-  protected closeSuccessModal(): void {
-    this.successModal.set(null);
+  protected closeResultModal(): void {
+    this.resultModal.set(null);
   }
 
   private updateCompletion(taskId: number, reopen: boolean): void {
@@ -664,10 +671,22 @@ export class TaskBoard implements OnDestroy, OnInit {
   }
 
   private showSuccess(title: string, message: string): void {
-    this.successModal.set({ title, message });
+    this.resultModal.set({ title, message, variant: 'success' });
+  }
+
+  private showError(title: string, message: string): void {
+    this.resultModal.set({ title, message, variant: 'error' });
   }
 
   private getErrorMessage(error: HttpErrorResponse, fallback: string): string {
     return error.error?.detail ?? error.error?.message ?? error.error?.title ?? fallback;
+  }
+
+  private getDeleteErrorMessage(error: HttpErrorResponse, target: DeleteTarget): string {
+    if (target.type === 'status' && error.error?.code === 'TASK_STATUS_IN_USE') {
+      return 'Não é possível apagar esta coluna porque ainda contém tarefas. Move ou apaga as tarefas primeiro.';
+    }
+
+    return this.getErrorMessage(error, 'Não foi possível concluir a operação.');
   }
 }

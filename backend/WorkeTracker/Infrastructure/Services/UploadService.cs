@@ -394,17 +394,14 @@ namespace Infrastructure.Services
                 {
                     Configuration = ImageConfiguration,
                     MaxFrames = 1,
-                    SkipMetadata = false,
-
-                    // Supported decoders can reduce memory and CPU usage
-                    // by decoding toward this target size.
-                    TargetSize = new Size(
-                        _options.OutputMaxWidth,
-                        _options.OutputMaxHeight)
+                    SkipMetadata = false
                 };
 
                 // Fully decode the image. A file with a valid header but
-                // corrupted image data will fail at this stage.
+                // corrupted image data will fail at this stage. Resize only
+                // after decoding when it exceeds the configured output size;
+                // a decoder target size may upscale smaller photos and waste
+                // memory before this check.
                 image = await Image.LoadAsync(loadOptions, inputStream, cancellationToken);
             }
             catch (OperationCanceledException)

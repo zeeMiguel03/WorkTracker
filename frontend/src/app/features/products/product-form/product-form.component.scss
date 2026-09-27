@@ -1,13 +1,14 @@
 :host { display: block; }
 * { box-sizing: border-box; }
 .product-form { display: grid; gap: 16px; }
+.product-form__layout { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(340px, .88fr); gap: 16px; align-items: start; }
 .product-form__intro { display: flex; align-items: center; gap: 11px; padding: 12px 13px; background: rgba(70,95,255,.09); border: 1px solid rgba(117,146,255,.2); border-radius: 9px; }
 .product-form__intro-icon { display: grid; width: 28px; height: 28px; place-items: center; color: #fff; background: #465fff; border-radius: 8px; font-size: 18px; }
 .product-form__intro strong, .product-form__intro p { display: block; margin: 0; }
 .product-form__intro strong { color: #f2f4f7; font-size: 12px; }
 .product-form__intro p { margin-top: 3px; color: #98a2b3; font-size: 11px; }
 .product-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
-.product-form__grid--prices { grid-template-columns: 1fr 1fr 1fr; }
+.product-form__grid--prices { grid-template-columns: 1fr 1fr; }
 .product-form__field { display: grid; gap: 6px; min-width: 0; }
 .product-form__field--wide { grid-column: 1 / -1; }
 .product-form__field label { color: #d0d5dd; font-size: 11px; font-weight: 650; }
@@ -32,7 +33,7 @@
 .product-form__relations-state { padding: 12px; color: #98a2b3; background: #151f2e; border: 1px dashed #344054; border-radius: 8px; font-size: 11px; text-align: center; }
 .product-form__error { padding: 11px 12px; color: #fda29b; background: rgba(217,45,32,.1); border: 1px solid rgba(253,162,155,.3); border-radius: 8px; font-size: 11px; }
 .product-form__money-input { position: relative; }
-.product-form__money-input span { position: absolute; top: 50%; left: 11px; color: #98a2b3; font-size: 12px; transform: translateY(-50%); }
+.product-form__money-input b { position: absolute; top: 50%; left: 11px; color: #98a2b3; font-size: 12px; font-weight: 600; transform: translateY(-50%); }
 .product-form__money-input input { padding-left: 25px; appearance: textfield; }
 .product-form__money-input input::-webkit-inner-spin-button, .product-form__money-input input::-webkit-outer-spin-button { appearance: none; }
 .product-form__field--images { gap: 8px; }
@@ -76,8 +77,5 @@
 .product-form__next { color: #fff; background: #465fff; border: 1px solid #465fff; }
 .product-form__previous:disabled, .product-form__next:disabled { opacity: .6; cursor: wait; }
 
-@keyframes product-step-in {
-  from { opacity: .55; transform: translateY(3px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@media (max-width: 760px) { .product-form__layout { grid-template-columns: 1fr; } }
 
