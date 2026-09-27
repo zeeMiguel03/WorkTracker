@@ -5,6 +5,7 @@ import { switchMap } from 'rxjs';
 import { Auth } from '../../auth/auth.service';
 import { FilePicker } from '../../../shared/ui/file-picker/file-picker.component';
 import { Modal } from '../../../shared/ui/modal/modal.component';
+import { getPasswordStrengthError } from '../../../shared/security/password-policy';
 
 @Component({
   imports: [RouterLink, FilePicker, Modal],
@@ -209,8 +210,10 @@ export class Profile implements OnDestroy {
     const newPassword = (form.elements.namedItem('newPassword') as HTMLInputElement).value;
     const confirmPassword = (form.elements.namedItem('confirmPassword') as HTMLInputElement).value;
 
-    if (newPassword.length < 8) {
-      this.passwordError.set('A nova password deve ter pelo menos 8 caracteres.');
+    const passwordStrengthError = getPasswordStrengthError(newPassword);
+
+    if (passwordStrengthError) {
+      this.passwordError.set(passwordStrengthError);
       return;
     }
 

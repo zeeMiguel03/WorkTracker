@@ -47,10 +47,7 @@ namespace Application.Services
         {
             var createdByUserId = _currentUserService.GetUserIdOrNull();
 
-            if (string.IsNullOrWhiteSpace(user.Password))
-            {
-                throw new DomainException("PASSWORD_REQUIRED", "Password is required.");
-            }
+            ValidatePasswordStrength(user.Password);
 
             await ValidateUserDoesNotExistAsync(user.Email, cancellationToken);
 
@@ -183,6 +180,8 @@ namespace Application.Services
                 throw new DomainException("PASSWORD_REQUIRED", "New password is required.");
             }
 
+            ValidatePasswordStrength(password.NewPassword);
+
             var passwordHash = _passwordHasher.HashPassword(myUser, password.NewPassword);
 
             myUser.SetPasswordHash(passwordHash);
@@ -306,6 +305,47 @@ namespace Application.Services
             if (result == PasswordVerificationResult.Failed)
             {
                 throw new UnauthorizedException("INVALID_PASSWORD", "Password doesn't match");
+            }
+        }
+
+        private static void ValidatePasswordStrength(string password)
+        {
+            const int minimumLength = 12;
+            const int maximumLength = 128;
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new DomainException("PASSWORD_REQUIRED", "Password is required.");
+            }
+
+            if (password.Length < minimumLength)
+            {
+                throw new DomainException("PASSWORD_TOO_SHORT", $"Password must have at least {minimumLength} characters.");
+            }
+
+            if (password.Length > maximumLength)
+            {
+                throw new DomainException("PASSWORD_TOO_LONG", $"Password cannot exceed {maximumLength} characters.");
+            }
+
+            if (!password.Any(char.IsLower))
+            {
+                throw new DomainException("PASSWORD_LOWERCASE_REQUIRED", "Password must include at least one lowercase letter.");
+            }
+
+            if (!password.Any(char.IsUpper))
+            {
+                throw new DomainException("PASSWORD_UPPERCASE_REQUIRED", "Password must include at least one uppercase letter.");
+            }
+
+            if (!password.Any(char.IsDigit))
+            {
+                throw new DomainException("PASSWORD_DIGIT_REQUIRED", "Password must include at least one number.");
+            }
+
+            if (!password.Any(character => !char.IsLetterOrDigit(character)))
+            {
+                throw new DomainException("PASSWORD_SYMBOL_REQUIRED", "Password must include at least one symbol.");
             }
         }
 

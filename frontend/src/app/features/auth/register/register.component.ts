@@ -8,6 +8,10 @@ import { Auth } from '../auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FilePicker } from '../../../shared/ui/file-picker/file-picker.component';
 import { ThemeToggle } from '../../../shared/ui/theme-toggle/theme-toggle.component';
+import {
+  getPasswordStrengthError,
+  PASSWORD_MIN_LENGTH,
+} from '../../../shared/security/password-policy';
 
 @Component({
   imports: [NgOptimizedImage, RouterLink, FormField, FilePicker, ThemeToggle],
@@ -39,7 +43,7 @@ export class Register {
     email(fields.email, { message: 'Enter a valid email address.' });
 
     required(fields.password, { message: 'Password is required.' });
-    minLength(fields.password, 8, { message: 'Password must contain at least 8 characters.', });
+    minLength(fields.password, PASSWORD_MIN_LENGTH, { message: 'A password deve ter pelo menos 12 caracteres.', });
 
     required(fields.confirmPassword, { message: 'Please confirm your password.', });
 
@@ -58,6 +62,13 @@ export class Register {
 
     if (this.registerForm().invalid()) {
       this.errorMessage.set('Please complete all required fields.');
+      return;
+    }
+
+    const passwordStrengthError = getPasswordStrengthError(values.password);
+
+    if (passwordStrengthError) {
+      this.errorMessage.set(passwordStrengthError);
       return;
     }
 
