@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260929202011_RemoveAccountsAndEntries")]
+    partial class RemoveAccountsAndEntries
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,13 +99,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("purchase_price");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion")
-                        .HasColumnName("row_version");
-
                     b.Property<decimal?>("SaleOtherCosts")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("sale_other_costs");
@@ -143,8 +139,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("PurchaseOrderId");
 
                     b.HasIndex("SaleSourceId");
-
-                    b.HasIndex("UserId", "Status");
 
                     b.HasIndex("UserId", "CreatedAt", "Id");
 
@@ -195,77 +189,6 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("product_images");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProductSale", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("AllocatedOtherCosts")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("allocated_other_costs");
-
-                    b.Property<decimal>("AllocatedShippingCost")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("allocated_shipping_cost");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("product_id");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("product_name");
-
-                    b.Property<decimal>("PurchasePrice")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("purchase_price");
-
-                    b.Property<DateOnly>("SaleDate")
-                        .HasColumnType("date")
-                        .HasColumnName("sale_date");
-
-                    b.Property<decimal>("SaleOtherCosts")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("sale_other_costs");
-
-                    b.Property<decimal>("SalePrice")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("sale_price");
-
-                    b.Property<int?>("SaleSourceId")
-                        .HasColumnType("int")
-                        .HasColumnName("sale_source_id");
-
-                    b.Property<string>("SaleSourceName")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("sale_source_name");
-
-                    b.Property<DateTime>("SoldAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("sold_at");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique()
-                        .HasFilter("[product_id] IS NOT NULL");
-
-                    b.HasIndex("UserId", "SaleDate", "Id");
-
-                    b.ToTable("product_sales");
                 });
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrder", b =>
@@ -641,20 +564,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProductSale", b =>
-                {
-                    b.HasOne("Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.PurchaseOrder", b =>

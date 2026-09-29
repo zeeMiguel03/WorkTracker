@@ -45,8 +45,6 @@ namespace Domain.Entities
         [ForeignKey(nameof(UserId))]
         public User User { get; private set; } = null!;
 
-        public ICollection<Entry> Entries { get; private set; } = new List<Entry>();
-
         public ICollection<Tasks> Tasks { get; private set; } = new List<Tasks>();
 
         private Source() { }

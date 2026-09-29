@@ -7,7 +7,7 @@ import { concatMap, finalize, from, of, Subscription, switchMap, toArray } from 
 import { Modal } from '../../../shared/ui/modal/modal.component';
 import { SuccessModal } from '../../../shared/ui/success-modal/success-modal.component';
 import { Dropdown, DropdownOption } from '../../../shared/ui/dropdown/dropdown.component';
-import { ProductTransactionFields } from '../components/product-transaction-fields/product-transaction-fields.component';
+import { portugalSaleDateInstant } from '../../../shared/util/portugal-calendar';
 import {
   ProductCondition,
   ProductDetailsApi,
@@ -36,15 +36,13 @@ interface ProductEditDraft {
 
 interface ProductSellDraft {
   sourceId: number | null;
-  accountId: number | null;
-  transactionTypeId: number | null;
   salePrice: number;
   saleOtherCosts: number | null;
   soldAt: string;
 }
 
 @Component({
-  imports: [FormsModule, RouterLink, Dropdown, Modal, SuccessModal, ProductTransactionFields],
+  imports: [FormsModule, RouterLink, Dropdown, Modal, SuccessModal],
   selector: 'app-product-detail',
   styleUrl: './product-detail.component.scss',
   templateUrl: './product-detail.component.html',
@@ -71,8 +69,6 @@ export class ProductDetail implements OnInit, OnDestroy {
   protected readonly relationsLoading = signal(false);
   protected readonly relationOptions = signal<ProductRelationOptions>({
     sourceOptions: [],
-    accountOptions: [],
-    transactionTypeOptions: [],
   });
 
   protected editDraft: ProductEditDraft = this.emptyDraft();
@@ -183,13 +179,8 @@ export class ProductDetail implements OnInit, OnDestroy {
       return;
     }
 
-    const saleTransaction = this.relationOptions().transactionTypeOptions.find((option) => option.label.toLowerCase().includes('venda'))
-      ?? this.relationOptions().transactionTypeOptions[0];
-
     this.sellDraft = {
       sourceId: this.relationOptions().sourceOptions[0] ? Number(this.relationOptions().sourceOptions[0].value) : null,
-      accountId: this.relationOptions().accountOptions[0] ? Number(this.relationOptions().accountOptions[0].value) : null,
-      transactionTypeId: saleTransaction ? Number(saleTransaction.value) : null,
       salePrice: product.listingPrice ?? product.purchasePrice,
       saleOtherCosts: null,
       soldAt: this.todayInputValue(),
@@ -199,11 +190,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   }
 
   protected chooseSaleSource(value: string): void {
-    this.sellDraft = { ...this.sellDraft, sourceId: Number(value) };
-  }
-
-  protected chooseSaleAccount(value: string): void {
-    this.sellDraft = { ...this.sellDraft, accountId: Number(value) };
+    this.sellDraft = { ...this.sellDraft, sourceId: value ? Number(value) : null };
   }
 
   protected cancelSell(): void {
@@ -218,26 +205,20 @@ export class ProductDetail implements OnInit, OnDestroy {
       this.isSelling()
       || this.sellDraft.salePrice < 0
       || !this.sellDraft.soldAt
-      || !this.sellDraft.sourceId
-      || !this.sellDraft.accountId
-      || !this.sellDraft.transactionTypeId
     ) {
-      if (!this.sellDraft.sourceId || !this.sellDraft.accountId || !this.sellDraft.transactionTypeId) {
-        this.errorMessage.set('Seleciona o canal e a conta da venda.');
+      if (!this.sellDraft.soldAt) {
+        this.errorMessage.set('Indica a data da venda.');
       }
       return;
     }
 
     const request: SellProductRequest = {
-      productName: this.product()?.name ?? 'Produto',
       sourceId: this.sellDraft.sourceId,
-      accountId: this.sellDraft.accountId,
-      transactionTypeId: this.sellDraft.transactionTypeId,
       salePrice: Number(this.sellDraft.salePrice) || 0,
       saleOtherCosts: this.sellDraft.saleOtherCosts === null || this.sellDraft.saleOtherCosts === undefined
         ? null
         : Number(this.sellDraft.saleOtherCosts),
-      soldAt: new Date(`${this.sellDraft.soldAt}T12:00:00`).toISOString(),
+      soldAt: portugalSaleDateInstant(this.sellDraft.soldAt),
     };
 
     this.isSelling.set(true);
@@ -516,7 +497,7 @@ export class ProductDetail implements OnInit, OnDestroy {
       .pipe(finalize(() => this.relationsLoading.set(false)))
       .subscribe({
         next: (options) => this.relationOptions.set(options),
-        error: () => this.errorMessage.set('Não foi possível carregar as fontes e contas.'),
+        error: () => this.errorMessage.set('Não foi possível carregar os canais de venda.'),
       });
   }
 
@@ -617,8 +598,6 @@ export class ProductDetail implements OnInit, OnDestroy {
   private emptySellDraft(): ProductSellDraft {
     return {
       sourceId: null,
-      accountId: null,
-      transactionTypeId: null,
       salePrice: 0,
       saleOtherCosts: null,
       soldAt: this.todayInputValue(),

@@ -27,6 +27,7 @@ export class Dropdown implements OnDestroy {
   readonly value = input('');
   readonly fullWidth = input(false);
   readonly openUp = input(false);
+  readonly ariaLabel = input('');
   readonly valueChange = output<string>();
 
   protected readonly isOpen = signal(false);

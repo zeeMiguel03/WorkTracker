@@ -194,7 +194,6 @@ export class OrderService {
 
   private orderPayload(draft: OrderDraft): object {
     return {
-      EntryId: null,
       SourceId: draft.sourceId,
       TrackingNumber: draft.trackingNumber.trim() || null,
       ShippingCost: draft.shippingCost,

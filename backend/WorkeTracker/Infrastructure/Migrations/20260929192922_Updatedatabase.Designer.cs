@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260929192922_Updatedatabase")]
+    partial class Updatedatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,157 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.Entities.Account", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int")
+                        .HasColumnName("account_type");
+
+                    b.Property<string>("BankName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)")
+                        .HasColumnName("bank_name");
+
+                    b.Property<string>("CardBrand")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("card_brand");
+
+                    b.Property<string>("Color")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("color");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("IconKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("icon_key");
+
+                    b.Property<bool>("IncludeInTotal")
+                        .HasColumnType("bit")
+                        .HasColumnName("include_in_total");
+
+                    b.Property<decimal>("InitialBalance")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("initial_balance");
+
+                    b.Property<string>("Last4")
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)")
+                        .HasColumnName("last4");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.Property<int?>("UtCreation")
+                        .HasColumnType("int")
+                        .HasColumnName("ut_creation");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.HasIndex("UserId", "Name", "Id");
+
+                    b.ToTable("accounts");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Entry", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int")
+                        .HasColumnName("account_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("date");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("image_url");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)")
+                        .HasColumnName("name");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("quantity");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("int")
+                        .HasColumnName("source_id");
+
+                    b.Property<int>("TransactionTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("transaction_type_id");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.Property<int?>("UtCreation")
+                        .HasColumnType("int")
+                        .HasColumnName("ut_creation");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceId");
+
+                    b.HasIndex("TransactionTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("AccountId", "Date");
+
+                    b.HasIndex("AccountId", "SourceId");
+
+                    b.HasIndex("AccountId", "TransactionTypeId");
+
+                    b.ToTable("entries");
+                });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
@@ -96,12 +250,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("purchase_price");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion")
-                        .HasColumnName("row_version");
+                    b.Property<int?>("SaleEntryId")
+                        .HasColumnType("int")
+                        .HasColumnName("sale_entry_id");
 
                     b.Property<decimal?>("SaleOtherCosts")
                         .HasColumnType("decimal(18,2)")
@@ -142,9 +293,11 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PurchaseOrderId");
 
-                    b.HasIndex("SaleSourceId");
+                    b.HasIndex("SaleEntryId")
+                        .IsUnique()
+                        .HasFilter("[sale_entry_id] IS NOT NULL");
 
-                    b.HasIndex("UserId", "Status");
+                    b.HasIndex("SaleSourceId");
 
                     b.HasIndex("UserId", "CreatedAt", "Id");
 
@@ -197,77 +350,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("product_images");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProductSale", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("AllocatedOtherCosts")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("allocated_other_costs");
-
-                    b.Property<decimal>("AllocatedShippingCost")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("allocated_shipping_cost");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int")
-                        .HasColumnName("product_id");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("product_name");
-
-                    b.Property<decimal>("PurchasePrice")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("purchase_price");
-
-                    b.Property<DateOnly>("SaleDate")
-                        .HasColumnType("date")
-                        .HasColumnName("sale_date");
-
-                    b.Property<decimal>("SaleOtherCosts")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("sale_other_costs");
-
-                    b.Property<decimal>("SalePrice")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("sale_price");
-
-                    b.Property<int?>("SaleSourceId")
-                        .HasColumnType("int")
-                        .HasColumnName("sale_source_id");
-
-                    b.Property<string>("SaleSourceName")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)")
-                        .HasColumnName("sale_source_name");
-
-                    b.Property<DateTime>("SoldAt")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("sold_at");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique()
-                        .HasFilter("[product_id] IS NOT NULL");
-
-                    b.HasIndex("UserId", "SaleDate", "Id");
-
-                    b.ToTable("product_sales");
-                });
-
             modelBuilder.Entity("Domain.Entities.PurchaseOrder", b =>
                 {
                     b.Property<int>("Id")
@@ -284,6 +366,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime?>("DeliveredAt")
                         .HasColumnType("datetime2")
                         .HasColumnName("delivered_at");
+
+                    b.Property<int?>("EntryId")
+                        .HasColumnType("int")
+                        .HasColumnName("entry_id");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(1000)
@@ -326,6 +412,10 @@ namespace Infrastructure.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EntryId")
+                        .IsUnique()
+                        .HasFilter("[entry_id] IS NOT NULL");
 
                     b.HasIndex("SourceId");
 
@@ -555,6 +645,47 @@ namespace Infrastructure.Migrations
                     b.ToTable("task_status");
                 });
 
+            modelBuilder.Entity("Domain.Entities.TransactionType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)")
+                        .HasColumnName("color");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("user_id");
+
+                    b.Property<int?>("UtCreation")
+                        .HasColumnType("int")
+                        .HasColumnName("ut_creation");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("transaction_types");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -607,11 +738,62 @@ namespace Infrastructure.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Account", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("Accounts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Entry", b =>
+                {
+                    b.HasOne("Domain.Entities.Account", "Account")
+                        .WithMany("Entries")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Source", "Source")
+                        .WithMany("Entries")
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.TransactionType", "TransactionType")
+                        .WithMany("Entries")
+                        .HasForeignKey("TransactionTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("Entries")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Source");
+
+                    b.Navigation("TransactionType");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.HasOne("Domain.Entities.PurchaseOrder", "PurchaseOrder")
                         .WithMany("Products")
                         .HasForeignKey("PurchaseOrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Domain.Entities.Entry", "SaleEntry")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.Product", "SaleEntryId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Domain.Entities.Source", "SaleSource")
@@ -626,6 +808,8 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("PurchaseOrder");
+
+                    b.Navigation("SaleEntry");
 
                     b.Navigation("SaleSource");
 
@@ -643,22 +827,13 @@ namespace Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProductSale", b =>
-                {
-                    b.HasOne("Domain.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Entities.PurchaseOrder", b =>
                 {
+                    b.HasOne("Domain.Entities.Entry", "Entry")
+                        .WithOne()
+                        .HasForeignKey("Domain.Entities.PurchaseOrder", "EntryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Domain.Entities.Source", "Source")
                         .WithMany()
                         .HasForeignKey("SourceId")
@@ -669,6 +844,8 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Entry");
 
                     b.Navigation("Source");
 
@@ -734,6 +911,22 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.TransactionType", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("TransactionTypes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Account", b =>
+                {
+                    b.Navigation("Entries");
+                });
+
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.Navigation("Images");
@@ -746,6 +939,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Source", b =>
                 {
+                    b.Navigation("Entries");
+
                     b.Navigation("Tasks");
                 });
 
@@ -754,8 +949,17 @@ namespace Infrastructure.Migrations
                     b.Navigation("Tasks");
                 });
 
+            modelBuilder.Entity("Domain.Entities.TransactionType", b =>
+                {
+                    b.Navigation("Entries");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
+                    b.Navigation("Accounts");
+
+                    b.Navigation("Entries");
+
                     b.Navigation("Products");
 
                     b.Navigation("PurchaseOrders");
@@ -767,6 +971,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Tasks");
 
                     b.Navigation("TasksStatus");
+
+                    b.Navigation("TransactionTypes");
                 });
 #pragma warning restore 612, 618
         }

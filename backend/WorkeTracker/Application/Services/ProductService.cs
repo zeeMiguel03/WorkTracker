@@ -21,9 +21,9 @@ namespace Application.Services
         private readonly IProductRepository _productRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly IPurchaseOrderRepository _purchaseOrderRepository;
-        private readonly IEntryRepository _entryRepository;
         private readonly ISourceRepository _sourceRepository;
         private readonly IUploadService _uploadService;
+        private readonly IProductSaleRepository _productSaleRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<ProductService> _logger;
 
@@ -31,8 +31,8 @@ namespace Application.Services
             IProductRepository productRepository,
             ICurrentUserService currentUserService,
             IPurchaseOrderRepository purchaseOrderRepository,
-            IEntryRepository entryRepository,
             ISourceRepository sourceRepository,
+            IProductSaleRepository productSaleRepository,
             IUploadService uploadService, 
             IUnitOfWork unitOfWork,
             ILogger<ProductService> logger)
@@ -40,8 +40,8 @@ namespace Application.Services
             _productRepository = productRepository;
             _currentUserService = currentUserService;
             _purchaseOrderRepository = purchaseOrderRepository;
-            _entryRepository = entryRepository;
             _sourceRepository = sourceRepository;
+            _productSaleRepository = productSaleRepository;
             _uploadService = uploadService;
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -483,28 +483,41 @@ namespace Application.Services
         {
             var userId = _currentUserService.GetUserId();
 
-            var product = await GetOwnedProductAsync(
-                dto.ProductId,
-                userId,
-                includeImages: false,
-                cancellationToken);
+            var product = await GetOwnedProductAsync(dto.ProductId,userId, includeImages: false, cancellationToken);
 
-            if (dto.SaleEntryId is int saleEntryId)
+            string? sourceName = null;
+
+            if (dto.SaleSourceId is int sourceId)
             {
-                await ValidateSaleEntryAsync(saleEntryId, userId, cancellationToken);
+                var source = await _sourceRepository.GetByIdAsync(sourceId, cancellationToken);
+
+                if (source is null || source.UserId != userId)
+                {
+                    throw new DomainException("SOURCE_NOT_FOUND", "Source was not found.");
+                }
+
+                sourceName = source.Name;
             }
 
-            if (dto.SaleSourceId is int saleSourceId)
+            var soldAtUtc = dto.SoldAt.Kind switch
             {
-                await ValidateSaleSourceAsync(saleSourceId, userId, cancellationToken);
-            }
+                DateTimeKind.Utc => dto.SoldAt,
+                DateTimeKind.Local => dto.SoldAt.ToUniversalTime(),
+                _ => throw new DomainException("INVALID_SOLD_AT_TIMEZONE", "Sale date must include a UTC offset.")
+            };
 
-            product.RegisterSale(
-                dto.SaleEntryId,
-                dto.SaleSourceId,
-                dto.SalePrice,
-                dto.SaleOtherCosts,
-                dto.SoldAt);
+            product.RegisterSale(dto.SaleSourceId, dto.SalePrice, dto.SaleOtherCosts, soldAtUtc);
+
+            var portugalTime = TimeZoneInfo.ConvertTimeFromUtc(
+                soldAtUtc,
+                TimeZoneInfo.FindSystemTimeZoneById("Europe/Lisbon"));
+
+            var sale = ProductSale.FromProduct(
+                product,
+                DateOnly.FromDateTime(portugalTime),
+                sourceName);
+
+            await _productSaleRepository.AddAsync(sale, cancellationToken);
 
             _productRepository.Update(product);
 
@@ -635,7 +648,6 @@ namespace Application.Services
                 ListingPrice = product.ListingPrice,
                 MinimumPrice = product.MinimumPrice,
                 Status = product.Status,
-                SaleEntryId = product.SaleEntryId,
                 SaleSourceId = product.SaleSourceId,
                 SalePrice = product.SalePrice,
                 SaleOtherCosts = product.SaleOtherCosts,
@@ -682,7 +694,7 @@ namespace Application.Services
                 // The product is saved before images so it has an identifier for
                 // ProductImage. If image processing or persistence fails, remove
                 // that partial product before the caller compensates its purchase
-                // order and entry.
+                // order.
                 _productRepository.Remove(product);
                 await _unitOfWork.SaveChangesAsync(CancellationToken.None);
             }
@@ -707,16 +719,6 @@ namespace Application.Services
             if (purchaseOrder is null || purchaseOrder.UserId != userId)
             {
                 throw new DomainException("PURCHASE_ORDER_NOT_FOUND", "Purchase order was not found.");
-            }
-        }
-
-        private async Task ValidateSaleEntryAsync(int entryId, int userId, CancellationToken cancellationToken)
-        {
-            var entry = await _entryRepository.GetByIdAsync(entryId, cancellationToken);
-
-            if (entry is null || entry.UserId != userId)
-            {
-                throw new DomainException("ENTRY_NOT_FOUND", "Entry was not found.");
             }
         }
 

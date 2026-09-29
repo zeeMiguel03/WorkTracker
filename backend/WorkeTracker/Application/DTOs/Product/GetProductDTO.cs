@@ -25,7 +25,6 @@ public class GetProductDTO
 
     public ProductStatus Status { get; set; }
 
-    public int? SaleEntryId { get; set; }
     public int? SaleSourceId { get; set; }
     public decimal? SalePrice { get; set; }
     public decimal? SaleOtherCosts { get; set; }

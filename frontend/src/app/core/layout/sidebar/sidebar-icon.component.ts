@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 
-export type SidebarIconName = 'dashboard' | 'entries' | 'products' | 'orders' | 'accounts' | 'sources' | 'tasks' | 'profile';
+export type SidebarIconName = 'dashboard' | 'products' | 'orders' | 'sources' | 'tasks' | 'profile';
 
 @Component({
   selector: 'app-sidebar-icon',
@@ -11,17 +11,11 @@ export type SidebarIconName = 'dashboard' | 'entries' | 'products' | 'orders' | 
           <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
           <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
         }
-        @case ('entries') {
-          <path d="M7 3.5h8l4 4V21H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z"/><path d="M15 3.5v5h4M9 13h6m-6 4h4"/>
-        }
         @case ('products') {
           <path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="m4 7 8 4 8-4v10l-8 4-8-4V7Z"/><path d="M12 11v10"/>
         }
         @case ('orders') {
           <path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9M8 5.25l8 4.5"/>
-        }
-        @case ('accounts') {
-          <rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/>
         }
         @case ('sources') {
           <path d="M4 8.5h16M6 4h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/>

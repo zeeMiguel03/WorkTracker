@@ -13,20 +13,17 @@ namespace Application.Services
         private readonly IPurchaseOrderRepository _purchaseOrderRepository;
         private readonly ICurrentUserService _currentUserService;
         private readonly ISourceRepository _sourceRepository;
-        private readonly IEntryRepository _entryRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public PurchaseOrderService(
             IPurchaseOrderRepository purchaseOrderRepository, 
             ICurrentUserService currentUserService,
             ISourceRepository sourceRepository,
-            IEntryRepository entryRepository,
             IUnitOfWork unitOfWork)
         {
             _purchaseOrderRepository = purchaseOrderRepository;
             _currentUserService = currentUserService;
             _sourceRepository = sourceRepository;
-            _entryRepository = entryRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -57,14 +54,8 @@ namespace Application.Services
                 await ValidateSource(sourceId, currentUserId, cancellationToken);
             }
 
-            if (dto.EntryId is int entryId)
-            {
-                await ValidateEntry(entryId, currentUserId, cancellationToken);
-            }
-
             var purchaseOrder = PurchaseOrder.Create(
                 currentUserId,
-                dto.EntryId,
                 dto.SourceId,
                 dto.TrackingNumber,
                 dto.ShippingCost,
@@ -212,7 +203,6 @@ namespace Application.Services
             return new GetPurchaseOrderDTO
             {
                 Id = purchaseOrder.Id,
-                EntryId = purchaseOrder.EntryId,
                 SourceId = purchaseOrder.SourceId,
                 SourceName = purchaseOrder.Source?.Name,
                 TrackingNumber = purchaseOrder.TrackingNumber,
@@ -238,14 +228,5 @@ namespace Application.Services
             }
         }
 
-        private async Task ValidateEntry(int entryId, int currentUserId, CancellationToken cancellationToken)
-        {
-            var entry = await _entryRepository.GetByIdAsync(entryId, cancellationToken);
-
-            if (entry is null || entry.UserId != currentUserId)
-            {
-                throw new DomainException("ENTRY_NOT_FOUND", "Entry was not found.");
-            }
-        }
     }
 }

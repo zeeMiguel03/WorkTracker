@@ -19,9 +19,6 @@ namespace Domain.Entities
         [Required]
         public int UserId { get; private set; }
 
-        [Column("entry_id")]
-        public int? EntryId { get; private set; }
-
         [Column("source_id")]
         public int? SourceId { get; private set; }
 
@@ -63,16 +60,12 @@ namespace Domain.Entities
         [ForeignKey(nameof(SourceId))]
         public Source? Source { get; private set; } = null!;
 
-        [ForeignKey(nameof(EntryId))]
-        public Entry? Entry { get; private set; } = null!;
-
         public ICollection<Product> Products { get; private set; } = new List<Product>();
 
         private PurchaseOrder() { }
 
         public static PurchaseOrder Create(
             int userId,
-            int? entryId,
             int? sourceId,
             string? trackingNumber,
             decimal shippingCost,
@@ -84,7 +77,6 @@ namespace Domain.Entities
             return new PurchaseOrder
             {
                 UserId = ValidateUserId(userId),
-                EntryId = ValidateOptionalId(entryId, "entry"),
                 SourceId = ValidateOptionalId(sourceId, "source"),
                 TrackingNumber = NormalizeTrackingNumber(trackingNumber),
                 Status = PurchaseOrderStatus.Draft,

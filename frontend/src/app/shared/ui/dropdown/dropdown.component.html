@@ -9,6 +9,7 @@
     type="button"
     [id]="triggerId"
     [attr.aria-expanded]="isOpen()"
+    [attr.aria-label]="ariaLabel() || null"
     aria-haspopup="listbox"
     (click)="toggle($event)"
   >

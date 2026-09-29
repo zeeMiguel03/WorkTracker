@@ -9,8 +9,6 @@ namespace Infrastructure.Persistence
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) {}
 
-        public DbSet<Account> accounts { get; set; }
-        public DbSet<Entry> entries { get; set; }
         public DbSet<Product> products { get; set; }
         public DbSet<ProductImage> product_images { get; set; }
         public DbSet<PurchaseOrder> purchase_orders { get; set; }
@@ -18,55 +16,13 @@ namespace Infrastructure.Persistence
         public DbSet<Source> sources { get; set; } 
         public DbSet<Tasks> tasks { get; set; }
         public DbSet<TasksStatus> task_status { get; set; }
-        public DbSet<TransactionType> transaction_types { get; set; }
         public DbSet<User> users { get; set; }
+
+        public DbSet<ProductSale> product_sales { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Account>(e =>
-            {
-                e.HasOne(x => x.User)
-                    .WithMany(x => x.Accounts)
-                    .HasForeignKey(x => x.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                e.HasIndex(x => new { x.UserId, x.CreatedAt });
-
-                e.HasIndex(x => new { x.UserId, x.Name, x.Id });
-            });
-
-            modelBuilder.Entity<Entry>(e =>
-            {
-                e.HasOne(x => x.User)
-                    .WithMany(x => x.Entries)
-                    .HasForeignKey(x => x.UserId)
-                    // Entries are already deleted through Account -> Entries.
-                    // NoAction avoids SQL Server's multiple cascade path restriction.
-                    .OnDelete(DeleteBehavior.NoAction);
-
-                e.HasOne(x => x.Account)
-                    .WithMany(x => x.Entries)
-                    .HasForeignKey(x => x.AccountId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                e.HasOne(x => x.Source)
-                    .WithMany(x => x.Entries)
-                    .HasForeignKey(x => x.SourceId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                e.HasOne(x => x.TransactionType)
-                    .WithMany(x => x.Entries)
-                    .HasForeignKey(x => x.TransactionTypeId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                e.HasIndex(x => new { x.AccountId, x.Date });
-
-                e.HasIndex(x => new { x.AccountId, x.TransactionTypeId });
-
-                e.HasIndex(x => new { x.AccountId, x.SourceId });
-            });
 
             modelBuilder.Entity<PurchaseOrder>(e =>
             {
@@ -84,14 +40,8 @@ namespace Infrastructure.Persistence
                     .HasForeignKey(x => x.SourceId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                e.HasOne(x => x.Entry)
-                    .WithOne()
-                    .HasForeignKey<PurchaseOrder>(x => x.EntryId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
                 e.HasIndex(x => new { x.UserId, x.Status, x.CreatedAt, x.Id });
                 e.HasIndex(x => new { x.UserId, x.CreatedAt, x.Id });
-                e.HasIndex(x => x.EntryId).IsUnique();
             });
 
             modelBuilder.Entity<Product>(e =>
@@ -104,6 +54,8 @@ namespace Infrastructure.Persistence
                     .HasConversion<string>()
                     .HasMaxLength(30);
 
+                e.Property(x => x.RowVersion).IsRowVersion();
+
                 e.HasOne(x => x.User)
                     .WithMany(x => x.Products)
                     .HasForeignKey(x => x.UserId)
@@ -114,20 +66,15 @@ namespace Infrastructure.Persistence
                     .HasForeignKey(x => x.PurchaseOrderId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                e.HasOne(x => x.SaleEntry)
-                    .WithOne()
-                    .HasForeignKey<Product>(x => x.SaleEntryId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
                 e.HasOne(x => x.SaleSource)
                     .WithMany()
                     .HasForeignKey(x => x.SaleSourceId)
                     .OnDelete(DeleteBehavior.Restrict);
 
+                e.HasIndex(x => new { x.UserId, x.Status });
                 e.HasIndex(x => new { x.UserId, x.Status, x.CreatedAt, x.Id });
                 e.HasIndex(x => new { x.UserId, x.CreatedAt, x.Id });
                 e.HasIndex(x => x.PurchaseOrderId);
-                e.HasIndex(x => x.SaleEntryId).IsUnique();
                 e.HasIndex(x => x.SaleSourceId);
             });
 
@@ -198,17 +145,6 @@ namespace Infrastructure.Persistence
                     .IsUnique();
             });
 
-            modelBuilder.Entity<TransactionType>(e =>
-            {
-                e.HasOne(x => x.User)
-                    .WithMany(x => x.TransactionTypes)
-                    .HasForeignKey(x => x.UserId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                e.HasIndex(x => new { x.UserId, x.Name })
-                    .IsUnique();
-            });
-
             modelBuilder.Entity<RefreshToken>(e =>
             {
                 e.Property(x => x.RowVersion)
@@ -230,6 +166,25 @@ namespace Infrastructure.Persistence
             {
                 e.HasIndex(x => x.Email)
                     .IsUnique();
+            });
+
+            modelBuilder.Entity<ProductSale>(e =>
+            {
+                e.HasOne<User>()
+                    .WithMany()
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                e.HasOne<Product>()
+                    .WithMany()
+                    .HasForeignKey(x => x.ProductId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                e.HasIndex(x => x.ProductId)
+                    .IsUnique()
+                    .HasFilter("[product_id] IS NOT NULL");
+
+                e.HasIndex(x => new { x.UserId, x.SaleDate, x.Id });
             });
         }
 

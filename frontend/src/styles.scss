@@ -154,6 +154,22 @@ html:not(.dark) .task-column__count {
   border-color: var(--app-border-strong) !important;
 }
 
+html:not(.dark) .task-column__actions button {
+  color: var(--app-text-muted) !important;
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+html:not(.dark) .task-column__actions button:hover {
+  color: var(--app-text) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+}
+
+html:not(.dark) .task-column__actions .task-column__delete:hover {
+  color: #b42318 !important;
+}
+
 html:not(.dark) .task-card__meta {
   border-bottom-color: var(--app-border) !important;
 }

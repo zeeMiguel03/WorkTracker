@@ -78,9 +78,6 @@ namespace Domain.Entities
         [Column("status")]
         public ProductStatus Status { get; private set; }
 
-        [Column("sale_entry_id")]
-        public int? SaleEntryId { get; private set; }
-
         [Column("sale_source_id")]
         public int? SaleSourceId { get; private set; }
 
@@ -105,14 +102,16 @@ namespace Domain.Entities
         [Column("updated_at")]
         public DateTime UpdatedAt { get; private set; }
 
+        [Timestamp]
+        [Column("row_version")]
+        public byte[] RowVersion { get; private set; } = [];
+
+
         [ForeignKey(nameof(UserId))]
         public User User { get; private set; } = null!;
 
         [ForeignKey(nameof(PurchaseOrderId))]
         public PurchaseOrder? PurchaseOrder { get; private set; }
-
-        [ForeignKey(nameof(SaleEntryId))]
-        public Entry? SaleEntry { get; private set; }
 
         [ForeignKey(nameof(SaleSourceId))]
         public Source? SaleSource { get; private set; }
@@ -140,6 +139,10 @@ namespace Domain.Entities
             string? notes)
         {
             ValidatePriceRange(listingPrice, minimumPrice);
+            if (status == ProductStatus.Sold)
+            {
+                throw new DomainException("SALE_REQUIRED", "Register the sale to mark a product as sold.");
+            }
             var now = DateTime.UtcNow;
 
             return new Product
@@ -180,6 +183,13 @@ namespace Domain.Entities
             decimal? minimumPrice,
             string? notes)
         {
+            if (Status == ProductStatus.Sold && (PurchasePrice != purchasePrice ||
+                 AllocatedShippingCost != allocatedShippingCost ||
+                 AllocatedOtherCosts != allocatedOtherCosts))
+            {
+                throw new DomainException("SOLD_PRODUCT_COSTS", "The acquisition costs of a sold product cannot be changed.");
+            }
+
             ValidatePriceRange(listingPrice, minimumPrice);
             Name = NormalizeRequired(name, MAX_LENGTH_NAME, "name");
             Description = NormalizeOptional(description, MAX_LENGTH_DESCRIPTION, "description");
@@ -199,18 +209,29 @@ namespace Domain.Entities
 
         public void ChangeStatus(ProductStatus status)
         {
-            Status = ValidateStatus(status);
+            status = ValidateStatus(status);
+
+            if (status == ProductStatus.Sold && Status != ProductStatus.Sold)
+            {
+                throw new DomainException("SALE_REQUIRED", "Register the sale to mark a product as sold.");
+            }
+
+            if (Status == ProductStatus.Sold && status != ProductStatus.Sold)
+            {
+                throw new DomainException("SOLD_PRODUCT_STATUS", "The status of a sold product cannot be changed.");
+            }
+
+            Status = status;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void RegisterSale(int? entryId, int? sourceId, decimal salePrice, decimal? otherCosts, DateTime soldAt)
+        public void RegisterSale(int? sourceId, decimal salePrice, decimal? otherCosts, DateTime soldAt)
         {
             if (Status == ProductStatus.Sold)
             {
                 throw new DomainException("PRODUCT_ALREADY_SOLD", "Product is already sold.");
             }
 
-            SaleEntryId = ValidateOptionalId(entryId, "sale entry");
             SaleSourceId = ValidateOptionalId(sourceId, "sale source");
             SalePrice = ValidateCost(salePrice, "sale price");
             SaleOtherCosts = ValidateOptionalCost(otherCosts, "sale other costs");

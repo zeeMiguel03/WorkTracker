@@ -21,6 +21,7 @@ namespace Application.Services
         ];
 
         private readonly IUserRepository _userRepo;
+        private readonly IProductSaleRepository _productSaleRepository;
         private readonly IUploadService _uploadService;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly ICurrentUserService _currentUserService;
@@ -29,6 +30,7 @@ namespace Application.Services
 
         public UserService(
             IUserRepository userRepo,
+            IProductSaleRepository productSaleRepository,
             IUploadService uploadService, 
             IPasswordHasher<User> passwordHasher,
             ICurrentUserService currentUserService,
@@ -36,6 +38,7 @@ namespace Application.Services
             ILogger<UserService> logger)
         {
             _userRepo = userRepo;
+            _productSaleRepository = productSaleRepository;
             _uploadService = uploadService;
             _passwordHasher = passwordHasher;
             _currentUserService = currentUserService;
@@ -203,6 +206,7 @@ namespace Application.Services
 
             var profileImagePath = myUser.ProfileImageUrl;
 
+            await _productSaleRepository.RemoveByUserAsync(currentUser, cancellationToken);
             _userRepo.Remove(myUser);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

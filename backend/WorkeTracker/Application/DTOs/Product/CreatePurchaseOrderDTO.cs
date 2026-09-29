@@ -2,7 +2,6 @@
 
 public class CreatePurchaseOrderDTO
 {
-    public int? EntryId { get; set; }
     public int? SourceId { get; set; }
 
     public string? TrackingNumber { get; set; }

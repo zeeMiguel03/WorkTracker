@@ -82,7 +82,6 @@ export interface OrderListApi {
 }
 
 export interface OrderDetailsApi extends OrderListApi {
-  readonly entryId: number | null;
   readonly notes: string | null;
   readonly updatedAt: string;
 }

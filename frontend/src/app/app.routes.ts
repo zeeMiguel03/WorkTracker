@@ -35,14 +35,6 @@ export const routes: Routes = [
         title: 'Dashboard | WorkTracker',
       },
       {
-        path: 'entries',
-        loadComponent: () =>
-          import('./features/entries/entry-list/entry-list.component').then(
-            (module) => module.EntryList,
-          ),
-        title: 'Movimentos | WorkTracker',
-      },
-      {
         path: 'products/:id',
         loadComponent: () =>
           import('./features/products/product-detail/product-detail.component').then(
@@ -65,14 +57,6 @@ export const routes: Routes = [
             (module) => module.OrderList,
           ),
         title: 'Encomendas | WorkTracker',
-      },
-      {
-        path: 'accounts',
-        loadComponent: () =>
-          import('./features/accounts/account-list/account-list.component').then(
-            (module) => module.AccountList,
-          ),
-        title: 'Contas | WorkTracker',
       },
       {
         path: 'sources',

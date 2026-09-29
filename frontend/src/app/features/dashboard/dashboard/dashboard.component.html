@@ -1,0 +1,160 @@
+<main class="dashboard" aria-labelledby="dashboard-title">
+  <header class="dashboard__header">
+    <div>
+      <h1 id="dashboard-title">Dashboard</h1>
+      <p class="dashboard__subtitle">Acompanha o lucro das vendas e o valor investido no teu stock.</p>
+    </div>
+    <div class="dashboard__actions">
+      <app-dropdown
+        class="dashboard__period"
+        [fullWidth]="true"
+        [options]="periodOptions"
+        [value]="period()"
+        ariaLabel="Período dos resultados"
+        (valueChange)="selectPeriod($event)"
+      />
+      @if (period() === 'custom') {
+        <div class="dashboard__range-control">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="5" width="14" height="12" rx="2" /><path d="M6.5 3v4M13.5 3v4M3 8.5h14" /></svg>
+          <input
+            #customRangeInput
+            aria-label="Escolher intervalo de datas"
+            placeholder="Escolher datas"
+            readonly
+            type="text"
+          />
+        </div>
+      }
+      <button class="dashboard__refresh" type="button" (click)="refresh()" [disabled]="loading()" aria-label="Atualizar dashboard">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.2 9a6.3 6.3 0 0 0-11.5-2L3 9m0 0V5.5M3 9h3.5M3.8 11a6.3 6.3 0 0 0 11.5 2L17 11m0 0v3.5M17 11h-3.5" /></svg>
+        <span>Atualizar</span>
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <section class="dashboard__loading" role="status" aria-live="polite">
+      <span class="dashboard__spinner" aria-hidden="true"></span>
+      <span>A carregar a dashboard…</span>
+    </section>
+  } @else if (errorMessage()) {
+    <section class="dashboard__error" role="alert">
+      <div>
+        <strong>O dashboard não ficou disponível</strong>
+        <p>{{ errorMessage() }}</p>
+      </div>
+      <button type="button" (click)="refresh()">Tentar novamente</button>
+    </section>
+  } @else if (data()) {
+    <section class="dashboard__metrics" aria-label="Indicadores de {{ periodLabel() | lowercase }}">
+      <article class="metric-card metric-card--profit">
+        <div class="metric-card__top"><span>Lucro realizado</span><span class="metric-card__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M17.5 5.5a8 8 0 1 0 0 13M4 10h10m-11 4h10" /></svg>
+        </span></div>
+        <strong [class.metric-card__value--negative]="summary().profit < 0">{{ summary().profit | currency:'EUR':'symbol':'1.2-2':'pt-PT' }}</strong>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-card__top"><span>Receita de vendas</span><span class="metric-card__icon metric-card__icon--blue" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 9h16m-12 6h3" /></svg>
+        </span></div>
+        <strong>{{ summary().revenue | currency:'EUR':'symbol':'1.2-2':'pt-PT' }}</strong>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-card__top"><span>Produtos vendidos</span><span class="metric-card__icon metric-card__icon--violet" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="m4 7 8-4 8 4-8 4-8-4Zm0 0v10l8 4 8-4V7m-8 4v10" /></svg>
+        </span></div>
+        <strong>{{ summary().soldCount }}</strong>
+      </article>
+
+      <article class="metric-card">
+        <div class="metric-card__top"><span>Investimento em stock</span><span class="metric-card__icon metric-card__icon--amber" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5v-9Zm0 0 8 4.5 8-4.5M12 12v9m-4-15 8 4.5" /></svg>
+        </span></div>
+        <strong>{{ summary().invested | currency:'EUR':'symbol':'1.2-2':'pt-PT' }}</strong>
+      </article>
+    </section>
+
+    <section class="dashboard__charts" aria-label="Análise de vendas">
+      <article class="dashboard-panel dashboard-panel--trend">
+        <div class="panel-heading">
+          <div><h2>Receita e lucro</h2></div>
+        </div>
+        @if (summary().soldCount > 0) {
+          <div class="chart-frame chart-frame--trend"><canvas #profitCanvas role="img" aria-label="Gráfico da receita e do lucro ao longo do período selecionado"></canvas></div>
+        } @else {
+          <div class="chart-empty"><span class="chart-empty__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18.5 9.2 13l4 3.5L20 8.5"/><path d="M14.5 8.5H20v5.5"/></svg></span><strong>Ainda sem vendas neste período</strong><span>Quando registares uma venda, a evolução do lucro aparece aqui.</span></div>
+        }
+      </article>
+
+      <article class="dashboard-panel dashboard-panel--channels">
+        <div class="panel-heading">
+          <div><h2>Lucro por canal</h2></div>
+        </div>
+        @if (summary().sourceProfits.length > 0) {
+          <div class="chart-frame chart-frame--channels" [style.--channel-count]="summary().sourceProfits.length"><canvas #sourceCanvas role="img" aria-label="Gráfico do lucro realizado por canal de venda"></canvas></div>
+        } @else {
+          <div class="chart-empty chart-empty--compact"><span class="chart-empty__icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 19.5h15"/><path d="M7 16v-4m5 4V7m5 9v-6"/></svg></span><strong>Sem canais com vendas</strong><span>O lucro por canal será calculado após a primeira venda.</span></div>
+        }
+      </article>
+    </section>
+
+    <section class="dashboard__tables" aria-label="Resumo dos produtos">
+      <article class="dashboard-panel table-panel">
+        <div class="panel-heading panel-heading--table">
+          <div><h2>Vendas recentes</h2><p>Resultados das últimas vendas concluídas</p></div>
+          <a routerLink="/products" class="text-link">Ver produtos <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th scope="col">Produto</th><th scope="col">Data</th><th scope="col">Canal</th><th scope="col" class="numeric">Venda</th><th scope="col" class="numeric">Lucro</th></tr></thead>
+            <tbody>
+              @for (sale of summary().sales; track sale.id) {
+                <tr>
+                  <td>
+                    @if (sale.productId !== null) {
+                      <a class="product-link" [routerLink]="['/products', sale.productId]">{{ sale.name }}</a>
+                    } @else {
+                      <span>{{ sale.name }}</span>
+                    }
+                  </td>
+                  <td>{{ sale.saleDate | date:'dd MMM yyyy':'':'pt-PT' }}</td>
+                  <td><span class="channel-pill">{{ sale.sourceName }}</span></td>
+                  <td class="numeric">{{ sale.salePrice | currency:'EUR':'symbol':'1.2-2':'pt-PT' }}</td>
+                  <td class="numeric" [class.value-positive]="sale.profit >= 0" [class.value-negative]="sale.profit < 0">{{ sale.profit | currency:'EUR':'symbol':'1.2-2':'pt-PT' }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5" class="table-empty">Não há vendas concluídas {{ periodLabel() | lowercase }}.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="dashboard-panel table-panel">
+        <div class="panel-heading panel-heading--table">
+          <div><h2>Stock com potencial</h2><p>Estimativa pelo preço anunciado menos custos de aquisição</p></div>
+          <a routerLink="/products" class="text-link">Gerir stock <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th scope="col">Produto</th><th scope="col">Anunciado</th><th scope="col" class="numeric">Custo</th><th scope="col" class="numeric">Lucro potencial</th></tr></thead>
+            <tbody>
+              @for (product of summary().stock; track product.id) {
+                <tr>
+                  <td><a class="product-link" [routerLink]="['/products', product.id]">{{ product.name }}</a></td>
+                  <td>{{ product.listingPrice | currency:'EUR':'symbol':'1.2-2':'pt-PT' }}</td>
+                  <td class="numeric">{{ product.acquisitionCost | currency:'EUR':'symbol':'1.2-2':'pt-PT' }}</td>
+                  <td class="numeric" [class.value-positive]="product.potentialProfit >= 0" [class.value-negative]="product.potentialProfit < 0">{{ product.potentialProfit | currency:'EUR':'symbol':'1.2-2':'pt-PT' }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4" class="table-empty">Não há produtos em stock com preço anunciado.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  }
+</main>

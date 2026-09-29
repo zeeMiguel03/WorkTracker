@@ -6,7 +6,6 @@ public class GetPurchaseOrderDTO
 {
     public int Id { get; set; }
 
-    public int? EntryId { get; set; }
     public int? SourceId { get; set; }
 
     public string? SourceName { get; set; }

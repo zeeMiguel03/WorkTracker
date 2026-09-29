@@ -1,6 +1,6 @@
 # WorkTracker
 
-Aplicação web para registar rendimentos, despesas, fontes de trabalho, contas e tarefas num único local.
+Aplicação web para gerir produtos, encomendas, canais de venda e tarefas num único local, com foco no cálculo de lucro por produto.
 
 ## Estrutura inicial da base de dados
 
@@ -10,14 +10,12 @@ Tabelas atuais:
 
 - `User`
 - `Source`
-- `Entry`
-- `TransactionType`
-- `Account`
-- `AccountType`
 - `Task`
 - `TaskStatus`
 
 A tabela `TaskStatus` permite suportar um Kanban com estados como `To Do`, `Doing`, `Testing` e `Done`, mas esses estados não são inseridos automaticamente na base de dados.
+
+O lucro de cada produto é calculado a partir do preço de venda, preço de compra, portes e outros custos. O projeto não controla contas bancárias, cartões, transferências ou movimentos financeiros genéricos.
 
 ## Ficheiros
 

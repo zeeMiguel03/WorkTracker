@@ -227,20 +227,19 @@
     </div>
 
     <form class="product-detail__sell-form" (ngSubmit)="confirmSale()">
-      <p>Indica os dados da venda para manter o histórico financeiro correto.</p>
+      <p>Indica os dados da venda para calcular o lucro do produto.</p>
       @if (relationsLoading()) {
-        <div class="product-detail__relations-state">A carregar fontes e contas...</div>
+        <div class="product-detail__relations-state">A carregar canais de venda...</div>
       } @else {
-        <app-product-transaction-fields
-          [sourceOptions]="relationOptions().sourceOptions"
-          [accountOptions]="relationOptions().accountOptions"
-          [sourceValue]="sellDraft.sourceId"
-          [accountValue]="sellDraft.accountId"
-          sourceLabel="Canal da venda"
-          accountLabel="Conta de recebimento"
-          (sourceValueChange)="chooseSaleSource($event)"
-          (accountValueChange)="chooseSaleAccount($event)"
-        />
+        <label class="product-detail__field">
+          <span>Canal da venda <small>(opcional)</small></span>
+          <app-dropdown
+            [fullWidth]="true"
+            [options]="relationOptions().sourceOptions"
+            [value]="sellDraft.sourceId?.toString() ?? ''"
+            (valueChange)="chooseSaleSource($event)"
+          />
+        </label>
       }
       <label class="product-detail__field">
         <span>Preço de venda</span>

@@ -49,13 +49,10 @@ namespace Domain.Entities
 
         public ICollection<TasksStatus> TasksStatus { get; private set; } = new List<TasksStatus>();
         public ICollection<Tasks> Tasks { get; private set; } = new List<Tasks>();
-        public ICollection<Account> Accounts { get; private set; } = new List<Account>();
         public ICollection<Source> Sources { get; private set; } = new List<Source>();
-        public ICollection<TransactionType> TransactionTypes { get; private set; } = new List<TransactionType>();
         public ICollection<RefreshToken> RefreshTokens { get; private set; } = new List<RefreshToken>();
         public ICollection<PurchaseOrder> PurchaseOrders { get; private set; } = new List<PurchaseOrder>();
         public ICollection<Product> Products { get; private set; } = new List<Product>();
-        public ICollection<Entry> Entries { get; private set; } = new List<Entry>();
 
         private User() { }
 

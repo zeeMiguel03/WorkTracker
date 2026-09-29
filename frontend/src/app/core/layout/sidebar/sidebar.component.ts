@@ -34,10 +34,8 @@ export class Sidebar {
       label: 'FINANÇAS',
       spaced: true,
       items: [
-        { label: 'Movimentos', route: '/entries', icon: 'entries' },
         { label: 'Produtos', route: '/products', icon: 'products' },
         { label: 'Encomendas', route: '/orders', icon: 'orders' },
-        { label: 'Contas', route: '/accounts', icon: 'accounts' },
       ],
     },
     {

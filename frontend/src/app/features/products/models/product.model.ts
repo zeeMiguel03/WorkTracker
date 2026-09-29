@@ -57,7 +57,6 @@ export interface ProductDetailsApi {
   readonly listingPrice: number | null;
   readonly minimumPrice: number | null;
   readonly status: number | string;
-  readonly saleEntryId: number | null;
   readonly saleSourceId: number | null;
   readonly salePrice: number | null;
   readonly saleOtherCosts: number | null;

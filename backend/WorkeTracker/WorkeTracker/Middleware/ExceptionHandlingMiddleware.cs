@@ -43,10 +43,36 @@ namespace API.Middleware
             {
                 await HandleUnauthorizedExceptionAsync(context, exception);
             }
+            catch (ConcurrencyException)
+            {
+                await HandleConflictAsync(context);
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException exception)
+                when (exception.InnerException is Microsoft.Data.SqlClient.SqlException
+                    { Number: 2601 or 2627 })
+            {
+                await HandleConflictAsync(context);
+            }
             catch (Exception exception)
             {
                 await HandleUnexpectedExceptionAsync(context, exception);
             }
+        }
+
+        private static async Task HandleConflictAsync(HttpContext context)
+        {
+            var problem = new ProblemDetails
+            {
+                Status = StatusCodes.Status409Conflict,
+                Title = "Conflict",
+                Detail = "Os dados foram alterados por outro pedido. Atualiza e tenta novamente.",
+                Instance = context.Request.Path
+            };
+
+            problem.Extensions["traceId"] = context.TraceIdentifier;
+            context.Response.StatusCode = StatusCodes.Status409Conflict;
+            context.Response.ContentType = "application/problem+json";
+            await context.Response.WriteAsJsonAsync(problem);
         }
 
         private async Task HandleDomainExceptionAsync(HttpContext context, DomainException exception)

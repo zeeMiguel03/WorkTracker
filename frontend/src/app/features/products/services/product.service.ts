@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, catchError, of, switchMap, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { ProductCondition, ProductDetailsApi, ProductPage, ProductStatus } from '../models/product.model';
@@ -22,7 +22,6 @@ export interface CreateProductRequest {
   readonly minimumPrice: number | null;
   readonly images: File[];
 }
-
 export interface UpdateProductRequest {
   readonly name: string;
   readonly description: string;
@@ -41,24 +40,10 @@ export interface UpdateProductRequest {
 }
 
 export interface SellProductRequest {
-  readonly productName: string;
-  readonly sourceId: number;
-  readonly accountId: number;
-  readonly transactionTypeId: number;
+  readonly sourceId: number | null;
   readonly salePrice: number;
   readonly saleOtherCosts: number | null;
   readonly soldAt: string;
-}
-
-interface CreateEntryRequest {
-  readonly sourceId: number;
-  readonly transactionTypeId: number;
-  readonly accountId: number;
-  readonly name: string;
-  readonly description: string | null;
-  readonly quantity: number;
-  readonly value: number;
-  readonly date: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -156,56 +141,12 @@ export class ProductService {
   }
 
   sell(id: number, data: SellProductRequest): Observable<void> {
-    return this.createSaleEntry(data).pipe(
-      switchMap((entry) => this.http.post<void>(`${this.endpoint}/${id}/sell`, {
-        SaleEntryId: entry.id,
-        SaleSourceId: data.sourceId,
-        SalePrice: data.salePrice,
-        SaleOtherCosts: data.saleOtherCosts,
-        SoldAt: data.soldAt,
-      }, { withCredentials: true }).pipe(
-        catchError((error) => this.removeEntry(entry.id).pipe(
-          catchError(() => of(void 0)),
-          switchMap(() => throwError(() => error)),
-        )),
-      )),
-    );
-  }
-
-  private createSaleEntry(data: SellProductRequest): Observable<EntryApi> {
-    return this.createEntry({
-      sourceId: data.sourceId,
-      transactionTypeId: data.transactionTypeId,
-      accountId: data.accountId,
-      name: `Venda: ${data.productName.trim()}`,
-      description: `Venda do produto ${data.productName.trim()}`,
-      quantity: 1,
-      value: data.salePrice,
-      date: data.soldAt,
-    });
-  }
-
-  private createEntry(data: CreateEntryRequest): Observable<EntryApi> {
-    const formData = new FormData();
-    formData.append('SourceId', String(data.sourceId));
-    formData.append('TransactionTypeId', String(data.transactionTypeId));
-    formData.append('AccountId', String(data.accountId));
-    formData.append('Name', data.name);
-    formData.append('Quantity', String(data.quantity));
-    formData.append('Value', String(data.value));
-    formData.append('Date', data.date);
-
-    if (data.description) {
-      formData.append('Description', data.description);
-    }
-
-    return this.http.post<EntryApi>(`${environment.apiUrl}/entries`, formData, {
-      withCredentials: true,
-    });
-  }
-
-  private removeEntry(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/entries/${id}`, { withCredentials: true });
+    return this.http.post<void>(`${this.endpoint}/${id}/sell`, {
+      SaleSourceId: data.sourceId,
+      SalePrice: data.salePrice,
+      SaleOtherCosts: data.saleOtherCosts,
+      SoldAt: data.soldAt,
+    }, { withCredentials: true });
   }
 
   getImage(productId: number, imageId: number): Observable<Blob> {
@@ -254,8 +195,4 @@ export class ProductService {
   private conditionToApi(condition: ProductCondition): number {
     return { 'new-with-tags': 1, 'new-without-tags': 2, 'very-good': 3, good: 4, satisfactory: 5 }[condition];
   }
-}
-
-interface EntryApi {
-  readonly id: number;
 }
