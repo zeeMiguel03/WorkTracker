@@ -8,26 +8,32 @@
   (keydown.enter)="selected.emit(product().id)"
 >
   <div class="product-card__image" [class.product-card__image--empty]="!imageSrc() || imageFailed()">
-    @if (imageSrc() && !imageFailed()) {
-      <img [src]="imageSrc()!" [alt]="'Fotografia de ' + product().name" (error)="handleImageError()" />
-    } @else {
-      <div class="product-card__image-placeholder" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
-          <path d="m4 7 8-4 8 4-8 4-8-4Z" />
-          <path d="m4 7 8 4 8-4v10l-8 4-8-4V7Z" />
-          <path d="M12 11v10" />
-        </svg>
-      </div>
-    }
-    <span class="product-card__status">
-      @switch (product().status) {
-        @case ('active') { Ativo }
-        @case ('purchased') { Comprado }
-        @case ('sold') { Vendido }
-        @case ('draft') { Rascunho }
-        @case ('archived') { Arquivado }
+    <div class="product-card__media">
+      @if (imageSrc() && !imageFailed()) {
+        <img [src]="imageSrc()!" [alt]="'Fotografia de ' + product().name" (error)="handleImageError()" />
+      } @else {
+        <div class="product-card__image-placeholder" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="m4 7 8-4 8 4-8 4-8-4Z" />
+            <path d="m4 7 8 4 8-4v10l-8 4-8-4V7Z" />
+            <path d="M12 11v10" />
+          </svg>
+        </div>
       }
-    </span>
+      @if (product().status === 'sold') {
+        <span class="product-card__status">Vendido</span>
+      }
+    </div>
+    @if (product().status !== 'sold') {
+      <span class="product-card__status">
+        @switch (product().status) {
+          @case ('active') { Ativo }
+          @case ('purchased') { Comprado }
+          @case ('draft') { Rascunho }
+          @case ('archived') { Arquivado }
+        }
+      </span>
+    }
     <div class="product-card__menu" [class.product-card__menu--open]="menuOpen()">
       <button
         class="product-card__menu-trigger"
@@ -66,7 +72,9 @@
     </div>
     <div class="product-card__meta">
       <span>{{ product().category }}</span>
-      <span>{{ product().status === 'sold' ? 'Vendido' : product().status === 'draft' ? 'Em rascunho' : 'Disponível' }}</span>
+      @if (product().status !== 'sold') {
+        <span>{{ product().status === 'draft' ? 'Em rascunho' : 'Disponível' }}</span>
+      }
     </div>
   </div>
 </article>

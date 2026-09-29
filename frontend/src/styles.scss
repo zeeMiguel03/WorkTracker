@@ -777,6 +777,7 @@ html:not(.dark) .product-card:hover {
 }
 
 html:not(.dark) .product-card__image,
+html:not(.dark) .product-card__media,
 html:not(.dark) .product-card__image-placeholder {
   background: var(--app-surface-muted) !important;
   border-color: var(--app-border) !important;
