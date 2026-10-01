@@ -70,3 +70,10 @@ Desktop.ini
 *.bak
 *.swp
 *~
+
+# Runtime uploads and build/editor files in nested projects
+**/wwwroot/uploads/
+**/.vs/
+**/bin/
+**/obj/
+**/*.csproj.user
