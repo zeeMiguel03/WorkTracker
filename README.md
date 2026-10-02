@@ -63,9 +63,26 @@ npm start
 
 Open `http://localhost:4200`. The development server forwards `/api` requests to the local API at `https://localhost:7176`, as configured in `frontend/proxy.conf.json`.
 
+### 3. Configure Google sign-in
+
+Create a **Web application** OAuth client in Google Cloud Console. Add `http://localhost:4200` as an authorized JavaScript origin. The app uses Google Identity Services to return an ID token to the API, so this flow does not need an OAuth client secret or an authorized redirect URI.
+
+Set the same OAuth client ID in both places:
+
+- Frontend: `frontend/src/environments/environment.development.ts` (`googleClientId`). A client ID is public and can be included in frontend code; never put a client secret there.
+- Backend: set `Google__ClientId` in the API process environment. ASP.NET Core maps this to the `Google:ClientId` setting and uses it to validate the ID token audience.
+
+PowerShell example:
+
+```powershell
+$env:Google__ClientId = "your-client-id.apps.googleusercontent.com"
+```
+
+For production, set the same client ID in the frontend's production environment configuration and in the backend environment. Add the deployed frontend origin to the OAuth client's authorized JavaScript origins.
+
 ## Configuration for other environments
 
-Set `ConnectionStrings__DefaultConnection`, `Jwt__Secret`, and `Cors__AllowedOrigins` through environment variables or your platform's secret manager. `Cors__AllowedOrigins` must contain the frontend's exact origin, including the protocol. Do not commit secrets to the repository.
+Set `ConnectionStrings__DefaultConnection`, `Jwt__Secret`, `Cors__AllowedOrigins`, and `Google__ClientId` through environment variables or your platform's secret manager. `Cors__AllowedOrigins` must contain the frontend's exact origin, including the protocol. Do not commit secrets to the repository.
 
 Migrations are located in `backend/WorkeTracker/Infrastructure/Migrations`. Uploaded images are stored locally in `backend/WorkeTracker/WorkeTracker/wwwroot/uploads`; deployments with ephemeral storage or multiple instances should use shared persistent storage.
 
