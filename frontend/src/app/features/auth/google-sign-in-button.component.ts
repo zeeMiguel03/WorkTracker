@@ -17,7 +17,7 @@ interface GoogleIdentityApi {
       renderButton(
         parent: HTMLElement,
         options: {
-          theme: 'outline';
+          theme: 'outline_dark' | 'filled_black';
           size: 'large';
           text: GoogleButtonText;
           shape: 'rectangular';
@@ -48,7 +48,7 @@ function loadGoogleIdentityServices(): Promise<GoogleIdentityApi> {
 
   googleScriptPromise = new Promise<GoogleIdentityApi>((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client?hl=pt';
+    script.src = 'https://accounts.google.com/gsi/client?hl=en';
     script.async = true;
     script.defer = true;
     script.onload = () => {
@@ -71,11 +71,24 @@ function loadGoogleIdentityServices(): Promise<GoogleIdentityApi> {
 
 @Component({
   selector: 'app-google-sign-in-button',
-  styles: [':host { display: block; }'],
+  styles: [`
+    :host { display: block; width: 100%; }
+    .google-button-host {
+      box-sizing: border-box;
+      display: flex;
+      width: min(100%, 400px);
+      margin-inline: auto;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 5px;
+      background: transparent;
+    }
+    .google-button__error { margin: 8px 0 0; color: #f97066; text-align: center; font-size: 13px; line-height: 18px; }
+  `],
   template: `
-    <div #buttonHost class="google-sign-in-button"></div>
+    <div #buttonHost class="google-button-host"></div>
     @if (errorMessage()) {
-      <p class="mt-2 text-center text-sm text-error-500" role="alert">{{ errorMessage() }}</p>
+      <p class="google-button__error" role="alert">{{ errorMessage() }}</p>
     }
   `,
 })
@@ -85,10 +98,10 @@ export class GoogleSignInButton implements AfterViewInit {
 
   protected readonly errorMessage = signal<string | null>(null);
 
+  private readonly zone = inject(NgZone);
+
   @ViewChild('buttonHost', { static: true })
   private buttonHost!: ElementRef<HTMLDivElement>;
-
-  private readonly zone = inject(NgZone);
 
   ngAfterViewInit(): void {
     if (!environment.googleClientId) {
@@ -106,15 +119,15 @@ export class GoogleSignInButton implements AfterViewInit {
             }
           },
         });
-
         google.accounts.id.renderButton(this.buttonHost.nativeElement, {
-          theme: 'outline',
+          theme: 'filled_black',
           size: 'large',
           text: this.text(),
           shape: 'rectangular',
-          width: Math.max(240, Math.floor(this.buttonHost.nativeElement.clientWidth)),
-          locale: 'pt',
+          width: Math.min(400, Math.max(240, Math.floor(this.buttonHost.nativeElement.clientWidth))),
+          locale: 'en',
         });
+
       })
       .catch(() => {
         this.errorMessage.set('Não foi possível carregar a autenticação Google.');
