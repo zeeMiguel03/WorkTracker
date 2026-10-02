@@ -19,6 +19,8 @@ namespace Application.Services
 
         private readonly IUserRepository _userRepo;
         private readonly IUserService _userService;
+        private readonly IExternalLoginRepository _externalLoginRepo;
+        private readonly IGoogleIdentityVerifier _googleIdentityVerifier;
         private readonly IRefreshTokenRepository _refreshTokenRepo;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IAccessTokenService _accessTokenService;
@@ -28,6 +30,8 @@ namespace Application.Services
         public AuthService(
             IUserRepository userRepo,
             IUserService userService,
+            IExternalLoginRepository externalLoginRepo,
+            IGoogleIdentityVerifier googleIdentityVerifier,
             IRefreshTokenRepository refreshTokenRepo,
             IPasswordHasher<User> passwordHasher,
             IAccessTokenService accessTokenService,
@@ -36,6 +40,8 @@ namespace Application.Services
         {
             _userRepo = userRepo;
             _userService = userService;
+            _externalLoginRepo = externalLoginRepo;
+            _googleIdentityVerifier = googleIdentityVerifier;
             _refreshTokenRepo = refreshTokenRepo;
             _passwordHasher = passwordHasher;
             _accessTokenService = accessTokenService;
@@ -52,7 +58,7 @@ namespace Application.Services
 
             var user = await _userRepo.GetByEmailAsync(dto.Email, cancellationToken);
 
-            if (user is null)
+            if (user is null || string.IsNullOrWhiteSpace(user.PasswordHash))
             {
                 throw new UnauthorizedException("INVALID_CREDENTIALS", "Email or password is invalid.");
             }
@@ -71,6 +77,65 @@ namespace Application.Services
             }
 
             return await CreateAuthenticatedUserAsync(user, null, cancellationToken);
+        }
+
+        public async Task<AuthenticatedUserDTO> LoginWithGoogleAsync(string credential, CancellationToken cancellationToken = default)
+        {
+            var identity = await _googleIdentityVerifier.VerifyAsync(credential, cancellationToken);
+
+            var user = await _userRepo.GetByExternalLoginAsync("Google", identity.Subject, cancellationToken);
+
+            if (user is null)
+            {
+                var existingEmailUser = await _userRepo.GetByEmailAsync(identity.Email, cancellationToken);
+
+                if (existingEmailUser is not null)
+                {
+                    throw new UnauthorizedException("GOOGLE_LINK_REQUIRED", "Inicia sessão na conta existente e associa a conta Google ao teu perfil.");
+                }
+
+                user = await _userService.AddExternalUserAsync(identity.Name, identity.Email, cancellationToken);
+
+                await _externalLoginRepo.AddAsync(ExternalLogin.Google(user, identity.Subject), cancellationToken);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            }
+
+            return await CreateAuthenticatedUserAsync(user, null, cancellationToken);
+        }
+
+        public async Task LinkGoogleAsync(string credential, CancellationToken cancellationToken = default)
+        {
+            var identity = await _googleIdentityVerifier.VerifyAsync(credential, cancellationToken);
+            var currentUserId = _currentUserService.GetUserId();
+            var linkedUser = await _userRepo.GetByExternalLoginAsync("Google", identity.Subject, cancellationToken);
+
+            if (linkedUser is not null)
+            {
+                if (linkedUser.Id != currentUserId)
+                {
+                    throw new UnauthorizedException("GOOGLE_ACCOUNT_ALREADY_LINKED", "Esta conta Google já está associada a outro utilizador.");
+                }
+
+                return;
+            }
+
+            var currentGoogleLogin = await _externalLoginRepo.GetByUserAndProviderAsync(currentUserId, "Google", cancellationToken);
+
+            if (currentGoogleLogin is not null)
+            {
+                throw new UnauthorizedException("GOOGLE_PROVIDER_ALREADY_LINKED", "Já existe uma conta Google associada a este utilizador.");
+            }
+
+            var user = await _userRepo.GetByIdAsync(currentUserId, cancellationToken);
+
+            if (user is null)
+            {
+                throw new DomainException("USER_NOT_FOUND", "User was not found.");
+            }
+
+            await _externalLoginRepo.AddAsync(ExternalLogin.Google(user, identity.Subject), cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<AuthenticatedUserDTO> RegisterAsync(CreateUserDTO dto, CancellationToken cancellationToken = default)
@@ -159,10 +224,7 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task<AuthenticatedUserDTO> CreateAuthenticatedUserAsync(
-            User user,
-            DateTime? sessionExpiresAt,
-            CancellationToken cancellationToken)
+        private async Task<AuthenticatedUserDTO> CreateAuthenticatedUserAsync(User user, DateTime? sessionExpiresAt, CancellationToken cancellationToken)
         {
             var utcNow = DateTime.UtcNow;
             var refreshTokenExpiresAt = sessionExpiresAt ?? utcNow.AddDays(REFRESH_TOKEN_LIFETIME_DAYS);
@@ -184,6 +246,10 @@ namespace Application.Services
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             var accessToken = _accessTokenService.Create(user);
+            var hasGoogleLogin = await _externalLoginRepo.HasProviderAsync(
+                user.Id,
+                "Google",
+                cancellationToken);
 
             return new AuthenticatedUserDTO
             {
@@ -198,7 +264,9 @@ namespace Application.Services
                     Email = user.Email,
                     ProfileImageUrl = user.ProfileImageUrl,
                     CreatedAt = user.CreatedAt,
-                    UtCreation = user.UtCreation
+                    UtCreation = user.UtCreation,
+                    HasLocalPassword = !string.IsNullOrWhiteSpace(user.PasswordHash),
+                    HasGoogleLogin = hasGoogleLogin
                 }
             };
         }

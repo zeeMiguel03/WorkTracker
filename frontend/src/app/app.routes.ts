@@ -7,14 +7,14 @@ export const routes: Routes = [
     canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/login/login.component').then((module) => module.Login),
-    title: 'Angular Sign In Dashboard | TailAdmin - Angular Admin Dashboard Template',
+    title: 'Iniciar sessão | WorkTracker',
   },
   {
     path: 'signup',
     canActivate: [guestGuard],
     loadComponent: () =>
       import('./features/auth/register/register.component').then((module) => module.Register),
-    title: 'Angular Sign Up Dashboard | TailAdmin - Angular Admin Dashboard Template',
+    title: 'Criar conta | WorkTracker',
   },
   { path: 'login', redirectTo: 'signin' },
   { path: 'register', redirectTo: 'signup' },

@@ -17,6 +17,7 @@ namespace Infrastructure.Persistence
         public DbSet<Tasks> tasks { get; set; }
         public DbSet<TasksStatus> task_status { get; set; }
         public DbSet<User> users { get; set; }
+        public DbSet<ExternalLogin> external_logins { get; set; }
 
         public DbSet<ProductSale> product_sales { get; set; }
 
@@ -185,6 +186,25 @@ namespace Infrastructure.Persistence
                     .HasFilter("[product_id] IS NOT NULL");
 
                 e.HasIndex(x => new { x.UserId, x.SaleDate, x.Id });
+            });
+
+            modelBuilder.Entity<ExternalLogin>(e =>
+            {
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.Provider).HasMaxLength(30).IsRequired();
+                e.Property(x => x.ProviderSubject).HasMaxLength(255).IsRequired();
+
+                e.HasIndex(x => new { x.Provider, x.ProviderSubject })
+                    .IsUnique();
+
+                e.HasIndex(x => new { x.UserId, x.Provider })
+                    .IsUnique();
+
+                e.HasOne(x => x.User)
+                    .WithMany(x => x.ExternalLogins)
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
 

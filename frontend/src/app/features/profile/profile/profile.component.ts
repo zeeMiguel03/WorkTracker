@@ -6,9 +6,10 @@ import { Auth } from '../../auth/auth.service';
 import { FilePicker } from '../../../shared/ui/file-picker/file-picker.component';
 import { Modal } from '../../../shared/ui/modal/modal.component';
 import { getPasswordStrengthError } from '../../../shared/security/password-policy';
+import { GoogleSignInButton } from '../../auth/google-sign-in-button.component';
 
 @Component({
-  imports: [RouterLink, FilePicker, Modal],
+  imports: [RouterLink, FilePicker, Modal, GoogleSignInButton],
   selector: 'app-profile',
   styleUrl: './profile.component.scss',
   templateUrl: './profile.component.html',
@@ -24,6 +25,7 @@ export class Profile implements OnDestroy {
   protected readonly profileImageSrc = signal<string | null>(null);
   protected readonly profileError = signal<string | null>(null);
   protected readonly changingPassword = signal(false);
+  protected readonly linkingGoogle = signal(false);
   protected readonly passwordModalOpen = signal(false);
   protected readonly passwordError = signal<string | null>(null);
   protected readonly confirmationAction = signal<'logout-all' | 'delete-account' | null>(null);
@@ -145,6 +147,27 @@ export class Profile implements OnDestroy {
     this.passwordModalOpen.set(true);
   }
 
+  protected linkGoogle(credential: string): void {
+    this.profileError.set(null);
+    this.linkingGoogle.set(true);
+
+    this.auth.linkGoogle(credential).subscribe({
+      next: () => {
+        this.linkingGoogle.set(false);
+        this.successModal.set({
+          title: 'Google associado!',
+          message: 'A tua conta Google foi associada com sucesso.',
+        });
+      },
+      error: (error: HttpErrorResponse) => {
+        this.linkingGoogle.set(false);
+        this.profileError.set(
+          error.error?.detail ?? 'Não foi possível associar a conta Google.',
+        );
+      },
+    });
+  }
+
   protected closePasswordModal(): void {
     if (!this.changingPassword()) {
       this.passwordModalOpen.set(false);
@@ -206,7 +229,7 @@ export class Profile implements OnDestroy {
     event.preventDefault();
 
     const form = event.target as HTMLFormElement;
-    const currentPassword = (form.elements.namedItem('currentPassword') as HTMLInputElement).value;
+    const currentPassword = (form.elements.namedItem('currentPassword') as HTMLInputElement | null)?.value ?? '';
     const newPassword = (form.elements.namedItem('newPassword') as HTMLInputElement).value;
     const confirmPassword = (form.elements.namedItem('confirmPassword') as HTMLInputElement).value;
 

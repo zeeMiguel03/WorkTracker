@@ -37,6 +37,14 @@ namespace Infrastructure.Repositories
                 cancellationToken);
         }
 
+        public Task<User?> GetByExternalLoginAsync(string provider, string subject, CancellationToken cancellationToken = default)
+        {
+            return _context.external_logins
+                .Where(login => login.Provider == provider && login.ProviderSubject == subject)
+                .Select(login => login.User)
+                .FirstOrDefaultAsync(cancellationToken);
+        }
+
         public Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             return _context.users.FirstOrDefaultAsync(

@@ -65,6 +65,11 @@ builder.Services
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services
+    .AddOptions<GoogleOptions>()
+    .Bind(builder.Configuration.GetSection(GoogleOptions.SectionName))
+    .ValidateDataAnnotations();
+
 var jwtOptions = builder.Configuration
     .GetSection(JwtOptions.SectionName)
     .Get<JwtOptions>()
@@ -225,6 +230,7 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGoogleIdentityVerifier, GoogleIdentityVerifier>();
 builder.Services.AddScoped<IRefreshTokenCookieService, RefreshTokenCookieService>();
 builder.Services.AddScoped<ISourceService, SourceService>();
 builder.Services.AddScoped<ITasksService, TasksService>();
@@ -242,6 +248,7 @@ builder.Services.AddScoped<ISourceRepository, SourceRepository>();
 builder.Services.AddScoped<ITasksRepository, TasksRepository>();
 builder.Services.AddScoped<ITasksStatusRepository, TasksStatusRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IExternalLoginRepository, ExternalLoginRepository>();
 builder.Services.AddScoped<IPasswordHasher<Domain.Entities.User>, PasswordHasher<Domain.Entities.User>>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();

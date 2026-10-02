@@ -52,6 +52,32 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
+        [EnableRateLimiting("auth-login")]
+        [HttpPost("google")]
+        public async Task<ActionResult<AuthenticatedUserDTO>> GoogleLogin(
+            GoogleLoginDTO dto,
+            CancellationToken cancellationToken)
+        {
+            var result = await _authService.LoginWithGoogleAsync(dto.Credential, cancellationToken);
+
+            SetRefreshToken(result);
+            AddProfileImageUrl(result);
+
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("google/link")]
+        public async Task<IActionResult> LinkGoogle(
+            GoogleLoginDTO dto,
+            CancellationToken cancellationToken)
+        {
+            await _authService.LinkGoogleAsync(dto.Credential, cancellationToken);
+
+            return NoContent();
+        }
+
+        [AllowAnonymous]
         [EnableRateLimiting("auth-refresh")]
         [HttpPost("refresh")]
         public async Task<ActionResult<AuthenticatedUserDTO>> Refresh(CancellationToken cancellationToken)

@@ -7,9 +7,10 @@ import { finalize } from 'rxjs';
 import { Auth } from '../auth.service';
 import { LoginRequest } from '../models/auth.model';
 import { ThemeToggle } from '../../../shared/ui/theme-toggle/theme-toggle.component';
+import { GoogleSignInButton } from '../google-sign-in-button.component';
 
 @Component({
-  imports: [NgOptimizedImage, RouterLink, FormField, ThemeToggle],
+  imports: [NgOptimizedImage, RouterLink, FormField, ThemeToggle, GoogleSignInButton],
   selector: 'app-login',
   styleUrl: './login.component.scss',
   templateUrl: './login.component.html',
@@ -66,6 +67,32 @@ export class Login {
 
           this.errorMessage.set(
             error.error?.detail ?? 'It was not possible to sign in.',
+          );
+        },
+      });
+  }
+
+  protected loginWithGoogle(credential: string): void {
+    this.errorMessage.set(null);
+    this.submitting.set(true);
+
+    this.auth
+      .loginWithGoogle(credential)
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: () => void this.router.navigateByUrl('/dashboard'),
+        error: (error: HttpErrorResponse) => {
+          const code = error.error?.code;
+
+          if (code === 'GOOGLE_LINK_REQUIRED') {
+            this.errorMessage.set(
+              'Esta conta já existe. Inicia sessão com a password para associares o Google no perfil.',
+            );
+            return;
+          }
+
+          this.errorMessage.set(
+            error.error?.detail ?? 'Não foi possível iniciar sessão com o Google.',
           );
         },
       });

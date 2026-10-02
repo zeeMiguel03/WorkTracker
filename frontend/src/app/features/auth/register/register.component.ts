@@ -8,13 +8,14 @@ import { Auth } from '../auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FilePicker } from '../../../shared/ui/file-picker/file-picker.component';
 import { ThemeToggle } from '../../../shared/ui/theme-toggle/theme-toggle.component';
+import { GoogleSignInButton } from '../google-sign-in-button.component';
 import {
   getPasswordStrengthError,
   PASSWORD_MIN_LENGTH,
 } from '../../../shared/security/password-policy';
 
 @Component({
-  imports: [NgOptimizedImage, RouterLink, FormField, FilePicker, ThemeToggle],
+  imports: [NgOptimizedImage, RouterLink, FormField, FilePicker, ThemeToggle, GoogleSignInButton],
   selector: 'app-register',
   styleUrl: './register.component.scss',
   templateUrl: './register.component.html',
@@ -108,5 +109,31 @@ export class Register {
         );
       },
     });
+  }
+
+  protected registerWithGoogle(credential: string): void {
+    if (!this.registerModel().acceptTerms) {
+      this.errorMessage.set('Aceita os Termos e a Política de Privacidade para criar a conta.');
+      return;
+    }
+
+    this.errorMessage.set(null);
+    this.submitting.set(true);
+
+    this.auth
+      .loginWithGoogle(credential)
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: () => void this.router.navigateByUrl('/dashboard'),
+        error: (error: HttpErrorResponse) => {
+          const code = error.error?.code;
+
+          this.errorMessage.set(
+            code === 'GOOGLE_LINK_REQUIRED'
+              ? 'Já existe uma conta com este email. Inicia sessão com a password e associa o Google no perfil.'
+              : error.error?.detail ?? 'Não foi possível criar a conta com o Google.',
+          );
+        },
+      });
   }
 }

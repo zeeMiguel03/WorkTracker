@@ -43,6 +43,37 @@ export class Auth {
             );
     }
 
+    loginWithGoogle(credential: string): Observable<AuthResponse> {
+        return this.http
+            .post<AuthResponse>(`${environment.apiUrl}/auth/google`, { credential }, {
+                withCredentials: true,
+            })
+            .pipe(
+                tap((response) => {
+                    this.session.set(response);
+                    this.profileImageRevision.update((revision) => revision + 1);
+                }),
+            );
+    }
+
+    linkGoogle(credential: string): Observable<void> {
+        return this.http
+            .post<void>(`${environment.apiUrl}/auth/google/link`, { credential }, {
+                withCredentials: true,
+            })
+            .pipe(
+                tap(() => {
+                    const session = this.session();
+                    if (session) {
+                        this.session.set({
+                            ...session,
+                            user: { ...session.user, hasGoogleLogin: true },
+                        });
+                    }
+                }),
+            );
+    }
+
     refresh(): Observable<AuthResponse> {
         if (this.refreshRequest) {
             return this.refreshRequest;

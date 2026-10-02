@@ -184,6 +184,20 @@
             Alterar password
           </button>
         </div>
+        <div class="security-row">
+          <div>
+            <h4>Conta Google</h4>
+            <p>{{ currentUser.hasGoogleLogin ? 'A tua conta Google está associada.' : 'Associa o Google para iniciares sessão com essa conta.' }}</p>
+          </div>
+          @if (currentUser.hasGoogleLogin) {
+            <span class="profile-button profile-button--secondary" aria-label="Conta Google associada">Associada</span>
+          } @else {
+            <app-google-sign-in-button
+              text="continue_with"
+              (credential)="linkGoogle($event)"
+            />
+          }
+        </div>
         <div class="security-row security-row--last">
           <div>
             <h4>Autenticação de dois fatores (2FA)</h4>
@@ -269,13 +283,18 @@
         <p class="profile-alert profile-alert--error" role="alert">{{ passwordError() }}</p>
       }
       <form class="profile-modal__form" (submit)="changePassword($event)">
-        <label
+        @if (user()?.hasLocalPassword) {
+          <label
           >Password atual<input
             name="currentPassword"
             type="password"
             autocomplete="current-password"
             required
         /></label>
+        } @else {
+          <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">A tua conta ainda não tem uma password. Define uma para poderes iniciar sessão também com email.</p>
+          <input name="currentPassword" type="hidden" value="" />
+        }
         <label
           >Nova password<input
             name="newPassword"

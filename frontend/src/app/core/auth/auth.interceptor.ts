@@ -14,6 +14,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const isPublicAuthRequest =
     request.url.endsWith('/auth/login') ||
     request.url.endsWith('/auth/register') ||
+    request.url.endsWith('/auth/google') ||
     request.url.endsWith('/auth/refresh');
 
   const accessToken = auth.accessToken();

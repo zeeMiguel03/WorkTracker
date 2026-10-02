@@ -5,6 +5,8 @@ export interface User {
   profileImageUrl: string | null;
   createdAt: string;
   utCreation: number | null;
+  hasLocalPassword: boolean;
+  hasGoogleLogin: boolean;
 }
 
 export interface AuthResponse {

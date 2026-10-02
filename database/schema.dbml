@@ -1,49 +1,200 @@
-Table User {
-  Id int [pk, increment]
-  Name varchar(150) [not null]
-  Email varchar(255) [not null, unique]
-  PasswordHash varchar(500) [not null]
-  ProfileImageUrl varchar(500)
-  CreatedAt datetime [not null]
+// Current WorkTracker model. Keep aligned with the EF Core model snapshot and migrations.
+
+Table users {
+  id int [pk, increment]
+  name nvarchar(150) [not null]
+  email nvarchar(255) [not null, unique]
+  password_hash nvarchar(500)
+  profile_image_url nvarchar(500)
+  created_at datetime2 [not null]
+  token_version int [not null, default: 0]
+  ut_creation int
 }
 
-Table Source {
-  Id int [pk, increment]
-  UserId int [not null]
-  Name varchar(150) [not null]
-  ImageUrl varchar(500)
-  CreatedAt datetime [not null]
-  IsActive boolean [not null, default: true]
+Table external_logins {
+  id int [pk, increment]
+  provider nvarchar(30) [not null]
+  provider_subject nvarchar(255) [not null]
+  user_id int [not null]
+
+  indexes {
+    (provider, provider_subject) [unique]
+    (user_id, provider) [unique]
+  }
 }
 
-Table Task {
-  Id int [pk, increment]
-  UserId int [not null]
-  SourceId int
-  TaskStatusId int [not null]
-  Title varchar(150) [not null]
-  Description varchar(500)
-  Priority int [not null, default: 1]
-  SortOrder int [not null, default: 0]
-  DueDate datetime
-  CompletedAt datetime
-  CreatedAt datetime [not null]
+Table sources {
+  id int [pk, increment]
+  name nvarchar(150) [not null]
+  image_url nvarchar(500)
+  link nvarchar(max)
+  created_at datetime2 [not null]
+  is_active bit [not null]
+  user_id int [not null]
+  ut_creation int
+
+  indexes {
+    (user_id, is_active)
+    (user_id, name)
+  }
 }
 
-Table TaskStatus {
-  Id int [pk, increment]
-  UserId int [not null]
-  Name varchar(100) [not null]
-  Color varchar(50) [not null]
-  SortOrder int [not null]
+Table task_status {
+  id int [pk, increment]
+  name nvarchar(150) [not null]
+  color nvarchar(7) [not null]
+  sort_order int [not null]
+  created_at datetime2 [not null]
+  user_id int [not null]
+  ut_creation int
+
+  indexes {
+    (user_id, name) [unique]
+    (user_id, sort_order)
+  }
 }
 
-/* RELATIONSHIPS */
+Table purchase_orders {
+  id int [pk, increment]
+  user_id int [not null]
+  source_id int
+  status nvarchar(30) [not null]
+  shipping_cost decimal(18,2) [not null]
+  other_costs decimal(18,2)
+  tracking_number nvarchar(60)
+  notes nvarchar(1000)
+  ordered_at datetime2
+  delivered_at datetime2
+  created_at datetime2 [not null]
+  updated_at datetime2 [not null]
 
-Ref: Source.UserId > User.Id
+  indexes {
+    (source_id)
+    (user_id, created_at, id)
+    (user_id, status, created_at, id)
+  }
+}
 
-Ref: Task.UserId > User.Id
-Ref: Task.SourceId > Source.Id
-Ref: Task.TaskStatusId > TaskStatus.Id
+Table products {
+  id int [pk, increment]
+  user_id int [not null]
+  purchase_order_id int
+  name nvarchar(150) [not null]
+  description nvarchar(2000)
+  category nvarchar(100)
+  brand nvarchar(100)
+  size nvarchar(50)
+  color nvarchar(50)
+  condition nvarchar(30) [not null]
+  status nvarchar(20) [not null]
+  purchase_price decimal(18,2) [not null]
+  allocated_shipping_cost decimal(18,2) [not null]
+  allocated_other_costs decimal(18,2) [not null]
+  listing_price decimal(18,2)
+  minimum_price decimal(18,2)
+  sale_price decimal(18,2)
+  sale_other_costs decimal(18,2)
+  sale_source_id int
+  sold_at datetime2
+  notes nvarchar(1000)
+  created_at datetime2 [not null]
+  updated_at datetime2 [not null]
+  row_version rowversion [not null, note: 'SQL Server concurrency token']
 
-Ref: TaskStatus.UserId > User.Id
+  indexes {
+    (purchase_order_id)
+    (sale_source_id)
+    (user_id, status)
+    (user_id, created_at, id)
+    (user_id, status, created_at, id)
+  }
+}
+
+Table product_images {
+  id int [pk, increment]
+  product_id int [not null]
+  image_url nvarchar(500) [not null]
+  display_order int [not null]
+  is_cover bit [not null]
+  created_at datetime2 [not null]
+
+  indexes {
+    (product_id, display_order) [unique]
+    (product_id) [unique, name: 'UX_product_images_cover', note: 'SQL Server filtered index where is_cover = 1']
+  }
+}
+
+Table product_sales {
+  id int [pk, increment]
+  user_id int [not null]
+  product_id int
+  product_name nvarchar(150) [not null]
+  sale_source_id int
+  sale_source_name nvarchar(150)
+  purchase_price decimal(18,2) [not null]
+  allocated_shipping_cost decimal(18,2) [not null]
+  allocated_other_costs decimal(18,2) [not null]
+  sale_price decimal(18,2) [not null]
+  sale_other_costs decimal(18,2) [not null]
+  sold_at datetime2 [not null]
+  sale_date date [not null]
+
+  indexes {
+    (product_id) [unique, note: 'SQL Server filtered index where product_id is not null']
+    (user_id, sale_date, id)
+  }
+}
+
+Table refresh_tokens {
+  id int [pk, increment]
+  user_id int [not null]
+  token_hash nvarchar(64) [not null, unique]
+  token_version int [not null]
+  created_at datetime2 [not null]
+  expires_at datetime2 [not null]
+  revoked_at datetime2
+  row_version rowversion [not null, note: 'SQL Server concurrency token']
+
+  indexes {
+    (user_id, expires_at)
+  }
+}
+
+Table tasks {
+  id int [pk, increment]
+  user_id int [not null]
+  source_id int
+  task_status_id int [not null]
+  title nvarchar(150) [not null]
+  description nvarchar(500)
+  priority int [not null]
+  sort_order int [not null]
+  due_date datetime2
+  completed_at datetime2
+  created_at datetime2 [not null]
+  ut_creation int
+
+  indexes {
+    (source_id)
+    (task_status_id, sort_order)
+    (user_id, completed_at)
+    (user_id, due_date)
+    (user_id, task_status_id)
+  }
+}
+
+Ref: sources.user_id > users.id [delete: cascade]
+Ref: external_logins.user_id > users.id [delete: cascade]
+Ref: task_status.user_id > users.id [delete: cascade]
+Ref: purchase_orders.source_id > sources.id [delete: no action]
+Ref: purchase_orders.user_id > users.id [delete: cascade]
+Ref: products.purchase_order_id > purchase_orders.id [delete: no action]
+Ref: products.sale_source_id > sources.id [delete: no action]
+Ref: products.user_id > users.id [delete: cascade]
+Ref: product_images.product_id > products.id [delete: cascade]
+Ref: product_sales.product_id > products.id [delete: set null]
+Ref: product_sales.user_id > users.id [delete: no action]
+Ref: refresh_tokens.user_id > users.id [delete: cascade]
+Ref: tasks.source_id > sources.id [delete: no action]
+Ref: tasks.task_status_id > task_status.id [delete: no action]
+Ref: tasks.user_id > users.id [delete: cascade]

@@ -13,5 +13,9 @@
         public DateTime CreatedAt { get; set; }
 
         public int? UtCreation { get; set; }
+
+        public bool HasLocalPassword { get; set; }
+
+        public bool HasGoogleLogin { get; set; }
     }
 }

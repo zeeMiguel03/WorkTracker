@@ -3,7 +3,7 @@
 .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 20; width: 285px; padding: 28px 15px; overflow-y: auto; background: #101828; border-right: 1px solid #1d2939; scrollbar-width: none; transition: width .3s ease, transform .3s ease; }
 .sidebar__logo { height: 48px; display: flex; align-items: center; gap: 11px; }
 .sidebar__logo-mark { width: 40px; height: 40px; flex: 0 0 40px; overflow: hidden; border-radius: 12px; filter: drop-shadow(0 7px 12px rgb(70 95 255 / 24%)); }
-.sidebar__logo-mark img { display: block; width: 192.5px; max-width: none; height: 40px; }
+.sidebar__logo-mark img { display: block; width: 200px; max-width: none; height: 40px; }
 .sidebar__logo-name { color: #fff; font-size: 20px; font-weight: 600; white-space: nowrap; }
 .sidebar__nav { padding-top: 20px; }
 .sidebar__label { margin: 0 0 14px; color: #98a2b3; font-size: 12px; font-weight: 500; }

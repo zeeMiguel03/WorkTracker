@@ -36,10 +36,15 @@ $env:ConnectionStrings__DefaultConnection = "Server=(localdb)\MSSQLLocalDB;Datab
 $env:Jwt__Secret = "replace-with-a-random-secret-at-least-32-characters-long"
 ```
 
-Install the EF Core tool, apply the database migrations, and start the API:
+Install the EF Core tool once if it is not already installed:
 
 ```powershell
 dotnet tool install --global dotnet-ef --version 10.0.11
+```
+
+Apply the database migrations and start the API:
+
+```powershell
 dotnet ef database update --project backend/WorkeTracker/Infrastructure --startup-project backend/WorkeTracker/WorkeTracker
 dotnet run --project backend/WorkeTracker/WorkeTracker --launch-profile https
 ```

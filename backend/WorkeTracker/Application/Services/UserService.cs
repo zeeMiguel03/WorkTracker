@@ -21,6 +21,7 @@ namespace Application.Services
         ];
 
         private readonly IUserRepository _userRepo;
+        private readonly IExternalLoginRepository _externalLoginRepository;
         private readonly IProductSaleRepository _productSaleRepository;
         private readonly IUploadService _uploadService;
         private readonly IPasswordHasher<User> _passwordHasher;
@@ -30,6 +31,7 @@ namespace Application.Services
 
         public UserService(
             IUserRepository userRepo,
+            IExternalLoginRepository externalLoginRepository,
             IProductSaleRepository productSaleRepository,
             IUploadService uploadService, 
             IPasswordHasher<User> passwordHasher,
@@ -38,6 +40,7 @@ namespace Application.Services
             ILogger<UserService> logger)
         {
             _userRepo = userRepo;
+            _externalLoginRepository = externalLoginRepository;
             _productSaleRepository = productSaleRepository;
             _uploadService = uploadService;
             _passwordHasher = passwordHasher;
@@ -93,6 +96,33 @@ namespace Application.Services
 
                 throw;
             }
+        }
+
+        public async Task<User> AddExternalUserAsync(string name, string email, CancellationToken cancellationToken = default)
+        {
+            await ValidateUserDoesNotExistAsync(email, cancellationToken);
+
+            var normalizedName = string.IsNullOrWhiteSpace(name)
+                ? email.Split('@', 2)[0]
+                : name.Trim();
+
+            if (normalizedName.Length > 150)
+            {
+                normalizedName = normalizedName[..150];
+            }
+
+            var newUser = User.Create(normalizedName, email, null, null);
+
+            for (var index = 0; index < DefaultTaskStatuses.Length; index++)
+            {
+                var (statusName, color) = DefaultTaskStatuses[index];
+
+                newUser.TasksStatus.Add(TasksStatus.CreateForUser(newUser, statusName, color, index));
+            }
+
+            await _userRepo.AddAsync(newUser, cancellationToken);
+
+            return newUser;
         }
 
         public async Task UpdateUserAsync(UpdateUserDTO user, CancellationToken cancellationToken = default)
@@ -176,7 +206,14 @@ namespace Application.Services
                 throw new DomainException("USER_NOT_FOUND", "User was not found.");
             }
 
-            ValidateCurrentPassword(myUser, password.CurrentPassword);
+            if (!string.IsNullOrWhiteSpace(myUser.PasswordHash))
+            {
+                ValidateCurrentPassword(myUser, password.CurrentPassword);
+            }
+            else if (!string.IsNullOrWhiteSpace(password.CurrentPassword))
+            {
+                throw new UnauthorizedException("INVALID_PASSWORD", "Password doesn't match");
+            }
 
             if (string.IsNullOrWhiteSpace(password.NewPassword))
             {
@@ -233,7 +270,7 @@ namespace Application.Services
                 throw new DomainException("FORBIDDEN", "You are not allowed to access this user's information.");
             }
 
-            return MapToGetUserDTO(user);
+            return await MapToGetUserDTOAsync(user, cancellationToken);
         }
 
         public async Task<GetUserDTO?> GetUserByIdAsync(CancellationToken cancellationToken = default)
@@ -247,7 +284,7 @@ namespace Application.Services
                 throw new DomainException("USER_NOT_FOUND", "User was not found.");
             }
 
-            return MapToGetUserDTO(user);
+            return await MapToGetUserDTOAsync(user, cancellationToken);
         }
 
         public async Task<Stream?> GetProfileImageAsync(CancellationToken cancellationToken = default)
@@ -304,6 +341,11 @@ namespace Application.Services
 
         private void ValidateCurrentPassword(User user, string password)
         {
+            if (string.IsNullOrWhiteSpace(user.PasswordHash))
+            {
+                throw new UnauthorizedException("INVALID_PASSWORD", "Password doesn't match");
+            }
+
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
 
             if (result == PasswordVerificationResult.Failed)
@@ -353,7 +395,7 @@ namespace Application.Services
             }
         }
 
-        private static GetUserDTO MapToGetUserDTO(User user)
+        private async Task<GetUserDTO> MapToGetUserDTOAsync(User user, CancellationToken cancellationToken)
         {
             return new GetUserDTO
             {
@@ -362,7 +404,9 @@ namespace Application.Services
                 Email = user.Email,
                 ProfileImageUrl = user.ProfileImageUrl,
                 CreatedAt = user.CreatedAt,
-                UtCreation = user.UtCreation
+                UtCreation = user.UtCreation,
+                HasLocalPassword = !string.IsNullOrWhiteSpace(user.PasswordHash),
+                HasGoogleLogin = await _externalLoginRepository.HasProviderAsync(user.Id, "Google", cancellationToken)
             };
         }
     }

@@ -13,6 +13,7 @@ namespace API.Middleware
                 "INVALID_USER_ID",
                 "INVALID_PASSWORD",
                 "INVALID_CREDENTIALS",
+                "INVALID_GOOGLE_TOKEN",
                 "REFRESH_TOKEN_REQUIRED",
                 "INVALID_REFRESH_TOKEN",
                 "REFRESH_TOKEN_EXPIRED"

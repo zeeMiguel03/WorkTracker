@@ -4,6 +4,8 @@ namespace Application.Interfaces
 {
     public interface IUserService
     {
+        Task<Domain.Entities.User> AddExternalUserAsync(string name, string email, CancellationToken cancellationToken = default);
+
         Task CreateUserAsync(CreateUserDTO user, CancellationToken cancellationToken = default);
 
         Task UpdateUserAsync(UpdateUserDTO user, CancellationToken cancellationToken = default);

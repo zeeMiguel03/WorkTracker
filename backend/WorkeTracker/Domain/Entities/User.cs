@@ -28,9 +28,8 @@ namespace Domain.Entities
         public string Email { get; private set; } = string.Empty;
 
         [Column("password_hash")]
-        [Required]
         [MaxLength(MAX_LENGTH_PASSWORD_HASH)]
-        public string PasswordHash { get; private set; } = string.Empty;
+        public string? PasswordHash { get; private set; }
 
         [Column("profile_image_url")]
         [MaxLength(MAX_LENGTH_PROFILE_IMAGE)]
@@ -53,6 +52,7 @@ namespace Domain.Entities
         public ICollection<RefreshToken> RefreshTokens { get; private set; } = new List<RefreshToken>();
         public ICollection<PurchaseOrder> PurchaseOrders { get; private set; } = new List<PurchaseOrder>();
         public ICollection<Product> Products { get; private set; } = new List<Product>();
+        public ICollection<ExternalLogin> ExternalLogins { get; private set; } = new List<ExternalLogin>();
 
         private User() { }
 
