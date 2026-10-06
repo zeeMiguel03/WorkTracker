@@ -1,37 +1,36 @@
 <form class="task-status-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
   @if (error()) {
-    <p class="task-status-form__error" role="alert">{{ error() }}</p>
+    <p class="task-status-form__error" role="alert">{{ error() | translate }}</p>
   }
 
   <label>
-    <span class="task-status-form__label">Nome <b>*</b></span>
-    <input formControlName="name" type="text" placeholder="Ex.: Em progresso" autocomplete="off" />
+    <span class="task-status-form__label">{{ "Nome" | translate }} <b>*</b></span>
+    <input formControlName="name" type="text" [placeholder]="('Ex.: Em progresso' | translate)" autocomplete="off" />
   </label>
 
   <div class="task-status-form__grid">
     <label>
-      <span class="task-status-form__label">Cor <b>*</b></span>
+      <span class="task-status-form__label">{{ "Cor" | translate }} <b>*</b></span>
       <div class="task-status-form__color-field">
         <input
           type="color"
-          aria-label="Escolher cor"
+          [attr.aria-label]="('Escolher cor' | translate)"
           [value]="form.controls.color.value"
           (input)="setColor($event)"
         />
-        <input formControlName="color" type="text" aria-label="Código hexadecimal da cor" />
+        <input formControlName="color" type="text" [attr.aria-label]="('Código hexadecimal da cor' | translate)" />
       </div>
     </label>
 
     <label>
-      Ordem
-      <input formControlName="sortOrder" type="number" min="0" />
+       {{ "Ordem" | translate }} <input formControlName="sortOrder" type="number" min="0" />
     </label>
   </div>
 
   <div class="task-status-form__actions">
-    <button type="button" class="task-status-form__secondary" (click)="cancelled.emit()">Cancelar</button>
+    <button type="button" class="task-status-form__secondary" (click)="cancelled.emit()">{{ "Cancelar" | translate }}</button>
     <button type="submit" class="task-status-form__primary" [disabled]="saving()">
-      {{ saving() ? 'A guardar...' : status() ? 'Guardar alterações' : 'Criar coluna' }}
+      {{ (saving() ? 'A guardar...' : status() ? 'Guardar alterações' : 'Criar coluna') | translate }}
     </button>
   </div>
 </form>

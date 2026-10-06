@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SidebarService } from './sidebar.service';
 import { SidebarIcon, SidebarIconName } from './sidebar-icon.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 interface SidebarMenuItem {
   readonly label: string;
@@ -17,7 +18,7 @@ interface SidebarMenuSection {
 }
 
 @Component({
-  imports: [RouterLink, RouterLinkActive, SidebarIcon],
+  imports: [RouterLink, RouterLinkActive, SidebarIcon, TranslatePipe],
   selector: 'app-sidebar',
   styleUrl: './sidebar.component.scss',
   templateUrl: './sidebar.component.html',

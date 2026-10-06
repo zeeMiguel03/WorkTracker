@@ -6,9 +6,11 @@ import { AuthenticatedImage } from '../../../shared/ui/authenticated-image/authe
 import { ThemeToggle } from '../../../shared/ui/theme-toggle/theme-toggle.component';
 import { ThemeService } from '../../../core/theme/theme.service';
 import { SidebarService } from '../sidebar/sidebar.service';
+import { LanguageToggle } from '../../../shared/ui/language-toggle/language-toggle.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 @Component({
-  imports: [ThemeToggle, AuthenticatedImage, RouterLink],
+  imports: [ThemeToggle, LanguageToggle, AuthenticatedImage, RouterLink, TranslatePipe],
   selector: 'app-header',
   styleUrl: './header.component.scss',
   templateUrl: './header.component.html',

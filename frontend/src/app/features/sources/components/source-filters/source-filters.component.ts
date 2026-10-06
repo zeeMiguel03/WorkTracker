@@ -1,6 +1,8 @@
 import { Component, input, output } from '@angular/core';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-source-filters',
   styleUrl: './source-filters.component.scss',
   templateUrl: './source-filters.component.html',

@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ThemeService } from '../../../core/theme/theme.service';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 @Component({
   selector: 'app-theme-toggle',
@@ -7,8 +8,8 @@ import { ThemeService } from '../../../core/theme/theme.service';
     <button
       class="theme-toggle"
       type="button"
-      [attr.aria-label]="theme.isLight() ? 'Mudar para modo escuro' : 'Mudar para modo claro'"
-      [attr.title]="theme.isLight() ? 'Mudar para modo escuro' : 'Mudar para modo claro'"
+      [attr.aria-label]="language.translate(theme.isLight() ? 'Mudar para modo escuro' : 'Mudar para modo claro')"
+      [attr.title]="language.translate(theme.isLight() ? 'Mudar para modo escuro' : 'Mudar para modo claro')"
       (click)="theme.toggle()"
     >
       @if (theme.isLight()) {
@@ -43,4 +44,5 @@ import { ThemeService } from '../../../core/theme/theme.service';
 })
 export class ThemeToggle {
   protected readonly theme = inject(ThemeService);
+  protected readonly language = inject(LanguageService);
 }

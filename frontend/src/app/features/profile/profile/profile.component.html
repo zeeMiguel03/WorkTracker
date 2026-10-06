@@ -1,22 +1,22 @@
 <main class="profile-page">
   <header class="profile-page__header">
     <div>
-      <h1>Perfil</h1>
+      <h1>{{ "Perfil" | translate }}</h1>
     </div>
-    <nav class="profile-breadcrumb" aria-label="Breadcrumb">
-      <a routerLink="/dashboard">Dashboard</a>
+    <nav class="profile-breadcrumb" [attr.aria-label]="('Breadcrumb' | translate)">
+      <a routerLink="/dashboard">{{ "Dashboard" | translate }}</a>
       <span aria-hidden="true">›</span>
-      <span aria-current="page">Perfil</span>
+      <span aria-current="page">{{ "Perfil" | translate }}</span>
     </nav>
   </header>
 
   @if (profileError()) {
-    <p class="profile-alert profile-alert--error" role="alert">{{ profileError() }}</p>
+    <p class="profile-alert profile-alert--error" role="alert">{{ profileError() | translate }}</p>
   }
 
   @if (user(); as currentUser) {
     <section class="profile-shell" aria-labelledby="profile-shell-title">
-      <h2 id="profile-shell-title">O meu perfil</h2>
+      <h2 id="profile-shell-title">{{ "O meu perfil" | translate }}</h2>
 
       <article class="profile-card profile-card--identity">
         <div class="profile-card__heading">
@@ -30,7 +30,7 @@
             } @else {
               <span
                 class="profile-avatar profile-avatar--fallback"
-                aria-label="Sem fotografia de perfil"
+                [attr.aria-label]="('Sem fotografia de perfil' | translate)"
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <circle cx="12" cy="8" r="3.2" />
@@ -41,7 +41,7 @@
             <div>
               <h3>{{ displayName() }}</h3>
               <p>
-                Utilizador WorkTracker <span aria-hidden="true">|</span> Membro desde
+                 {{ "Utilizador WorkTracker" | translate }} <span aria-hidden="true">|</span> {{ "Membro desde" | translate }}
                 {{ memberSince() }}
               </p>
             </div>
@@ -55,14 +55,13 @@
               <path d="m4 16.5-.7 3.7 3.7-.7L18.5 8a2.1 2.1 0 0 0-3-3L4 16.5Z" />
               <path d="m14 6 4 4" />
             </svg>
-            Editar
-          </button>
+             {{ "Editar" | translate }} </button>
         </div>
 
         @if (editingProfile()) {
           <form class="profile-edit-form" (submit)="saveProfile($event)">
             <div class="profile-form-field">
-              <label for="profileName">Nome completo</label>
+              <label for="profileName">{{ "Nome completo" | translate }}</label>
               <input
                 id="profileName"
                 name="profileName"
@@ -72,7 +71,7 @@
               />
             </div>
             <div class="profile-form-field">
-              <label for="profileImage">Fotografia de perfil</label>
+              <label for="profileImage">{{ "Fotografia de perfil" | translate }}</label>
               <app-file-picker
                 inputId="profileImage"
                 inputName="profileImage"
@@ -86,35 +85,34 @@
                 type="button"
                 (click)="cancelEditing()"
               >
-                Cancelar
-              </button>
+                 {{ "Cancelar" | translate }} </button>
               <button
                 class="profile-button profile-button--primary"
                 type="submit"
                 [disabled]="savingProfile()"
               >
-                {{ savingProfile() ? 'A guardar...' : 'Guardar alterações' }}
+                {{ (savingProfile() ? 'A guardar...' : 'Guardar alterações') | translate }}
               </button>
             </div>
           </form>
         } @else {
           <dl class="profile-details profile-details--identity">
             <div>
-              <dt>Nome</dt>
+              <dt>{{ "Nome" | translate }}</dt>
               <dd>{{ displayName() }}</dd>
             </div>
             <div>
-              <dt>Email</dt>
+              <dt>{{ "Email" | translate }}</dt>
               <dd>{{ currentUser.email }}</dd>
             </div>
             <div>
-              <dt>Perfil</dt>
-              <dd>Utilizador</dd>
+              <dt>{{ "Perfil" | translate }}</dt>
+              <dd>{{ "Utilizador" | translate }}</dd>
             </div>
             <div>
-              <dt>Estado</dt>
+              <dt>{{ "Estado" | translate }}</dt>
               <dd>
-                <span class="profile-status"><i></i> Ativo</span>
+                <span class="profile-status"><i></i>  {{ "Ativo" | translate }}</span>
               </dd>
             </div>
           </dl>
@@ -124,38 +122,37 @@
       <article class="profile-card">
         <div class="profile-card__heading">
           <div>
-            <h3>Morada</h3>
-            <p class="profile-card__hint">A informação de morada ainda não está configurada.</p>
+            <h3>{{ "Morada" | translate }}</h3>
+            <p class="profile-card__hint">{{ "A informação de morada ainda não está configurada." | translate }}</p>
           </div>
           <button
             class="profile-button profile-button--secondary"
             type="button"
             disabled
-            title="Disponível numa próxima versão"
+            [title]="('Disponível numa próxima versão' | translate)"
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="m4 16.5-.7 3.7 3.7-.7L18.5 8a2.1 2.1 0 0 0-3-3L4 16.5Z" />
               <path d="m14 6 4 4" />
             </svg>
-            Editar
-          </button>
+             {{ "Editar" | translate }} </button>
         </div>
         <dl class="profile-details profile-details--address">
           <div>
-            <dt>País</dt>
-            <dd>Não configurado</dd>
+            <dt>{{ "País" | translate }}</dt>
+            <dd>{{ "Não configurado" | translate }}</dd>
           </div>
           <div>
-            <dt>Cidade / Estado</dt>
-            <dd>Não configurado</dd>
+            <dt>{{ "Cidade / Estado" | translate }}</dt>
+            <dd>{{ "Não configurado" | translate }}</dd>
           </div>
           <div>
-            <dt>Código postal</dt>
-            <dd>Não configurado</dd>
+            <dt>{{ "Código postal" | translate }}</dt>
+            <dd>{{ "Não configurado" | translate }}</dd>
           </div>
           <div>
-            <dt>Identificação fiscal</dt>
-            <dd>Não configurado</dd>
+            <dt>{{ "Identificação fiscal" | translate }}</dt>
+            <dd>{{ "Não configurado" | translate }}</dd>
           </div>
         </dl>
       </article>
@@ -163,14 +160,14 @@
       <article class="profile-card">
         <div class="profile-card__heading">
           <div>
-            <h3>Segurança</h3>
-            <p class="profile-card__hint">Gere o acesso e a segurança da tua conta.</p>
+            <h3>{{ "Segurança" | translate }}</h3>
+            <p class="profile-card__hint">{{ "Gere o acesso e a segurança da tua conta." | translate }}</p>
           </div>
         </div>
         <div class="security-row">
           <div>
-            <h4>Alterar password</h4>
-            <p>Atualiza a password da tua conta regularmente.</p>
+            <h4>{{ "Alterar password" | translate }}</h4>
+            <p>{{ "Atualiza a password da tua conta regularmente." | translate }}</p>
           </div>
           <button
             class="profile-button profile-button--secondary"
@@ -181,16 +178,15 @@
               <path d="m4 16.5-.7 3.7 3.7-.7L18.5 8a2.1 2.1 0 0 0-3-3L4 16.5Z" />
               <path d="m14 6 4 4" />
             </svg>
-            Alterar password
-          </button>
+             {{ "Alterar password" | translate }} </button>
         </div>
         <div class="security-row">
           <div>
-            <h4>Conta Google</h4>
-            <p>{{ currentUser.hasGoogleLogin ? 'A tua conta Google está associada.' : 'Associa o Google para iniciares sessão com essa conta.' }}</p>
+            <h4>{{ "Conta Google" | translate }}</h4>
+            <p>{{ (currentUser.hasGoogleLogin ? 'A tua conta Google está associada.' : 'Associa o Google para iniciares sessão com essa conta.') | translate }}</p>
           </div>
           @if (currentUser.hasGoogleLogin) {
-            <span class="profile-button profile-button--secondary" aria-label="Conta Google associada">Associada</span>
+            <span class="profile-button profile-button--secondary" [attr.aria-label]="('Conta Google associada' | translate)">{{ "Associada" | translate }}</span>
           } @else {
             <app-google-sign-in-button
               text="continue_with"
@@ -200,8 +196,8 @@
         </div>
         <div class="security-row security-row--last">
           <div>
-            <h4>Autenticação de dois fatores (2FA)</h4>
-            <p>Esta opção ficará disponível numa próxima versão.</p>
+            <h4>{{ "Autenticação de dois fatores (2FA)" | translate }}</h4>
+            <p>{{ "Esta opção ficará disponível numa próxima versão." | translate }}</p>
           </div>
           <button
             class="profile-switch"
@@ -209,7 +205,7 @@
             role="switch"
             [attr.aria-checked]="twoFactorEnabled()"
             disabled
-            aria-label="Autenticação de dois fatores indisponível"
+            [attr.aria-label]="('Autenticação de dois fatores indisponível' | translate)"
           >
             <span></span>
           </button>
@@ -219,14 +215,14 @@
       <article class="profile-card profile-card--danger">
         <div class="profile-card__heading">
           <div>
-            <h3>Zona de perigo</h3>
-            <p class="profile-card__hint">Ações permanentes e relacionadas com a sessão.</p>
+            <h3>{{ "Zona de perigo" | translate }}</h3>
+            <p class="profile-card__hint">{{ "Ações permanentes e relacionadas com a sessão." | translate }}</p>
           </div>
         </div>
         <div class="security-row">
           <div>
-            <h4>Terminar sessão em todos os dispositivos</h4>
-            <p>Fecha todas as sessões ativas da tua conta.</p>
+            <h4>{{ "Terminar sessão em todos os dispositivos" | translate }}</h4>
+            <p>{{ "Fecha todas as sessões ativas da tua conta." | translate }}</p>
           </div>
           <button
             class="profile-button profile-button--secondary"
@@ -237,13 +233,12 @@
               <path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5" />
               <path d="m14 8 4 4-4 4m-6-4h10" />
             </svg>
-            Terminar sessões
-          </button>
+             {{ "Terminar sessões" | translate }} </button>
         </div>
         <div class="security-row security-row--last">
           <div>
-            <h4>Apagar conta</h4>
-            <p>Remove permanentemente a tua conta e os teus dados.</p>
+            <h4>{{ "Apagar conta" | translate }}</h4>
+            <p>{{ "Remove permanentemente a tua conta e os teus dados." | translate }}</p>
           </div>
           <button
             class="profile-button profile-button--danger"
@@ -253,13 +248,12 @@
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M4 7h16m-10 4v6m4-6v6M9 7V4h6v3m-9 0 1 14h10l1-14" />
             </svg>
-            Apagar conta
-          </button>
+             {{ "Apagar conta" | translate }} </button>
         </div>
       </article>
     </section>
   } @else {
-    <section class="profile-shell profile-empty"><p>A carregar o perfil...</p></section>
+    <section class="profile-shell profile-empty"><p>{{ "A carregar o perfil..." | translate }}</p></section>
   }
 </main>
 
@@ -276,27 +270,27 @@
       </svg>
     </div>
     <div modal-heading class="profile-modal__heading">
-      <h2 id="password-modal-title">Alterar password</h2>
+      <h2 id="password-modal-title">{{ "Alterar password" | translate }}</h2>
     </div>
     <div class="profile-modal__body">
       @if (passwordError()) {
-        <p class="profile-alert profile-alert--error" role="alert">{{ passwordError() }}</p>
+        <p class="profile-alert profile-alert--error" role="alert">{{ passwordError() | translate }}</p>
       }
       <form class="profile-modal__form" (submit)="changePassword($event)">
         @if (user()?.hasLocalPassword) {
           <label
-          >Password atual<input
+          >{{ "Password atual" | translate }}<input
             name="currentPassword"
             type="password"
             autocomplete="current-password"
             required
         /></label>
         } @else {
-          <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">A tua conta ainda não tem uma password. Define uma para poderes iniciar sessão também com email.</p>
+          <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">{{ "A tua conta ainda não tem uma password. Define uma para poderes iniciar sessão também com email." | translate }}</p>
           <input name="currentPassword" type="hidden" value="" />
         }
         <label
-          >Nova password<input
+          >{{ "Nova password" | translate }}<input
             name="newPassword"
             type="password"
             autocomplete="new-password"
@@ -306,10 +300,9 @@
             required
         /></label>
         <p id="new-password-requirements" class="-mt-2 text-xs leading-5 text-gray-500 dark:text-gray-400">
-          12–128 caracteres, com maiúscula, minúscula, número e símbolo.
-        </p>
+           {{ "12–128 caracteres, com maiúscula, minúscula, número e símbolo." | translate }} </p>
         <label
-          >Confirmar nova password<input
+          >{{ "Confirmar nova password" | translate }}<input
             name="confirmPassword"
             type="password"
             autocomplete="new-password"
@@ -324,14 +317,13 @@
             [disabled]="changingPassword()"
             (click)="closePasswordModal()"
           >
-            Fechar
-          </button>
+             {{ "Fechar" | translate }} </button>
           <button
             class="profile-button profile-button--primary"
             type="submit"
             [disabled]="changingPassword()"
           >
-            {{ changingPassword() ? 'A guardar...' : 'Guardar password' }}
+            {{ (changingPassword() ? 'A guardar...' : 'Guardar password') | translate }}
           </button>
         </div>
       </form>
@@ -362,14 +354,14 @@
     </div>
     <div modal-heading class="profile-modal__heading profile-modal__heading--confirmation">
       <h2 id="confirmation-modal-title">
-        {{ action === 'delete-account' ? 'Apagar conta?' : 'Terminar todas as sessões?' }}
+        {{ (action === 'delete-account' ? 'Apagar conta?' : 'Terminar todas as sessões?') | translate }}
       </h2>
       <p>
-        {{
+        {{ (
           action === 'delete-account'
             ? 'Esta ação é permanente e remove a tua conta e os teus dados. Não pode ser desfeita.'
             : 'A sessão será terminada em todos os dispositivos onde a tua conta estiver ativa.'
-        }}
+        ) | translate }}
       </p>
     </div>
     <div class="profile-modal__body">
@@ -380,8 +372,7 @@
           [disabled]="confirmingAction()"
           (click)="closeConfirmation()"
         >
-          Cancelar
-        </button>
+           {{ "Cancelar" | translate }} </button>
         <button
           class="profile-button"
           type="button"
@@ -390,13 +381,13 @@
           [disabled]="confirmingAction()"
           (click)="confirmDangerAction()"
         >
-          {{
+          {{ (
             confirmingAction()
               ? 'A processar...'
               : action === 'delete-account'
                 ? 'Apagar conta'
                 : 'Terminar sessões'
-          }}
+          ) | translate }}
         </button>
       </div>
     </div>
@@ -417,16 +408,16 @@
       </svg>
     </div>
     <div modal-heading class="profile-success-modal__heading">
-      <h2 id="success-modal-title">{{ success.title }}</h2>
+      <h2 id="success-modal-title">{{ success.title | translate }}</h2>
     </div>
     <div class="profile-success-modal__body">
-      <p>{{ success.message }}</p>
+      <p>{{ success.message | translate }}</p>
       <button
         class="profile-button profile-button--primary"
         type="button"
         (click)="closeSuccessModal()"
       >
-        {{ success.redirectTo ? 'Continuar para iniciar sessão' : 'Fechar' }}
+        {{ (success.redirectTo ? 'Continuar para iniciar sessão' : 'Fechar') | translate }}
       </button>
     </div>
   </app-modal>

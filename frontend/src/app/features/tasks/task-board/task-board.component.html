@@ -1,45 +1,43 @@
 <main class="tasks-page">
   <header class="tasks-page__header">
     <div>
-      <h1>Tarefas</h1>
-      <nav class="tasks-page__breadcrumb" aria-label="Breadcrumb">
-        <a routerLink="/dashboard">Dashboard</a>
+      <h1>{{ "Tarefas" | translate }}</h1>
+      <nav class="tasks-page__breadcrumb" [attr.aria-label]="('Breadcrumb' | translate)">
+        <a routerLink="/dashboard">{{ "Dashboard" | translate }}</a>
         <span aria-hidden="true">›</span>
-        <span aria-current="page">Tarefas</span>
+        <span aria-current="page">{{ "Tarefas" | translate }}</span>
       </nav>
     </div>
 
     <button class="tasks-page__primary-button" type="button" (click)="openCreateTask()">
       <span aria-hidden="true">+</span>
-      Nova tarefa
-    </button>
+       {{ "Nova tarefa" | translate }} </button>
   </header>
 
   <section class="tasks-board-shell" aria-labelledby="tasks-board-title">
     <div class="tasks-board-shell__toolbar">
       <div>
-        <h2 id="tasks-board-title">Quadro de tarefas</h2>
-        <p>Organiza o trabalho por estado e acompanha o progresso da equipa.</p>
+        <h2 id="tasks-board-title">{{ "Quadro de tarefas" | translate }}</h2>
+        <p>{{ "Organiza o trabalho por estado e acompanha o progresso da equipa." | translate }}</p>
       </div>
 
       <div class="tasks-board-shell__actions">
         <label class="tasks-search">
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
-          <input type="search" placeholder="Pesquisar tarefas" (input)="updateSearch($event)" />
+          <input type="search" [placeholder]="('Pesquisar tarefas' | translate)" (input)="updateSearch($event)" />
         </label>
         <button class="tasks-filter-button" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10m-7 6h4"/></svg>
-          Filtros
-        </button>
+           {{ "Filtros" | translate }} </button>
       </div>
     </div>
 
     @if (isLoading()) {
-      <div class="tasks-board__state">A carregar tarefas...</div>
+      <div class="tasks-board__state">{{ "A carregar tarefas..." | translate }}</div>
     } @else if (errorMessage() && columns().length === 0) {
-      <div class="tasks-board__state tasks-board__state--error" role="alert">{{ errorMessage() }}</div>
+      <div class="tasks-board__state tasks-board__state--error" role="alert">{{ errorMessage() | translate }}</div>
     } @else {
-      <div class="tasks-board" aria-label="Quadro Kanban de tarefas">
+      <div class="tasks-board" [attr.aria-label]="('Quadro Kanban de tarefas' | translate)">
         <div
           class="tasks-board__columns"
           cdkDropList
@@ -78,9 +76,9 @@
           }
         </div>
 
-        <button class="tasks-add-column" type="button" aria-label="Adicionar coluna" (click)="openCreateStatus()">
+        <button class="tasks-add-column" type="button" [attr.aria-label]="('Adicionar coluna' | translate)" (click)="openCreateStatus()">
           <span class="tasks-add-column__icon" aria-hidden="true">+</span>
-          <span>Adicionar coluna</span>
+          <span>{{ "Adicionar coluna" | translate }}</span>
         </button>
       </div>
     }
@@ -88,7 +86,7 @@
 </main>
 
 @if (errorMessage() && columns().length > 0) {
-  <p class="tasks-page__error" role="alert">{{ errorMessage() }}</p>
+  <p class="tasks-page__error" role="alert">{{ errorMessage() | translate }}</p>
 }
 
 @if (resultModal(); as result) {
@@ -110,8 +108,8 @@
     (closed)="closeTaskModal()"
   >
     <div modal-heading class="tasks-modal__heading">
-      <h2 id="task-modal-title">{{ selectedTask() ? 'Editar tarefa' : 'Nova tarefa' }}</h2>
-      <p>Preenche os dados da tarefa e escolhe o seu estado.</p>
+      <h2 id="task-modal-title">{{ (selectedTask() ? 'Editar tarefa' : 'Nova tarefa') | translate }}</h2>
+      <p>{{ "Preenche os dados da tarefa e escolhe o seu estado." | translate }}</p>
     </div>
     <app-task-form
       [task]="selectedTask()"
@@ -133,8 +131,8 @@
     (closed)="closeStatusModal()"
   >
     <div modal-heading class="tasks-modal__heading">
-      <h2 id="task-status-modal-title">{{ selectedStatus() ? 'Editar coluna' : 'Nova coluna' }}</h2>
-      <p>Define o nome, a cor e a ordem desta coluna.</p>
+      <h2 id="task-status-modal-title">{{ (selectedStatus() ? 'Editar coluna' : 'Nova coluna') | translate }}</h2>
+      <p>{{ "Define o nome, a cor e a ordem desta coluna." | translate }}</p>
     </div>
     <app-task-status-form
       [status]="selectedStatus()"
@@ -155,13 +153,13 @@
   >
     <div modal-icon class="tasks-confirmation-icon" aria-hidden="true">!</div>
     <div modal-heading class="tasks-modal__heading">
-      <h2 id="task-delete-modal-title">Apagar {{ target.type === 'task' ? 'tarefa' : 'coluna' }}?</h2>
-      <p>Esta ação não pode ser desfeita. O item “{{ target.label }}” será removido permanentemente.</p>
+      <h2 id="task-delete-modal-title">{{ "Apagar" | translate }} {{ (target.type === 'task' ? 'tarefa' : 'coluna') | translate }}?</h2>
+      <p>{{ "Esta ação não pode ser desfeita. O item " | translate }}“{{ target.label }}” {{ "será removido permanentemente." | translate }}</p>
     </div>
     <div class="tasks-modal__actions">
-      <button class="tasks-modal__secondary" type="button" (click)="closeDeleteModal()">Cancelar</button>
+      <button class="tasks-modal__secondary" type="button" (click)="closeDeleteModal()">{{ "Cancelar" | translate }}</button>
       <button class="tasks-modal__danger" type="button" [disabled]="isSaving()" (click)="deleteSelected()">
-        {{ isSaving() ? 'A apagar...' : 'Apagar' }}
+        {{ (isSaving() ? 'A apagar...' : 'Apagar') | translate }}
       </button>
     </div>
   </app-modal>

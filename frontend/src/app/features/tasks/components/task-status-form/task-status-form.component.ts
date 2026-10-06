@@ -2,9 +2,10 @@ import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { CreateTaskStatusRequest, TaskStatus } from '../../models/task-status.model';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 
 @Component({
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslatePipe],
   selector: 'app-task-status-form',
   templateUrl: './task-status-form.component.html',
   styleUrl: './task-status-form.component.scss',

@@ -14,14 +14,18 @@ import { Subscription } from 'rxjs';
 
 import { ProductListItem } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../../core/i18n/language.service';
 
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-product-card',
   styleUrl: './product-card.component.scss',
   templateUrl: './product-card.component.html',
 })
 export class ProductCard implements OnInit, OnChanges, OnDestroy {
   private readonly productService = inject(ProductService);
+  private readonly language = inject(LanguageService);
 
   readonly product = input.required<ProductListItem>();
   readonly selected = output<number>();
@@ -78,7 +82,7 @@ export class ProductCard implements OnInit, OnChanges, OnDestroy {
   }
 
   protected formatPrice(price: number): string {
-    return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }).format(price);
+    return new Intl.NumberFormat(this.language.locale(), { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }).format(price);
   }
 
   private loadProductImage(): void {

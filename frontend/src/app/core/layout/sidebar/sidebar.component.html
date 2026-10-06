@@ -1,11 +1,11 @@
 <aside class="sidebar" [class.sidebar--collapsed]="!sidebar.expanded()" [class.sidebar--mobile-open]="sidebar.mobileOpen()">
   <div class="sidebar__logo">
     <span class="sidebar__logo-mark"><img src="/images/logo/worktracker-logo.svg" alt="" width="160" height="32" /></span>
-    <span class="sidebar__logo-name">WorkTracker</span>
+    <span class="sidebar__logo-name">{{ "WorkTracker" | translate }}</span>
   </div>
-  <nav class="sidebar__nav" aria-label="Navegação principal">
+  <nav class="sidebar__nav" [attr.aria-label]="('Navegação principal' | translate)">
     @for (section of menuSections; track section.label) {
-      <p class="sidebar__label" [class.sidebar__label--spaced]="section.spaced">{{ section.label }}</p>
+      <p class="sidebar__label" [class.sidebar__label--spaced]="section.spaced">{{ section.label | translate }}</p>
       @for (item of section.items; track item.route) {
         <a
           class="nav-item"
@@ -15,10 +15,10 @@
           ariaCurrentWhenActive="page"
         >
           <app-sidebar-icon [name]="item.icon" />
-          <span>{{ item.label }}</span>
+          <span>{{ item.label | translate }}</span>
         </a>
       }
     }
   </nav>
 </aside>
-<button class="sidebar-backdrop" [class.sidebar-backdrop--visible]="sidebar.mobileOpen()" type="button" aria-label="Close sidebar" (click)="sidebar.closeMobile()"></button>
+<button class="sidebar-backdrop" [class.sidebar-backdrop--visible]="sidebar.mobileOpen()" type="button" [attr.aria-label]="('Close sidebar' | translate)" (click)="sidebar.closeMobile()"></button>

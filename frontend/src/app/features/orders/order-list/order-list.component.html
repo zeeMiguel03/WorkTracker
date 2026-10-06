@@ -1,74 +1,73 @@
 <main class="orders-page">
   <header class="orders-header">
     <div>
-      <h1>Encomendas</h1>
-      <nav class="orders-breadcrumb" aria-label="Breadcrumb">
-        <a routerLink="/dashboard">Dashboard</a><span aria-hidden="true">›</span><span aria-current="page">Encomendas</span>
+      <h1>{{ "Encomendas" | translate }}</h1>
+      <nav class="orders-breadcrumb" [attr.aria-label]="('Breadcrumb' | translate)">
+        <a routerLink="/dashboard">{{ "Dashboard" | translate }}</a><span aria-hidden="true">›</span><span aria-current="page">{{ "Encomendas" | translate }}</span>
       </nav>
     </div>
     <button class="primary-button" type="button" (click)="openCreateOrder()">
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
-      Nova encomenda
-    </button>
+       {{ "Nova encomenda" | translate }} </button>
   </header>
 
-  <section class="order-stats" aria-label="Resumo das encomendas">
+  <section class="order-stats" [attr.aria-label]="('Resumo das encomendas' | translate)">
     <article class="stat-card">
       <span class="stat-card__icon stat-card__icon--blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 7.5 7-3.5 7 3.5-7 3.5-7-3.5Z"/><path d="m5 7.5 7 3.5 7-3.5v8.75L12 20l-7-3.75V7.5Z"/><path d="M12 11v9M8.5 5.75l7 3.5"/></svg></span>
-      <div><span>Encomendas ativas</span><strong>{{ activeOrders() }}</strong><small>{{ totalUnits() }} artigos registados</small></div>
+      <div><span>{{ "Encomendas ativas" | translate }}</span><strong>{{ activeOrders() }}</strong><small>{{ totalUnits() }} {{ "artigos registados" | translate }}</small></div>
     </article>
     <article class="stat-card">
       <span class="stat-card__icon stat-card__icon--amber"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6.5h11v10h-11z"/><path d="M14.5 10h3.25l2.75 3v3.5h-6zM6 10h5"/><circle cx="7" cy="18" r="1.75"/><circle cx="17.5" cy="18" r="1.75"/></svg></span>
-      <div><span>Em trânsito</span><strong>{{ transitOrders() }}</strong><small>A acompanhar entrega</small></div>
+      <div><span>{{ "Em trânsito" | translate }}</span><strong>{{ transitOrders() }}</strong><small>{{ "A acompanhar entrega" | translate }}</small></div>
     </article>
     <article class="stat-card">
       <span class="stat-card__icon stat-card__icon--green"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m8.25 12 2.5 2.5 5-5"/></svg></span>
-      <div><span>Encomendas recebidas</span><strong>{{ receivedOrders() }}</strong><small class="positive">Concluídas com sucesso</small></div>
+      <div><span>{{ "Encomendas recebidas" | translate }}</span><strong>{{ receivedOrders() }}</strong><small class="positive">{{ "Concluídas com sucesso" | translate }}</small></div>
     </article>
     <article class="stat-card">
       <span class="stat-card__icon stat-card__icon--violet"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15 8.5a4.5 4.5 0 1 0 0 7M7.5 11h6M7.5 13h5"/></svg></span>
-      <div><span>Investimento total</span><strong>{{ formatCurrency(totalInvestment()) }}</strong><small>{{ totalUnits() }} artigos comprados</small></div>
+      <div><span>{{ "Investimento total" | translate }}</span><strong>{{ formatCurrency(totalInvestment()) }}</strong><small>{{ totalUnits() }} {{ "artigos comprados" | translate }}</small></div>
     </article>
   </section>
 
   <section class="orders-shell" aria-labelledby="orders-list-title">
     <div class="orders-toolbar">
       <div>
-        <h2 id="orders-list-title">Todas as encomendas</h2>
-        <p>Acompanha compras, entregas e os artigos de cada encomenda.</p>
+        <h2 id="orders-list-title">{{ "Todas as encomendas" | translate }}</h2>
+        <p>{{ "Acompanha compras, entregas e os artigos de cada encomenda." | translate }}</p>
       </div>
       <div class="orders-toolbar__actions">
         <label class="orders-search">
-          <span class="sr-only">Pesquisar encomendas</span>
+          <span class="sr-only">{{ "Pesquisar encomendas" | translate }}</span>
           <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="m13 13 4 4"/></svg>
-          <input type="search" placeholder="Pesquisar encomenda ou artigo..." [value]="searchTerm()" (input)="updateSearch($event)" />
+          <input type="search" [placeholder]="('Pesquisar encomenda ou artigo...' | translate)" [value]="searchTerm()" (input)="updateSearch($event)" />
         </label>
-        <button class="secondary-button" type="button" [attr.aria-expanded]="filtersOpen()" aria-controls="order-filters" (click)="filtersOpen.update((open) => !open)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M5 10h10M8 15h4"/></svg>Filtros</button>
+        <button class="secondary-button" type="button" [attr.aria-expanded]="filtersOpen()" aria-controls="order-filters" (click)="filtersOpen.update((open) => !open)"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M5 10h10M8 15h4"/></svg>{{ "Filtros" | translate }}</button>
       </div>
     </div>
 
     @if (filtersOpen()) {
       <div class="advanced-filters" id="order-filters">
-        <div class="filter-field"><span>Origem</span><app-dropdown [fullWidth]="true" [options]="sourceFilterOptions()" [value]="selectedSource()" (valueChange)="updateSourceFilter($event)" /></div>
-        <div class="filter-field"><span>Ordenar por</span><app-dropdown [fullWidth]="true" [options]="sortOptions" [value]="sortOrder()" (valueChange)="updateSort($event)" /></div>
-        <button type="button" (click)="resetFilters()">Limpar filtros</button>
+        <div class="filter-field"><span>{{ "Origem" | translate }}</span><app-dropdown [fullWidth]="true" [options]="sourceFilterOptions()" [value]="selectedSource()" (valueChange)="updateSourceFilter($event)" /></div>
+        <div class="filter-field"><span>{{ "Ordenar por" | translate }}</span><app-dropdown [fullWidth]="true" [options]="sortOptions" [value]="sortOrder()" (valueChange)="updateSort($event)" /></div>
+        <button type="button" (click)="resetFilters()">{{ "Limpar filtros" | translate }}</button>
       </div>
     }
 
-    <div class="status-tabs" role="group" aria-label="Filtrar encomendas por estado">
+    <div class="status-tabs" role="group" [attr.aria-label]="('Filtrar encomendas por estado' | translate)">
       @for (option of statusOptions; track option.value) {
-        <button type="button" [class.status-tabs__active]="selectedStatus() === option.value" [attr.aria-pressed]="selectedStatus() === option.value" (click)="selectStatus(option.value)">{{ option.label }}</button>
+        <button type="button" [class.status-tabs__active]="selectedStatus() === option.value" [attr.aria-pressed]="selectedStatus() === option.value" (click)="selectStatus(option.value)">{{ option.label | translate }}</button>
       }
     </div>
 
     <div class="orders-list">
       <div class="orders-list__head" aria-hidden="true">
-        <span>Encomenda</span><span>Origem</span><span>Artigos</span><span>Estado</span><span>Total</span><span></span>
+        <span>{{ "Encomenda" | translate }}</span><span>{{ "Origem" | translate }}</span><span>{{ "Artigos" | translate }}</span><span>{{ "Estado" | translate }}</span><span>{{ "Total" | translate }}</span><span></span>
       </div>
       @if (isLoading()) {
-        <div class="orders-empty"><strong>A carregar encomendas...</strong><p>A obter os dados atualizados do servidor.</p></div>
+        <div class="orders-empty"><strong>{{ "A carregar encomendas..." | translate }}</strong><p>{{ "A obter os dados atualizados do servidor." | translate }}</p></div>
       } @else if (errorMessage() && !createPanelOpen()) {
-        <div class="orders-empty orders-empty--error"><strong>{{ errorMessage() }}</strong><button type="button" (click)="loadOrders()">Tentar novamente</button></div>
+        <div class="orders-empty orders-empty--error"><strong>{{ errorMessage() | translate }}</strong><button type="button" (click)="loadOrders()">{{ "Tentar novamente" | translate }}</button></div>
       } @else { @for (order of visibleOrders(); track order.id) {
         <article class="order-row" [class.order-row--expanded]="expandedOrderId() === order.id">
           <button class="order-row__summary" type="button" [attr.aria-expanded]="expandedOrderId() === order.id" [attr.aria-controls]="'details-' + order.id" (click)="toggleOrder(order.id)">
@@ -80,9 +79,9 @@
                   <i [style.--avatar-accent]="product.accent"><app-authenticated-image [src]="product.coverImageUrl" alt="">{{ product.initials }}</app-authenticated-image></i>
                 }
               </span>
-              <span><strong>{{ productUnits(order) }} {{ productUnits(order) === 1 ? 'artigo' : 'artigos' }}</strong><small>{{ order.products.length }} {{ order.products.length === 1 ? 'produto' : 'produtos' }}</small></span>
+              <span><strong>{{ productUnits(order) }} {{ (productUnits(order) === 1 ? 'artigo' : 'artigos') | translate }}</strong><small>{{ order.products.length }} {{ (order.products.length === 1 ? 'produto' : 'produtos') | translate }}</small></span>
             </span>
-            <span class="status-badge" [class]="'status-badge status-badge--' + order.status"><i></i>{{ statusLabel(order.status) }}</span>
+            <span class="status-badge" [class]="'status-badge status-badge--' + order.status"><i></i>{{ statusLabel(order.status) | translate }}</span>
             <strong class="order-total">{{ formatCurrency(orderTotal(order)) }}</strong>
             <span class="order-chevron"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4"/></svg></span>
           </button>
@@ -90,43 +89,43 @@
           @if (expandedOrderId() === order.id) {
             <div class="order-details" [id]="'details-' + order.id">
               <div class="order-details__main">
-                <div class="order-details__title"><div><h3>Artigos da encomenda</h3><p>Custos de compra antes da distribuição de portes.</p></div><button type="button" (click)="openEditOrder(order, true)"><span aria-hidden="true">+</span> Adicionar artigo</button></div>
+                <div class="order-details__title"><div><h3>{{ "Artigos da encomenda" | translate }}</h3><p>{{ "Custos de compra antes da distribuição de portes." | translate }}</p></div><button type="button" (click)="openEditOrder(order, true)"><span aria-hidden="true">+</span>  {{ "Adicionar artigo" | translate }}</button></div>
                 <div class="product-lines">
                   @for (product of order.products; track product.ids[0] ?? product.name) {
                     <div class="product-line">
                       <span class="product-line__image" [style.--product-accent]="product.accent"><app-authenticated-image [src]="product.coverImageUrl" [alt]="'Fotografia de ' + product.name">{{ product.initials }}</app-authenticated-image></span>
-                      <span class="product-line__copy"><strong>{{ product.name }}</strong><small>{{ product.description || 'Sem detalhes' }}</small></span>
-                      <span class="product-line__quantity">Qtd. {{ product.quantity }}</span>
-                      <span class="product-line__price"><strong>{{ formatCurrency(product.unitPrice * product.quantity) }}</strong><small>{{ formatCurrency(product.unitPrice) }} / un.</small></span>
+                      <span class="product-line__copy"><strong>{{ product.name }}</strong><small>{{ (product.description || 'Sem detalhes') | translate }}</small></span>
+                      <span class="product-line__quantity">{{ "Qtd." | translate }} {{ product.quantity }}</span>
+                      <span class="product-line__price"><strong>{{ formatCurrency(product.unitPrice * product.quantity) }}</strong><small>{{ formatCurrency(product.unitPrice) }} {{ " / un." | translate }}</small></span>
                       <button class="icon-more" type="button" [attr.aria-label]="'Mais opções para ' + product.name">•••</button>
                     </div>
                   }
                 </div>
               </div>
               <aside class="order-details__aside">
-                <h3>Resumo</h3>
-                <dl><div><dt>Subtotal</dt><dd>{{ formatCurrency(orderSubtotal(order)) }}</dd></div><div><dt>Portes</dt><dd>{{ formatCurrency(order.shippingCost) }}</dd></div><div><dt>Outros custos</dt><dd>{{ formatCurrency(order.otherCosts) }}</dd></div><div class="summary-total"><dt>Total</dt><dd>{{ formatCurrency(orderTotal(order)) }}</dd></div></dl>
-                <div class="tracking-card"><span>Rastreio</span><strong>{{ order.trackingNumber }}</strong><small>Dados sincronizados com o servidor</small></div>
-                <div class="status-select"><span>Estado da encomenda</span><app-dropdown [fullWidth]="true" [options]="orderStatusDropdownOptions" [value]="order.status" (valueChange)="changeStatus(order.id, $event)" /></div>
-                <div class="detail-actions"><button type="button" (click)="openEditOrder(order)">Editar</button><button class="detail-actions__danger" type="button" (click)="requestDeleteOrder(order)">Apagar</button></div>
+                <h3>{{ "Resumo" | translate }}</h3>
+                <dl><div><dt>{{ "Subtotal" | translate }}</dt><dd>{{ formatCurrency(orderSubtotal(order)) }}</dd></div><div><dt>{{ "Portes" | translate }}</dt><dd>{{ formatCurrency(order.shippingCost) }}</dd></div><div><dt>{{ "Outros custos" | translate }}</dt><dd>{{ formatCurrency(order.otherCosts) }}</dd></div><div class="summary-total"><dt>{{ "Total" | translate }}</dt><dd>{{ formatCurrency(orderTotal(order)) }}</dd></div></dl>
+                <div class="tracking-card"><span>{{ "Rastreio" | translate }}</span><strong>{{ order.trackingNumber }}</strong><small>{{ "Dados sincronizados com o servidor" | translate }}</small></div>
+                <div class="status-select"><span>{{ "Estado da encomenda" | translate }}</span><app-dropdown [fullWidth]="true" [options]="orderStatusDropdownOptions" [value]="order.status" (valueChange)="changeStatus(order.id, $event)" /></div>
+                <div class="detail-actions"><button type="button" (click)="openEditOrder(order)">{{ "Editar" | translate }}</button><button class="detail-actions__danger" type="button" (click)="requestDeleteOrder(order)">{{ "Apagar" | translate }}</button></div>
               </aside>
             </div>
           }
         </article>
       } @empty {
-        <div class="orders-empty"><span>⌕</span><strong>Nenhuma encomenda encontrada</strong><p>Experimenta alterar a pesquisa ou o filtro selecionado.</p></div>
+        <div class="orders-empty"><span>⌕</span><strong>{{ "Nenhuma encomenda encontrada" | translate }}</strong><p>{{ "Experimenta alterar a pesquisa ou o filtro selecionado." | translate }}</p></div>
       } }
     </div>
-    <footer class="orders-footer"><span>A mostrar {{ visibleOrders().length }} de {{ totalItems() }} encomendas</span><nav aria-label="Paginação"><button type="button" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Anterior</button>@for (pageNumber of pageNumbers(); track pageNumber) { <button type="button" [class.page-active]="page() === pageNumber" (click)="goToPage(pageNumber)">{{ pageNumber }}</button> }<button type="button" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Seguinte</button></nav></footer>
+    <footer class="orders-footer"><span>{{ "A mostrar" | translate }} {{ visibleOrders().length }} {{ "de" | translate }} {{ totalItems() }} {{ "encomendas" | translate }}</span><nav [attr.aria-label]="('Paginação' | translate)"><button type="button" [disabled]="page() === 1" (click)="goToPage(page() - 1)">{{ "Anterior" | translate }}</button>@for (pageNumber of pageNumbers(); track pageNumber) { <button type="button" [class.page-active]="page() === pageNumber" (click)="goToPage(pageNumber)">{{ pageNumber }}</button> }<button type="button" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">{{ "Seguinte" | translate }}</button></nav></footer>
   </section>
 </main>
 
 @if (createPanelOpen()) {
   <app-modal [open]="true" titleId="order-modal-title" size="large" [closeOnBackdrop]="!isSaving()" (closed)="closeOrderModal()">
     <div modal-heading class="order-modal__heading">
-      <span>{{ editingOrder() ? 'Editar compra' : 'Nova compra' }}</span>
-      <h2 id="order-modal-title">{{ editingOrder() ? 'Editar encomenda' : 'Criar encomenda' }}</h2>
-      <p>Organiza a encomenda e todos os artigos numa só ficha.</p>
+      <span>{{ (editingOrder() ? 'Editar compra' : 'Nova compra') | translate }}</span>
+      <h2 id="order-modal-title">{{ (editingOrder() ? 'Editar encomenda' : 'Criar encomenda') | translate }}</h2>
+      <p>{{ "Organiza a encomenda e todos os artigos numa só ficha." | translate }}</p>
     </div>
 
     <form class="order-form" (submit)="$event.preventDefault()">
@@ -134,72 +133,72 @@
 
       @if (activeFormStep() === 0) {
         <section class="order-form__content" aria-labelledby="order-details-heading">
-          <div class="order-form__intro"><span>Informação da compra</span><h3 id="order-details-heading">Detalhes da encomenda</h3><p>Indica a origem, data e informação de envio.</p></div>
+          <div class="order-form__intro"><span>{{ "Informação da compra" | translate }}</span><h3 id="order-details-heading">{{ "Detalhes da encomenda" | translate }}</h3><p>{{ "Indica a origem, data e informação de envio." | translate }}</p></div>
           <div class="form-grid">
-            <div class="form-field"><label>Origem <b>*</b></label><app-dropdown [fullWidth]="true" [options]="sourceDropdownOptions()" [value]="dropdownValue(draft().sourceId)" (valueChange)="chooseDraftSource($event)" /></div>
-            <label class="form-field"><span>Data da encomenda <b>*</b></span><input type="date" [value]="draft().orderedDate" (input)="updateDraftField('orderedDate', $event)" /></label>
-            <label class="form-field form-grid__wide"><span>Número de rastreio <small>(opcional)</small></span><input type="text" placeholder="Ex.: PT123456789" [value]="draft().trackingNumber" (input)="updateDraftField('trackingNumber', $event)" /></label>
+            <div class="form-field"><label>{{ "Origem" | translate }} <b>*</b></label><app-dropdown [fullWidth]="true" [options]="sourceDropdownOptions()" [value]="dropdownValue(draft().sourceId)" (valueChange)="chooseDraftSource($event)" /></div>
+            <label class="form-field"><span>{{ "Data da encomenda" | translate }} <b>*</b></span><input type="date" [value]="draft().orderedDate" (input)="updateDraftField('orderedDate', $event)" /></label>
+            <label class="form-field form-grid__wide"><span>{{ "Número de rastreio" | translate }} <small>{{ "(opcional)" | translate }}</small></span><input type="text" [placeholder]="('Ex.: PT123456789' | translate)" [value]="draft().trackingNumber" (input)="updateDraftField('trackingNumber', $event)" /></label>
           </div>
         </section>
       }
 
       @if (activeFormStep() === 1) {
         <section class="order-form__content" aria-labelledby="order-products-heading">
-          <div class="order-form__intro order-form__intro--action"><div><span>Artigos incluídos</span><h3 id="order-products-heading">Produtos da encomenda</h3><p>Adiciona toda a informação do produto, exceto fotografias.</p></div><button class="add-product-button" type="button" (click)="addDraftProduct()">+ Adicionar produto</button></div>
+          <div class="order-form__intro order-form__intro--action"><div><span>{{ "Artigos incluídos" | translate }}</span><h3 id="order-products-heading">{{ "Produtos da encomenda" | translate }}</h3><p>{{ "Adiciona toda a informação do produto, exceto fotografias." | translate }}</p></div><button class="add-product-button" type="button" (click)="addDraftProduct()">{{ "+ Adicionar produto" | translate }}</button></div>
           <div class="draft-products">
             @for (product of draft().products; track $index; let index = $index) {
               <article class="draft-product" [class.draft-product--collapsed]="activeProductIndex() !== index">
-                <header role="button" tabindex="0" [attr.aria-expanded]="activeProductIndex() === index" (click)="toggleDraftProduct(index)" (keydown.enter)="toggleDraftProduct(index)" (keydown.space)="toggleDraftProduct(index); $event.preventDefault()"><span>{{ formatIndex(index) }}</span><div><strong>{{ product.name || 'Novo produto' }}</strong><small>Produto {{ index + 1 }} · {{ activeProductIndex() === index ? 'Aberto' : 'Clique para editar' }}</small></div><button type="button" [attr.aria-label]="'Remover ' + (product.name || 'produto')" (click)="$event.stopPropagation(); removeDraftProduct(index)">×</button></header>
+                <header role="button" tabindex="0" [attr.aria-expanded]="activeProductIndex() === index" (click)="toggleDraftProduct(index)" (keydown.enter)="toggleDraftProduct(index)" (keydown.space)="toggleDraftProduct(index); $event.preventDefault()"><span>{{ formatIndex(index) }}</span><div><strong>{{ (product.name || 'Novo produto') | translate }}</strong><small>{{ "Produto" | translate }} {{ index + 1 }} · {{ (activeProductIndex() === index ? 'Aberto' : 'Clique para editar') | translate }}</small></div><button type="button" [attr.aria-label]="('Remover ' | translate) + (product.name || 'produto')" (click)="$event.stopPropagation(); removeDraftProduct(index)">{{ "×" | translate }}</button></header>
                 @if (activeProductIndex() === index) {
                 <div class="product-fields">
                   <div class="product-image-field product-fields__wide">
                     @if (product.imagePreviewUrl || product.existingImageUrl) {
                       <div class="product-image-field__preview">
                         <img [src]="product.imagePreviewUrl || product.existingImageUrl" [alt]="'Imagem de ' + (product.name || 'produto')" />
-                        @if (product.imagePreviewUrl) { <button type="button" aria-label="Remover imagem selecionada" (click)="removeProductImage(index)">×</button> }
+                        @if (product.imagePreviewUrl) { <button type="button" [attr.aria-label]="('Remover imagem selecionada' | translate)" (click)="removeProductImage(index)">{{ "×" | translate }}</button> }
                       </div>
                     }
                     <label class="product-image-field__picker" [for]="'order-product-image-' + index">
                       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h3l1.4-2h3.2l1.4 2H20a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8.5a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.2"/></svg>
-                      <span><strong>{{ product.imagePreviewUrl || product.existingImageUrl ? 'Substituir imagem' : 'Adicionar imagem' }}</strong><small>JPG, PNG ou WebP</small></span>
+                      <span><strong>{{ (product.imagePreviewUrl || product.existingImageUrl ? 'Substituir imagem' : 'Adicionar imagem') | translate }}</strong><small>{{ "JPG, PNG ou WebP" | translate }}</small></span>
                       <input [id]="'order-product-image-' + index" type="file" accept="image/jpeg,image/png,image/webp" (change)="selectProductImage(index, $event)" />
                     </label>
                   </div>
-                  <label class="form-field product-fields__wide"><span>Nome do produto <b>*</b></span><input type="text" placeholder="Ex.: Casaco Ralph Lauren azul" [value]="product.name" (input)="updateDraftProduct(index, 'name', $event)" /></label>
-                  <label class="form-field"><span>Categoria</span><input type="text" placeholder="Ex.: Casacos" [value]="product.category" (input)="updateDraftProduct(index, 'category', $event)" /></label>
-                  <label class="form-field"><span>Marca</span><input type="text" placeholder="Ex.: Ralph Lauren" [value]="product.brand" (input)="updateDraftProduct(index, 'brand', $event)" /></label>
-                  <label class="form-field"><span>Tamanho</span><input type="text" placeholder="Ex.: M" [value]="product.size" (input)="updateDraftProduct(index, 'size', $event)" /></label>
-                  <label class="form-field"><span>Cor</span><input type="text" placeholder="Ex.: Azul" [value]="product.color" (input)="updateDraftProduct(index, 'color', $event)" /></label>
-                  <div class="form-field"><label>Condição</label><app-dropdown [fullWidth]="true" [options]="conditionOptions" [value]="dropdownValue(product.condition)" (valueChange)="chooseProductOption(index, 'condition', $event)" /></div>
-                  <label class="form-field"><span>Preço de compra</span><div class="currency-input"><span>€</span><input type="number" min="0" step="0.01" [value]="product.unitPrice" (input)="updateDraftProduct(index, 'unitPrice', $event)" /></div></label>
-                  <label class="form-field product-fields__wide"><span>Notas internas <small>(opcional)</small></span><textarea rows="2" placeholder="Notas sobre este produto" [value]="product.notes" (input)="updateDraftProduct(index, 'notes', $event)"></textarea></label>
+                  <label class="form-field product-fields__wide"><span>{{ "Nome do produto" | translate }} <b>*</b></span><input type="text" [placeholder]="('Ex.: Casaco Ralph Lauren azul' | translate)" [value]="product.name" (input)="updateDraftProduct(index, 'name', $event)" /></label>
+                  <label class="form-field"><span>{{ "Categoria" | translate }}</span><input type="text" [placeholder]="('Ex.: Casacos' | translate)" [value]="product.category" (input)="updateDraftProduct(index, 'category', $event)" /></label>
+                  <label class="form-field"><span>{{ "Marca" | translate }}</span><input type="text" [placeholder]="('Ex.: Ralph Lauren' | translate)" [value]="product.brand" (input)="updateDraftProduct(index, 'brand', $event)" /></label>
+                  <label class="form-field"><span>{{ "Tamanho" | translate }}</span><input type="text" [placeholder]="('Ex.: M' | translate)" [value]="product.size" (input)="updateDraftProduct(index, 'size', $event)" /></label>
+                  <label class="form-field"><span>{{ "Cor" | translate }}</span><input type="text" [placeholder]="('Ex.: Azul' | translate)" [value]="product.color" (input)="updateDraftProduct(index, 'color', $event)" /></label>
+                  <div class="form-field"><label>{{ "Condição" | translate }}</label><app-dropdown [fullWidth]="true" [options]="conditionOptions" [value]="dropdownValue(product.condition)" (valueChange)="chooseProductOption(index, 'condition', $event)" /></div>
+                  <label class="form-field"><span>{{ "Preço de compra" | translate }}</span><div class="currency-input"><span>€</span><input type="number" min="0" step="0.01" [value]="product.unitPrice" (input)="updateDraftProduct(index, 'unitPrice', $event)" /></div></label>
+                  <label class="form-field product-fields__wide"><span>{{ "Notas internas" | translate }} <small>{{ "(opcional)" | translate }}</small></span><textarea rows="2" [placeholder]="('Notas sobre este produto' | translate)" [value]="product.notes" (input)="updateDraftProduct(index, 'notes', $event)"></textarea></label>
                 </div>
                 }
               </article>
-            } @empty { <div class="draft-products__empty"><p>A encomenda precisa de pelo menos um produto.</p><button type="button" (click)="addDraftProduct()">Adicionar produto</button></div> }
+            } @empty { <div class="draft-products__empty"><p>{{ "A encomenda precisa de pelo menos um produto." | translate }}</p><button type="button" (click)="addDraftProduct()">{{ "Adicionar produto" | translate }}</button></div> }
           </div>
         </section>
       }
 
       @if (activeFormStep() === 2) {
         <section class="order-form__content" aria-labelledby="order-costs-heading">
-          <div class="order-form__intro"><span>Resumo financeiro</span><h3 id="order-costs-heading">Custos e confirmação</h3><p>Revê os custos comuns antes de guardar a encomenda.</p></div>
+          <div class="order-form__intro"><span>{{ "Resumo financeiro" | translate }}</span><h3 id="order-costs-heading">{{ "Custos e confirmação" | translate }}</h3><p>{{ "Revê os custos comuns antes de guardar a encomenda." | translate }}</p></div>
           <div class="form-grid">
-            <label class="form-field"><span>Portes</span><div class="currency-input"><span>€</span><input type="number" min="0" step="0.01" [value]="draft().shippingCost" (input)="updateDraftField('shippingCost', $event)" /></div></label>
-            <label class="form-field"><span>Outros custos</span><div class="currency-input"><span>€</span><input type="number" min="0" step="0.01" [value]="draft().otherCosts" (input)="updateDraftField('otherCosts', $event)" /></div></label>
-            <label class="form-field form-grid__wide"><span>Notas <small>(opcional)</small></span><textarea rows="3" placeholder="Detalhes úteis sobre esta encomenda" [value]="draft().notes" (input)="updateDraftField('notes', $event)"></textarea></label>
+            <label class="form-field"><span>{{ "Portes" | translate }}</span><div class="currency-input"><span>€</span><input type="number" min="0" step="0.01" [value]="draft().shippingCost" (input)="updateDraftField('shippingCost', $event)" /></div></label>
+            <label class="form-field"><span>{{ "Outros custos" | translate }}</span><div class="currency-input"><span>€</span><input type="number" min="0" step="0.01" [value]="draft().otherCosts" (input)="updateDraftField('otherCosts', $event)" /></div></label>
+            <label class="form-field form-grid__wide"><span>{{ "Notas" | translate }} <small>{{ "(opcional)" | translate }}</small></span><textarea rows="3" [placeholder]="('Detalhes úteis sobre esta encomenda' | translate)" [value]="draft().notes" (input)="updateDraftField('notes', $event)"></textarea></label>
           </div>
-          <div class="order-summary"><div><span>Produtos</span><strong>{{ draft().products.length }}</strong></div><div><span>Unidades</span><strong>{{ draftUnits() }}</strong></div><div><span>Subtotal</span><strong>{{ formatCurrency(draftSubtotal()) }}</strong></div><div class="order-summary__total"><span>Total estimado</span><strong>{{ formatCurrency(draftTotal()) }}</strong></div></div>
+          <div class="order-summary"><div><span>{{ "Produtos" | translate }}</span><strong>{{ draft().products.length }}</strong></div><div><span>{{ "Unidades" | translate }}</span><strong>{{ draftUnits() }}</strong></div><div><span>{{ "Subtotal" | translate }}</span><strong>{{ formatCurrency(draftSubtotal()) }}</strong></div><div class="order-summary__total"><span>{{ "Total estimado" | translate }}</span><strong>{{ formatCurrency(draftTotal()) }}</strong></div></div>
         </section>
       }
 
-      @if (errorMessage()) { <div class="order-form__error" role="alert">{{ errorMessage() }}</div> }
+      @if (errorMessage()) { <div class="order-form__error" role="alert">{{ errorMessage() | translate }}</div> }
       <footer class="order-form__actions">
-        <button class="order-form__cancel" type="button" [disabled]="isSaving()" (click)="closeOrderModal()">Cancelar</button>
+        <button class="order-form__cancel" type="button" [disabled]="isSaving()" (click)="closeOrderModal()">{{ "Cancelar" | translate }}</button>
         <div>
-          @if (activeFormStep() > 0) { <button class="order-form__previous" type="button" [disabled]="isSaving()" (click)="previousFormStep()">Anterior</button> }
-          @if (activeFormStep() < formSteps.length - 1) { <button class="primary-button" type="button" [disabled]="isSaving()" (click)="nextFormStep()">Continuar</button> }
-          @else { <button class="primary-button" type="button" [disabled]="!canSave() || isSaving()" (click)="saveOrder()">{{ isSaving() ? 'A guardar...' : editingOrder() ? 'Guardar alterações' : 'Criar encomenda' }}</button> }
+          @if (activeFormStep() > 0) { <button class="order-form__previous" type="button" [disabled]="isSaving()" (click)="previousFormStep()">{{ "Anterior" | translate }}</button> }
+          @if (activeFormStep() < formSteps.length - 1) { <button class="primary-button" type="button" [disabled]="isSaving()" (click)="nextFormStep()">{{ "Continuar" | translate }}</button> }
+          @else { <button class="primary-button" type="button" [disabled]="!canSave() || isSaving()" (click)="saveOrder()">{{ (isSaving() ? 'A guardar...' : editingOrder() ? 'Guardar alterações' : 'Criar encomenda') | translate }}</button> }
         </div>
       </footer>
     </form>
@@ -209,12 +208,12 @@
 @if (orderPendingDelete(); as order) {
   <app-modal [open]="true" titleId="delete-order-title" size="confirmation" [closeOnBackdrop]="!isDeleting()" (closed)="cancelDeleteOrder()">
     <div modal-heading class="order-delete__heading">
-      <span>Atenção</span>
-      <h2 id="delete-order-title">Apagar encomenda?</h2>
+      <span>{{ "Atenção" | translate }}</span>
+      <h2 id="delete-order-title">{{ "Apagar encomenda?" | translate }}</h2>
     </div>
     <div class="order-delete">
-      <p>A encomenda <strong>{{ orderReference(order.id) }}</strong> e os {{ productUnits(order) }} artigos associados serão removidos.</p>
-      <div><button type="button" [disabled]="isDeleting()" (click)="cancelDeleteOrder()">Cancelar</button><button class="order-delete__danger" type="button" [disabled]="isDeleting()" (click)="confirmDeleteOrder()">{{ isDeleting() ? 'A apagar...' : 'Apagar encomenda' }}</button></div>
+        <p>{{ "A encomenda" | translate }} <strong>{{ orderReference(order.id) }}</strong> {{ "e os" | translate }} {{ productUnits(order) }} {{ "artigos associados serão removidos." | translate }}</p>
+      <div><button type="button" [disabled]="isDeleting()" (click)="cancelDeleteOrder()">{{ "Cancelar" | translate }}</button><button class="order-delete__danger" type="button" [disabled]="isDeleting()" (click)="confirmDeleteOrder()">{{ (isDeleting() ? 'A apagar...' : 'Apagar encomenda') | translate }}</button></div>
     </div>
   </app-modal>
 }

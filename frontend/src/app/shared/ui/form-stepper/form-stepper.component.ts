@@ -1,4 +1,5 @@
 import { Component, input, output } from '@angular/core';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 export interface FormStep {
   readonly id: number;
@@ -7,6 +8,7 @@ export interface FormStep {
 }
 
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-form-stepper',
   templateUrl: './form-stepper.component.html',
   styleUrl: './form-stepper.component.scss',

@@ -8,11 +8,12 @@ import { ProductCard } from '../components/product-card/product-card.component';
 import { ProductForm } from '../product-form/product-form.component';
 import { ProductDraft, ProductListItem, ProductListItemApi, ProductStatus } from '../models/product.model';
 import { CreateProductRequest, ProductService } from '../services/product.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 type ProductFilter = 'all' | ProductStatus;
 
 @Component({
-  imports: [ProductCard, ProductForm, Modal, RouterLink],
+  imports: [ProductCard, ProductForm, Modal, RouterLink, TranslatePipe],
   selector: 'app-product-list',
   styleUrl: './product-list.component.scss',
   templateUrl: './product-list.component.html',

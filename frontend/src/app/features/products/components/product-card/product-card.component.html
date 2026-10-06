@@ -21,7 +21,7 @@
         </div>
       }
       @if (product().status === 'sold') {
-        <span class="product-card__status">Vendido</span>
+        <span class="product-card__status">{{ "Vendido" | translate }}</span>
       }
     </div>
     @if (product().status !== 'sold') {
@@ -38,8 +38,8 @@
       <button
         class="product-card__menu-trigger"
         type="button"
-        aria-label="Ações do produto"
-        title="Ações do produto"
+        [attr.aria-label]="('Ações do produto' | translate)"
+        [title]="('Ações do produto' | translate)"
         [attr.aria-expanded]="menuOpen()"
         (click)="toggleMenu($event)"
       >
@@ -54,13 +54,11 @@
           @if (product().status !== 'sold') {
             <button type="button" role="menuitem" (click)="requestSell($event)">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 5 5 9-10" /></svg>
-              Marcar como vendido
-            </button>
+               {{ "Marcar como vendido" | translate }} </button>
           }
           <button type="button" role="menuitem" class="product-card__menu-item--danger" (click)="requestDelete($event)">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6.5 7l.7 13h9.6l.7-13M9 7V4h6v3" /></svg>
-            Apagar produto
-          </button>
+             {{ "Apagar produto" | translate }} </button>
         </div>
       }
     </div>
@@ -73,7 +71,7 @@
     <div class="product-card__meta">
       <span>{{ product().category }}</span>
       @if (product().status !== 'sold') {
-        <span>{{ product().status === 'draft' ? 'Em rascunho' : 'Disponível' }}</span>
+        <span>{{ (product().status === 'draft' ? 'Em rascunho' : 'Disponível') | translate }}</span>
       }
     </div>
   </div>

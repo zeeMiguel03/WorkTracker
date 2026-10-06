@@ -9,13 +9,15 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FilePicker } from '../../../shared/ui/file-picker/file-picker.component';
 import { ThemeToggle } from '../../../shared/ui/theme-toggle/theme-toggle.component';
 import { GoogleSignInButton } from '../google-sign-in-button.component';
+import { LanguageToggle } from '../../../shared/ui/language-toggle/language-toggle.component';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import {
   getPasswordStrengthError,
   PASSWORD_MIN_LENGTH,
 } from '../../../shared/security/password-policy';
 
 @Component({
-  imports: [NgOptimizedImage, RouterLink, FormField, FilePicker, ThemeToggle, GoogleSignInButton],
+  imports: [NgOptimizedImage, RouterLink, FormField, FilePicker, ThemeToggle, LanguageToggle, GoogleSignInButton, TranslatePipe],
   selector: 'app-register',
   styleUrl: './register.component.scss',
   templateUrl: './register.component.html',
@@ -38,17 +40,17 @@ export class Register {
   });
 
   protected readonly registerForm = form(this.registerModel, (fields) => {
-    required(fields.name, { message: 'Name is required.' });
+    required(fields.name, { message: 'O nome é obrigatório.' });
 
-    required(fields.email, { message: 'Email is required.' });
-    email(fields.email, { message: 'Enter a valid email address.' });
+    required(fields.email, { message: 'O email é obrigatório.' });
+    email(fields.email, { message: 'Indica um endereço de email válido.' });
 
-    required(fields.password, { message: 'Password is required.' });
+    required(fields.password, { message: 'A password é obrigatória.' });
     minLength(fields.password, PASSWORD_MIN_LENGTH, { message: 'A password deve ter pelo menos 12 caracteres.', });
 
-    required(fields.confirmPassword, { message: 'Please confirm your password.', });
+    required(fields.confirmPassword, { message: 'Confirma a tua password.', });
 
-    required(fields.acceptTerms, { message: 'You must accept the terms.', });
+    required(fields.acceptTerms, { message: 'Tens de aceitar os termos.', });
   });
 
 
@@ -62,7 +64,7 @@ export class Register {
     const values = this.registerModel();
 
     if (this.registerForm().invalid()) {
-      this.errorMessage.set('Please complete all required fields.');
+      this.errorMessage.set('Preenche todos os campos obrigatórios.');
       return;
     }
 
@@ -74,7 +76,7 @@ export class Register {
     }
 
     if (values.password !== values.confirmPassword) {
-      this.errorMessage.set('Passwords do not match.');
+      this.errorMessage.set('As passwords não coincidem.');
       return;
     }
 
@@ -99,13 +101,13 @@ export class Register {
         const code = error.error?.code;
 
         if (code === 'EMAIL_ALREADY_EXISTS') {
-          this.errorMessage.set('An account with this email already exists.');
+          this.errorMessage.set('Já existe uma conta com este email.');
           return;
         }
 
         this.errorMessage.set(
           error.error?.detail ??
-          'It was not possible to create your account.',
+          'Não foi possível criar a conta.',
         );
       },
     });

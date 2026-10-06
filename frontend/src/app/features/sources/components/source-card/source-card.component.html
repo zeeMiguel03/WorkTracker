@@ -22,14 +22,14 @@
 
   <div class="source-card__header">
     <div class="source-card__identity">
-      <span class="source-card__eyebrow">Fonte</span>
+      <span class="source-card__eyebrow">{{ "Fonte" | translate }}</span>
       <h2>{{ source().name }}</h2>
     </div>
 
     <button
       class="source-card__menu"
       type="button"
-      aria-label="Opções da fonte"
+      [attr.aria-label]="('Opções da fonte' | translate)"
       [attr.aria-expanded]="menuOpen()"
       (click)="toggleMenu(); $event.stopPropagation()"
     >
@@ -37,8 +37,8 @@
     </button>
     @if (menuOpen()) {
       <div class="source-card__menu-panel" role="menu">
-        <button type="button" role="menuitem" (click)="edit()">Editar</button>
-        <button class="source-card__menu-danger" type="button" role="menuitem" (click)="remove()">Apagar</button>
+        <button type="button" role="menuitem" (click)="edit()">{{ "Editar" | translate }}</button>
+        <button class="source-card__menu-danger" type="button" role="menuitem" (click)="remove()">{{ "Apagar" | translate }}</button>
       </div>
     }
   </div>
@@ -46,30 +46,28 @@
   <div class="source-card__meta-row">
     <div class="source-card__status" [class.source-card__status--inactive]="!source().isActive">
       <span></span>
-      {{ source().isActive ? 'Ativa' : 'Inativa' }}
+      {{ (source().isActive ? 'Ativa' : 'Inativa') | translate }}
     </div>
 
     @if (source().websiteUrl) {
       <a class="source-card__link" [href]="source().websiteUrl" target="_blank" rel="noopener noreferrer">
         <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5a4 4 0 0 0 5.7.1l2.1-2.1a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 10.5a4 4 0 0 0-5.7-.1l-2.1 2.1a4 4 0 0 0 5.7 5.7l1.2-1.2"/></svg>
-        Abrir fonte
-      </a>
+         {{ "Abrir fonte" | translate }} </a>
     } @else {
       <span class="source-card__link source-card__link--placeholder">
         <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5a4 4 0 0 0 5.7.1l2.1-2.1a4 4 0 0 0-5.7-5.7l-1.2 1.2"/><path d="M14 10.5a4 4 0 0 0-5.7-.1l-2.1 2.1a4 4 0 0 0 5.7 5.7l1.2-1.2"/></svg>
-        Link da fonte em breve
-      </span>
+         {{ "Link da fonte em breve" | translate }} </span>
     }
   </div>
 
   <div class="source-card__stats">
     <div>
-      <span>Transações</span>
+      <span>{{ "Transações" | translate }}</span>
       <strong>{{ source().transactions }}</strong>
     </div>
     <div>
-      <span>Data de criação</span>
-      <strong>{{ source().createdAt | date:'dd/MM/yyyy' }}</strong>
+      <span>{{ "Data de criação" | translate }}</span>
+      <strong>{{ source().createdAt | date:'dd/MM/yyyy':'':language.locale() }}</strong>
     </div>
   </div>
 </article>

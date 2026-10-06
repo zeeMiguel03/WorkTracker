@@ -9,11 +9,13 @@ import { FormStepper } from '../../../shared/ui/form-stepper/form-stepper.compon
 import { Modal } from '../../../shared/ui/modal/modal.component';
 import { OrderDraft, OrderProductDraft, OrderSourceOption, OrderStatus, OrderView } from '../models/order.model';
 import { OrderService } from '../services/order.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 type OrderSort = 'recent' | 'highest' | 'lowest';
 
 @Component({
-  imports: [RouterLink, Modal, Dropdown, AuthenticatedImage, FormStepper],
+  imports: [RouterLink, Modal, Dropdown, AuthenticatedImage, FormStepper, TranslatePipe],
   selector: 'app-order-list',
   styleUrl: './order-list.component.scss',
   templateUrl: './order-list.component.html',
@@ -21,6 +23,7 @@ type OrderSort = 'recent' | 'highest' | 'lowest';
 export class OrderList {
   private readonly orderService = inject(OrderService);
   private readonly destroyRef = inject(DestroyRef);
+  protected readonly language = inject(LanguageService);
   private readonly searchChanges = new Subject<string>();
   private requestId = 0;
 
@@ -285,8 +288,8 @@ export class OrderList {
   protected orderTotal(order: OrderView): number { return this.orderSubtotal(order) + order.shippingCost + order.otherCosts; }
   protected productUnits(order: OrderView): number { return order.products.reduce((total, product) => total + product.quantity, 0); }
   protected statusLabel(status: OrderStatus): string { return ({ draft: 'Rascunho', ordered: 'Encomendada', transit: 'Em trânsito', partial: 'Receção parcial', received: 'Recebida', cancelled: 'Cancelada' } as const)[status]; }
-  protected formatCurrency(value: number): string { return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(value); }
-  protected formatDate(value: string | null): string { return value ? new Intl.DateTimeFormat('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value)).replace('.', '') : 'Sem data'; }
+  protected formatCurrency(value: number): string { return new Intl.NumberFormat(this.language.locale(), { style: 'currency', currency: 'EUR' }).format(value); }
+  protected formatDate(value: string | null): string { return value ? new Intl.DateTimeFormat(this.language.locale(), { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value)).replace('.', '') : this.language.translate('Sem data'); }
   protected dropdownValue(value: number | null): string { return value === null ? '' : `${value}`; }
   protected formatIndex(index: number): string { return String(index + 1).padStart(2, '0'); }
   protected orderReference(id: number): string { return `ENC-${String(id).padStart(4, '0')}`; }

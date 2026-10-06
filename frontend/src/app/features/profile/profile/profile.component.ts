@@ -7,15 +7,18 @@ import { FilePicker } from '../../../shared/ui/file-picker/file-picker.component
 import { Modal } from '../../../shared/ui/modal/modal.component';
 import { getPasswordStrengthError } from '../../../shared/security/password-policy';
 import { GoogleSignInButton } from '../../auth/google-sign-in-button.component';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 @Component({
-  imports: [RouterLink, FilePicker, Modal, GoogleSignInButton],
+  imports: [RouterLink, FilePicker, Modal, GoogleSignInButton, TranslatePipe],
   selector: 'app-profile',
   styleUrl: './profile.component.scss',
   templateUrl: './profile.component.html',
 })
 export class Profile implements OnDestroy {
   private readonly auth = inject(Auth);
+  protected readonly language = inject(LanguageService);
   private readonly router = inject(Router);
 
   protected readonly user = this.auth.currentUser;
@@ -44,7 +47,7 @@ export class Profile implements OnDestroy {
       return 'Data não disponível';
     }
 
-    return new Intl.DateTimeFormat('pt-PT', { month: 'long', year: 'numeric' }).format(
+    return new Intl.DateTimeFormat(this.language.locale(), { month: 'long', year: 'numeric' }).format(
       new Date(createdAt),
     );
   });

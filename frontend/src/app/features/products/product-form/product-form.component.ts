@@ -3,9 +3,10 @@ import { FormsModule } from '@angular/forms';
 
 import { Dropdown, DropdownOption } from '../../../shared/ui/dropdown/dropdown.component';
 import { ProductCondition, ProductDraft, ProductStatus } from '../models/product.model';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
-  imports: [FormsModule, Dropdown],
+  imports: [FormsModule, Dropdown, TranslatePipe],
   selector: 'app-product-form',
   styleUrl: './product-form.component.scss',
   templateUrl: './product-form.component.html',

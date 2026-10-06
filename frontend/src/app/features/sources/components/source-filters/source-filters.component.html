@@ -1,10 +1,10 @@
-<div class="source-filters" role="search" aria-label="Pesquisar fontes">
+<div class="source-filters" role="search" [attr.aria-label]="('Pesquisar fontes' | translate)">
   <label class="source-filters__search">
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
-    <span class="source-filters__sr-only">Pesquisar fontes</span>
+    <span class="source-filters__sr-only">{{ "Pesquisar fontes" | translate }}</span>
     <input
       type="search"
-      placeholder="Pesquisar fontes"
+      [placeholder]="('Pesquisar fontes' | translate)"
       [value]="searchTerm()"
       (input)="updateSearch($event)"
     />

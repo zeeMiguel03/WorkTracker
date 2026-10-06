@@ -16,6 +16,8 @@ import {
 } from '../models/product.model';
 import { ProductService, SellProductRequest, UpdateProductRequest } from '../services/product.service';
 import { ProductRelationOptions, ProductRelationsService } from '../services/product-relations.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 interface ProductEditDraft {
   name: string;
@@ -42,7 +44,7 @@ interface ProductSellDraft {
 }
 
 @Component({
-  imports: [FormsModule, RouterLink, Dropdown, Modal, SuccessModal],
+  imports: [FormsModule, RouterLink, Dropdown, Modal, SuccessModal, TranslatePipe],
   selector: 'app-product-detail',
   styleUrl: './product-detail.component.scss',
   templateUrl: './product-detail.component.html',
@@ -52,6 +54,7 @@ export class ProductDetail implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly productService = inject(ProductService);
   private readonly productRelationsService = inject(ProductRelationsService);
+  protected readonly language = inject(LanguageService);
 
   protected readonly product = signal<ProductDetailsApi | null>(null);
   protected readonly imageUrls = signal<Record<number, string>>({});
@@ -267,7 +270,7 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   protected formatPrice(value: number | null): string {
     if (value === null || value === undefined) return '—';
-    return new Intl.NumberFormat('pt-PT', {
+    return new Intl.NumberFormat(this.language.locale(), {
       style: 'currency',
       currency: 'EUR',
       minimumFractionDigits: 2,
@@ -276,7 +279,7 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   protected formatDate(value: string | null): string {
     if (!value) return '—';
-    return new Intl.DateTimeFormat('pt-PT', { dateStyle: 'medium' }).format(new Date(value));
+    return new Intl.DateTimeFormat(this.language.locale(), { dateStyle: 'medium' }).format(new Date(value));
   }
 
   protected statusLabel(value: number | string): string {
@@ -459,7 +462,7 @@ export class ProductDetail implements OnInit, OnDestroy {
 
   protected formatPercentage(value: number | null): string {
     if (value === null) return '—';
-    return new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 1 }).format(value) + '%';
+    return new Intl.NumberFormat(this.language.locale(), { maximumFractionDigits: 1 }).format(value) + '%';
   }
 
   protected financialTone(value: number | null): 'positive' | 'negative' | 'neutral' {

@@ -1,48 +1,48 @@
 <form class="product-form" (ngSubmit)="submit()">
   <section class="product-form__section product-form__section--media">
-    <div class="product-form__section-heading"><div><span class="product-form__eyebrow">Fotografias</span><h3>Mostra o produto</h3></div><small>Até 5 imagens. A primeira é a capa.</small></div>
+    <div class="product-form__section-heading"><div><span class="product-form__eyebrow">{{ "Fotografias" | translate }}</span><h3>{{ "Mostra o produto" | translate }}</h3></div><small>{{ "Até 5 imagens. A primeira é a capa." | translate }}</small></div>
     <div class="product-form__media-grid">
       @for (file of selectedFiles; track file) {
         <div class="product-form__preview" [class.product-form__preview--dragging]="draggedImageIndex === $index" [class.product-form__preview--drag-over]="dragOverImageIndex === $index && draggedImageIndex !== $index" draggable="true" (dragstart)="onImageDragStart($index, $event)" (dragover)="onImageDragOver($index, $event)" (drop)="onImageDrop($index, $event)" (dragend)="onImageDragEnd()">
           <img [src]="filePreview(file)" [alt]="file.name" />
-          @if ($index === 0) { <span class="product-form__cover-label">Capa</span> }
-          <button class="product-form__remove-image" type="button" [attr.aria-label]="'Remover ' + file.name" (click)="removeFile($index)">×</button>
+          @if ($index === 0) { <span class="product-form__cover-label">{{ "Capa" | translate }}</span> }
+          <button class="product-form__remove-image" type="button" [attr.aria-label]="'Remover ' + file.name" (click)="removeFile($index)">{{ "×" | translate }}</button>
         </div>
       }
       @if (selectedFiles.length < 5) {
-        <label class="product-form__add-image" for="product-images"><span class="product-form__add-image-icon" aria-hidden="true">+</span><strong>Adicionar fotografias</strong><small>JPG, PNG ou WebP</small><input id="product-images" name="images" type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="onFilesSelected($event)" /></label>
+        <label class="product-form__add-image" for="product-images"><span class="product-form__add-image-icon" aria-hidden="true">+</span><strong>{{ "Adicionar fotografias" | translate }}</strong><small>{{ "JPG, PNG ou WebP" | translate }}</small><input id="product-images" name="images" type="file" accept="image/jpeg,image/png,image/webp" multiple (change)="onFilesSelected($event)" /></label>
       }
     </div>
   </section>
 
   <div class="product-form__layout">
     <section class="product-form__section">
-      <div class="product-form__section-heading"><div><span class="product-form__eyebrow">Produto</span><h3>Informação principal</h3></div></div>
+      <div class="product-form__section-heading"><div><span class="product-form__eyebrow">{{ "Produto" | translate }}</span><h3>{{ "Informação principal" | translate }}</h3></div></div>
       <div class="product-form__grid">
-        <label class="product-form__field product-form__field--wide"><span>Nome do produto *</span><input name="name" type="text" placeholder="Ex.: Casaco com capuz" [(ngModel)]="draft.name" required /></label>
-        <label class="product-form__field"><span>Categoria</span><input name="category" type="text" placeholder="Ex.: Casacos" [(ngModel)]="draft.category" /></label>
-        <label class="product-form__field"><span>Marca</span><input name="brand" type="text" placeholder="Ex.: Carhartt" [(ngModel)]="draft.brand" /></label>
-        <label class="product-form__field"><span>Tamanho</span><input name="size" type="text" placeholder="Ex.: M" [(ngModel)]="draft.size" /></label>
-        <label class="product-form__field"><span>Cor</span><input name="color" type="text" placeholder="Ex.: Verde" [(ngModel)]="draft.color" /></label>
-        <div class="product-form__field"><span>Condição</span><app-dropdown [fullWidth]="true" [openUp]="true" [options]="conditions" [value]="draft.condition" (valueChange)="chooseCondition($event)" /></div>
-        <div class="product-form__field"><span>Estado</span><app-dropdown [fullWidth]="true" [openUp]="true" [options]="statuses" [value]="draft.status" (valueChange)="chooseStatus($event)" /></div>
-        <label class="product-form__field product-form__field--wide"><span>Descrição</span><textarea name="description" rows="4" placeholder="Descreve o estado, medidas ou pormenores relevantes." [(ngModel)]="draft.description"></textarea></label>
+        <label class="product-form__field product-form__field--wide"><span>{{ "Nome do produto *" | translate }}</span><input name="name" type="text" [placeholder]="('Ex.: Casaco com capuz' | translate)" [(ngModel)]="draft.name" required /></label>
+        <label class="product-form__field"><span>{{ "Categoria" | translate }}</span><input name="category" type="text" [placeholder]="('Ex.: Casacos' | translate)" [(ngModel)]="draft.category" /></label>
+        <label class="product-form__field"><span>{{ "Marca" | translate }}</span><input name="brand" type="text" [placeholder]="('Ex.: Carhartt' | translate)" [(ngModel)]="draft.brand" /></label>
+        <label class="product-form__field"><span>{{ "Tamanho" | translate }}</span><input name="size" type="text" [placeholder]="('Ex.: M' | translate)" [(ngModel)]="draft.size" /></label>
+        <label class="product-form__field"><span>{{ "Cor" | translate }}</span><input name="color" type="text" [placeholder]="('Ex.: Verde' | translate)" [(ngModel)]="draft.color" /></label>
+        <div class="product-form__field"><span>{{ "Condição" | translate }}</span><app-dropdown [fullWidth]="true" [openUp]="true" [options]="conditions" [value]="draft.condition" (valueChange)="chooseCondition($event)" /></div>
+        <div class="product-form__field"><span>{{ "Estado" | translate }}</span><app-dropdown [fullWidth]="true" [openUp]="true" [options]="statuses" [value]="draft.status" (valueChange)="chooseStatus($event)" /></div>
+        <label class="product-form__field product-form__field--wide"><span>{{ "Descrição" | translate }}</span><textarea name="description" rows="4" [placeholder]="('Descreve o estado, medidas ou pormenores relevantes.' | translate)" [(ngModel)]="draft.description"></textarea></label>
       </div>
     </section>
 
     <section class="product-form__section">
-      <div class="product-form__section-heading"><div><span class="product-form__eyebrow">Valores</span><h3>Custos e preço</h3></div><small>Todos os campos são opcionais.</small></div>
+      <div class="product-form__section-heading"><div><span class="product-form__eyebrow">{{ "Valores" | translate }}</span><h3>{{ "Custos e preço" | translate }}</h3></div><small>{{ "Todos os campos são opcionais." | translate }}</small></div>
       <div class="product-form__grid product-form__grid--prices">
-        <label class="product-form__field"><span>Preço de compra</span><div class="product-form__money-input"><b>€</b><input name="purchasePrice" type="number" min="0" step="0.01" [(ngModel)]="draft.purchasePrice" /></div></label>
-        <label class="product-form__field"><span>Portes atribuídos</span><div class="product-form__money-input"><b>€</b><input name="allocatedShippingCost" type="number" min="0" step="0.01" [(ngModel)]="draft.allocatedShippingCost" /></div></label>
-        <label class="product-form__field"><span>Outros custos</span><div class="product-form__money-input"><b>€</b><input name="allocatedOtherCosts" type="number" min="0" step="0.01" [(ngModel)]="draft.allocatedOtherCosts" /></div></label>
-        <label class="product-form__field"><span>Preço de venda</span><div class="product-form__money-input"><b>€</b><input name="listingPrice" type="number" min="0" step="0.01" placeholder="Opcional" [(ngModel)]="draft.listingPrice" /></div></label>
-        <label class="product-form__field"><span>Preço mínimo</span><div class="product-form__money-input"><b>€</b><input name="minimumPrice" type="number" min="0" step="0.01" placeholder="Opcional" [(ngModel)]="draft.minimumPrice" /></div></label>
+        <label class="product-form__field"><span>{{ "Preço de compra" | translate }}</span><div class="product-form__money-input"><b>€</b><input name="purchasePrice" type="number" min="0" step="0.01" [(ngModel)]="draft.purchasePrice" /></div></label>
+        <label class="product-form__field"><span>{{ "Portes atribuídos" | translate }}</span><div class="product-form__money-input"><b>€</b><input name="allocatedShippingCost" type="number" min="0" step="0.01" [(ngModel)]="draft.allocatedShippingCost" /></div></label>
+        <label class="product-form__field"><span>{{ "Outros custos" | translate }}</span><div class="product-form__money-input"><b>€</b><input name="allocatedOtherCosts" type="number" min="0" step="0.01" [(ngModel)]="draft.allocatedOtherCosts" /></div></label>
+        <label class="product-form__field"><span>{{ "Preço de venda" | translate }}</span><div class="product-form__money-input"><b>€</b><input name="listingPrice" type="number" min="0" step="0.01" [placeholder]="('Opcional' | translate)" [(ngModel)]="draft.listingPrice" /></div></label>
+        <label class="product-form__field"><span>{{ "Preço mínimo" | translate }}</span><div class="product-form__money-input"><b>€</b><input name="minimumPrice" type="number" min="0" step="0.01" [placeholder]="('Opcional' | translate)" [(ngModel)]="draft.minimumPrice" /></div></label>
       </div>
-      <label class="product-form__field"><span>Notas internas</span><textarea name="notes" rows="4" placeholder="Informação apenas para ti." [(ngModel)]="draft.notes"></textarea></label>
+      <label class="product-form__field"><span>{{ "Notas internas" | translate }}</span><textarea name="notes" rows="4" [placeholder]="('Informação apenas para ti.' | translate)" [(ngModel)]="draft.notes"></textarea></label>
     </section>
   </div>
 
-  @if (validationError() || errorMessage()) { <div class="product-form__error">{{ validationError() || errorMessage() }}</div> }
-  <div class="product-form__actions"><button class="product-form__cancel" type="button" [disabled]="saving()" (click)="cancelled.emit()">Cancelar</button><button class="product-form__submit" type="submit" [disabled]="saving()">{{ saving() ? 'A guardar...' : 'Criar produto' }}</button></div>
+  @if (validationError() || errorMessage()) { <div class="product-form__error">{{ (validationError() || errorMessage()) | translate }}</div> }
+  <div class="product-form__actions"><button class="product-form__cancel" type="button" [disabled]="saving()" (click)="cancelled.emit()">{{ "Cancelar" | translate }}</button><button class="product-form__submit" type="submit" [disabled]="saving()">{{ (saving() ? 'A guardar...' : 'Criar produto') | translate }}</button></div>
 </form>

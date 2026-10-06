@@ -5,9 +5,10 @@ import { Dropdown, DropdownOption } from '../../../shared/ui/dropdown/dropdown.c
 import { Source } from '../../sources/models/source.model';
 import { CreateTaskRequest, Task } from '../models/task.model';
 import { TaskStatus } from '../models/task-status.model';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
-  imports: [Dropdown, ReactiveFormsModule],
+  imports: [Dropdown, ReactiveFormsModule, TranslatePipe],
   selector: 'app-task-form',
   styleUrl: './task-form.component.scss',
   templateUrl: './task-form.component.html',

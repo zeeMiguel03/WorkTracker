@@ -1,8 +1,10 @@
 import { Component, input, output, signal } from '@angular/core';
 
 import { TaskCardModel } from '../../models/task-card.model';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-task-card',
   templateUrl: './task-card.component.html',
   styleUrl: './task-card.component.scss',

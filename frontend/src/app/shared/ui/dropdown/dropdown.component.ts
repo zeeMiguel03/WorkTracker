@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, ElementRef, effect, HostBinding, HostListener, inject, input, OnDestroy, output, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 export interface DropdownOption {
   readonly value: string;
@@ -13,6 +14,7 @@ export interface DropdownOption {
 let dropdownId = 0;
 
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-dropdown',
   styleUrl: './dropdown.component.scss',
   templateUrl: './dropdown.component.html',

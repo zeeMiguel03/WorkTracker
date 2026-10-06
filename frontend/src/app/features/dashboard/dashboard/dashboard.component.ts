@@ -9,9 +9,11 @@ import type { CustomLocale } from 'flatpickr/dist/types/locale';
 import { Subscription } from 'rxjs';
 
 import { ThemeService } from '../../../core/theme/theme.service';
+import { LanguageService } from '../../../core/i18n/language.service';
 import { Dropdown, DropdownOption } from '../../../shared/ui/dropdown/dropdown.component';
 import { portugalToday } from '../../../shared/util/portugal-calendar';
 import { DashboardDaily, DashboardData, DashboardDataService } from './dashboard-data.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 Chart.register(...registerables);
 
@@ -44,7 +46,7 @@ interface SourceProfit {
 }
 
 @Component({
-  imports: [CurrencyPipe, DatePipe, Dropdown, LowerCasePipe, RouterLink],
+  imports: [CurrencyPipe, DatePipe, Dropdown, LowerCasePipe, RouterLink, TranslatePipe],
   selector: 'app-dashboard',
   styleUrl: './dashboard.component.scss',
   templateUrl: './dashboard.component.html',
@@ -53,9 +55,11 @@ export class Dashboard {
   private readonly dashboardDataService = inject(DashboardDataService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly themeService = inject(ThemeService);
+  protected readonly language = inject(LanguageService);
   private profitChart: Chart<'line'> | null = null;
   private sourceChart: Chart<'bar'> | null = null;
   private chartTheme: string | null = null;
+  private chartLocale: string | null = null;
   private rangePicker: flatpickr.Instance | null = null;
   private loadSubscription: Subscription | null = null;
 
@@ -108,7 +112,7 @@ export class Dashboard {
       const initialRange = untracked(() => this.customRange());
       const picker = flatpickr(input, {
         mode: 'range',
-        locale: portugueseCalendarLocale,
+        locale: this.language.isEnglish() ? 'default' : portugueseCalendarLocale,
         dateFormat: 'd/m/Y',
         maxDate: portugalToday(),
         disableMobile: true,
@@ -139,6 +143,7 @@ export class Dashboard {
       const sourceCanvas = this.sourceCanvas()?.nativeElement;
       const summary = this.summary();
       const theme = this.themeService.theme();
+      const locale = this.language.locale();
       if (!profitCanvas || !sourceCanvas || !this.data()) {
         this.profitChart?.destroy();
         this.sourceChart?.destroy();
@@ -146,7 +151,7 @@ export class Dashboard {
         this.sourceChart = null;
         return;
       }
-      this.updateCharts(profitCanvas, sourceCanvas, summary.chart, summary.sourceProfits, theme);
+      this.updateCharts(profitCanvas, sourceCanvas, summary.chart, summary.sourceProfits, theme, locale);
     });
 
     this.destroyRef.onDestroy(() => {
@@ -250,7 +255,7 @@ export class Dashboard {
   }
 
   private formatDate(date: Date): string {
-    return new Intl.DateTimeFormat('pt-PT', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date);
+    return new Intl.DateTimeFormat(this.language.locale(), { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date);
   }
 
   private buildChartSeries(daily: readonly DashboardDaily[], period: Period, bounds: DateRange | null): ChartSeries {
@@ -267,8 +272,8 @@ export class Dashboard {
         ? 'week'
         : 'month';
     const cursor = new Date(bounds.start);
-    const dayFormatter = new Intl.DateTimeFormat('pt-PT', { day: '2-digit', month: 'short' });
-    const monthFormatter = new Intl.DateTimeFormat('pt-PT', {
+    const dayFormatter = new Intl.DateTimeFormat(this.language.locale(), { day: '2-digit', month: 'short' });
+    const monthFormatter = new Intl.DateTimeFormat(this.language.locale(), {
       month: 'short',
       ...(period === 'custom' && spanDays > 365 ? { year: '2-digit' as const } : {}),
     });
@@ -328,32 +333,34 @@ export class Dashboard {
     series: ChartSeries,
     sourceProfits: readonly SourceProfit[],
     theme: string,
+    locale: string,
   ): void {
-    if (this.chartTheme !== null && this.chartTheme !== theme) {
+    if ((this.chartTheme !== null && this.chartTheme !== theme) || (this.chartLocale !== null && this.chartLocale !== locale)) {
       this.profitChart?.destroy();
       this.sourceChart?.destroy();
       this.profitChart = null;
       this.sourceChart = null;
     }
     this.chartTheme = theme;
+    this.chartLocale = locale;
 
     const styles = getComputedStyle(document.documentElement);
     const textColor = styles.getPropertyValue('--app-text-muted').trim() || '#667085';
     const borderColor = styles.getPropertyValue('--app-border').trim() || '#e4e7ec';
-    const currency = (value: number): string => new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
+    const currency = (value: number): string => new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
 
     if (!this.profitChart) {
       this.profitChart = new Chart(profitCanvas, {
         type: 'line',
         data: { labels: [...series.labels], datasets: [
-          { label: 'Receita', data: [...series.revenue], borderColor: '#465fff', backgroundColor: 'rgba(70, 95, 255, 0.10)', fill: true, tension: 0.35, pointRadius: 2, pointHoverRadius: 5 },
-          { label: 'Lucro', data: [...series.profit], borderColor: '#12b76a', backgroundColor: 'rgba(18, 183, 106, 0.08)', fill: false, tension: 0.35, pointRadius: 2, pointHoverRadius: 5 },
+          { label: this.language.translate('Receita'), data: [...series.revenue], borderColor: '#465fff', backgroundColor: 'rgba(70, 95, 255, 0.10)', fill: true, tension: 0.35, pointRadius: 2, pointHoverRadius: 5 },
+          { label: this.language.translate('Lucro'), data: [...series.profit], borderColor: '#12b76a', backgroundColor: 'rgba(18, 183, 106, 0.08)', fill: false, tension: 0.35, pointRadius: 2, pointHoverRadius: 5 },
         ] },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
-          plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 7, color: textColor, padding: 18 } }, tooltip: { callbacks: { label: (item) => `${item.dataset.label}: ${new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(item.parsed.y ?? 0)}` } } },
+          plugins: { legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 7, color: textColor, padding: 18 } }, tooltip: { callbacks: { label: (item) => `${item.dataset.label}: ${new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(item.parsed.y ?? 0)}` } } },
           scales: {
             x: { grid: { display: false }, ticks: { color: textColor, maxTicksLimit: 8, maxRotation: 0 } },
             y: { beginAtZero: true, grid: { color: borderColor }, ticks: { color: textColor, callback: (value) => currency(Number(value)) } },
@@ -372,12 +379,12 @@ export class Dashboard {
     if (!this.sourceChart) {
       this.sourceChart = new Chart(sourceCanvas, {
         type: 'bar',
-        data: { labels: sourceLabels, datasets: [{ label: 'Lucro', data: sourceValues, backgroundColor: '#465fff', borderRadius: 6, maxBarThickness: 24 }] },
+        data: { labels: sourceLabels, datasets: [{ label: this.language.translate('Lucro'), data: sourceValues, backgroundColor: '#465fff', borderRadius: 6, maxBarThickness: 24 }] },
         options: {
           indexAxis: 'y',
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: false }, tooltip: { callbacks: { label: (item) => new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(item.parsed.x ?? 0) } } },
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: (item) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(item.parsed.x ?? 0) } } },
           scales: {
             x: { beginAtZero: true, grid: { color: borderColor }, ticks: { color: textColor, callback: (value) => currency(Number(value)) } },
             y: { grid: { display: false }, ticks: { color: textColor } },

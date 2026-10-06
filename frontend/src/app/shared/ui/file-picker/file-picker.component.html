@@ -1,7 +1,7 @@
 <div class="file-picker">
-  <label class="file-picker__button" [for]="inputId()">Escolher ficheiro</label>
+  <label class="file-picker__button" [for]="inputId()">{{ "Escolher ficheiro" | translate }}</label>
   <span class="file-picker__name" aria-live="polite">
-    {{ selectedFile()?.name ?? placeholder() }}
+    {{ (selectedFile()?.name ?? placeholder()) | translate }}
   </span>
   <input
     class="file-picker__input"

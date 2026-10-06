@@ -17,7 +17,7 @@
             <ng-content select="[modal-heading]" />
           </div>
         </div>
-        <button class="ui-modal__close" type="button" [attr.aria-label]="closeLabel()" (click)="requestClose()">×</button>
+        <button class="ui-modal__close" type="button" [attr.aria-label]="closeLabel() | translate" (click)="requestClose()">{{ "×" | translate }}</button>
       </div>
       <ng-content />
     </section>

@@ -3,6 +3,7 @@ import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/d
 
 import { TaskCard } from '../task-card/task-card.component';
 import { TaskCardModel } from '../../models/task-card.model';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 
 export interface TaskDropEvent {
   readonly taskId: number;
@@ -12,7 +13,7 @@ export interface TaskDropEvent {
 }
 
 @Component({
-  imports: [CdkDrag, CdkDragHandle, CdkDropList, TaskCard],
+  imports: [CdkDrag, CdkDragHandle, CdkDropList, TaskCard, TranslatePipe],
   selector: 'app-task-column',
   templateUrl: './task-column.component.html',
   styleUrl: './task-column.component.scss',

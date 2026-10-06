@@ -2,13 +2,14 @@ import { Component, input, output, signal } from '@angular/core';
 
 import { FilePicker } from '../../../../shared/ui/file-picker/file-picker.component';
 import { SourceCardModel } from '../../models/source-card.model';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import {
   CreateSourceRequest,
   UpdateSourceRequest,
 } from '../../models/source.model';
 
 @Component({
-  imports: [FilePicker],
+  imports: [FilePicker, TranslatePipe],
   selector: 'app-source-form',
   templateUrl: './source-form.component.html',
   styleUrl: './source-form.component.scss',

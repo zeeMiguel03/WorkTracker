@@ -15,9 +15,10 @@ import {
   UpdateSourceRequest,
 } from '../models/source.model';
 import { SourceService } from '../services/source.service';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
-  imports: [Modal, RouterLink, SourceCard, SourceFilters, SourceForm, SuccessModal],
+  imports: [Modal, RouterLink, SourceCard, SourceFilters, SourceForm, SuccessModal, TranslatePipe],
   selector: 'app-source-list',
   styleUrl: './source-list.component.scss',
   templateUrl: './source-list.component.html',

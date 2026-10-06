@@ -29,22 +29,22 @@ import { CreateTaskStatusRequest, TaskStatus } from '../models/task-status.model
 import { TaskStatusService } from '../services/task-status.service';
 import { TaskService } from '../services/task.service';
 import { TaskForm } from '../task-form/task-form.component';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../core/i18n/language.service';
 
 type DeleteTarget =
   | { readonly type: 'task'; readonly id: number; readonly label: string }
   | { readonly type: 'status'; readonly id: number; readonly label: string };
 
 @Component({
-  imports: [
-    CdkDrag,
+  imports: [CdkDrag,
     CdkDropList,
     Modal,
     RouterLink,
     SuccessModal,
     TaskColumn,
     TaskForm,
-    TaskStatusForm,
-  ],
+    TaskStatusForm, TranslatePipe],
   selector: 'app-task-board',
   styleUrl: './task-board.component.scss',
   templateUrl: './task-board.component.html',
@@ -52,6 +52,7 @@ type DeleteTarget =
 export class TaskBoard implements OnDestroy, OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly auth = inject(Auth);
+  private readonly language = inject(LanguageService);
   private readonly taskService = inject(TaskService);
   private readonly taskStatusService = inject(TaskStatusService);
   private readonly sourceService = inject(SourceService);
@@ -583,7 +584,7 @@ export class TaskBoard implements OnDestroy, OnInit {
       return 'Sem prazo';
     }
 
-    return new Intl.DateTimeFormat('pt-PT', { day: '2-digit', month: 'short' }).format(
+    return new Intl.DateTimeFormat(this.language.locale(), { day: '2-digit', month: 'short' }).format(
       new Date(value),
     );
   }
@@ -653,7 +654,7 @@ export class TaskBoard implements OnDestroy, OnInit {
 
   private normalize(value: string): string {
     return value
-      .toLocaleLowerCase('pt-PT')
+      .toLocaleLowerCase(this.language.locale())
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
   }

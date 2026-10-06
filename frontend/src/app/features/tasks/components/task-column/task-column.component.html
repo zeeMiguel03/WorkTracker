@@ -2,13 +2,13 @@
   <header class="task-column__header" cdkDragHandle>
     <div class="task-column__title">
       <span class="task-column__dot"></span>
-      <h2>{{ title() }}</h2>
+      <h2>{{ title() | translate }}</h2>
       <span class="task-column__count">{{ count() }}</span>
     </div>
     <div class="task-column__actions">
-      <button type="button" aria-label="Adicionar tarefa" (click)="addTaskRequested.emit(columnId())">+</button>
-      <button type="button" aria-label="Editar coluna" (click)="editColumnRequested.emit(columnId())">···</button>
-      <button class="task-column__delete" type="button" aria-label="Apagar coluna" (click)="deleteColumnRequested.emit(columnId())">×</button>
+      <button type="button" [attr.aria-label]="('Adicionar tarefa' | translate)" (click)="addTaskRequested.emit(columnId())">+</button>
+      <button type="button" [attr.aria-label]="('Editar coluna' | translate)" (click)="editColumnRequested.emit(columnId())">···</button>
+      <button class="task-column__delete" type="button" [attr.aria-label]="('Apagar coluna' | translate)" (click)="deleteColumnRequested.emit(columnId())">{{ "×" | translate }}</button>
     </div>
   </header>
 
@@ -22,7 +22,7 @@
     (cdkDropListDropped)="drop($event)"
   >
     @if (tasks().length === 0) {
-      <div class="task-column__empty">Sem tarefas nesta coluna</div>
+      <div class="task-column__empty">{{ "Sem tarefas nesta coluna" | translate }}</div>
     } @else {
       @for (task of tasks(); track task.id) {
         <app-task-card
@@ -45,7 +45,7 @@
       [disabled]="loadingMoreTasks()"
       (click)="loadMoreRequested.emit(columnId())"
     >
-      {{ loadingMoreTasks() ? 'A carregar...' : 'Ver mais' }}
+      {{ (loadingMoreTasks() ? 'A carregar...' : 'Ver mais') | translate }}
     </button>
   }
 </section>

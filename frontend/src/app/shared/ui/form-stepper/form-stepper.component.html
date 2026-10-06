@@ -1,4 +1,4 @@
-<nav class="form-stepper" [attr.aria-label]="ariaLabel()">
+<nav class="form-stepper" [attr.aria-label]="ariaLabel() | translate">
   @for (step of steps(); track step.id; let isLast = $last) {
     <button
       class="form-stepper__step"
@@ -10,7 +10,7 @@
       (click)="select(step.id)"
     >
       <span class="form-stepper__number">{{ step.id + 1 }}</span>
-      <span class="form-stepper__copy"><strong>{{ step.label }}</strong><small>{{ step.description }}</small></span>
+      <span class="form-stepper__copy"><strong>{{ step.label | translate }}</strong><small>{{ step.description | translate }}</small></span>
     </button>
     @if (!isLast) { <span class="form-stepper__line" [class.form-stepper__line--complete]="activeStep() > step.id" aria-hidden="true"></span> }
   }

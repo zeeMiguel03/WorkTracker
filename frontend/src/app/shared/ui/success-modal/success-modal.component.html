@@ -22,17 +22,17 @@
     </svg>
   </div>
   <div modal-heading class="success-modal__heading">
-    <h2 [id]="titleId()">{{ title() }}</h2>
+    <h2 [id]="titleId()">{{ title() | translate }}</h2>
   </div>
   <div class="success-modal__body">
-    <p>{{ message() }}</p>
+    <p>{{ message() | translate }}</p>
     <button
       class="success-modal__button"
       [class.success-modal__button--error]="variant() === 'error'"
       type="button"
       (click)="closed.emit()"
     >
-      {{ closeLabel() }}
+      {{ closeLabel() | translate }}
     </button>
   </div>
 </app-modal>

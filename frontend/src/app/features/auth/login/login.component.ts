@@ -8,9 +8,11 @@ import { Auth } from '../auth.service';
 import { LoginRequest } from '../models/auth.model';
 import { ThemeToggle } from '../../../shared/ui/theme-toggle/theme-toggle.component';
 import { GoogleSignInButton } from '../google-sign-in-button.component';
+import { LanguageToggle } from '../../../shared/ui/language-toggle/language-toggle.component';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
-  imports: [NgOptimizedImage, RouterLink, FormField, ThemeToggle, GoogleSignInButton],
+  imports: [NgOptimizedImage, RouterLink, FormField, ThemeToggle, LanguageToggle, GoogleSignInButton, TranslatePipe],
   selector: 'app-login',
   styleUrl: './login.component.scss',
   templateUrl: './login.component.html',
@@ -28,16 +30,16 @@ export class Login {
   });
 
   protected readonly loginForm = form(this.loginModel, (fields) => {
-    required(fields.email, { message: 'Email is required.' });
-    email(fields.email, { message: 'Enter a valid email address.' });
-    required(fields.password, { message: 'Password is required.' });
+    required(fields.email, { message: 'O email é obrigatório.' });
+    email(fields.email, { message: 'Indica um endereço de email válido.' });
+    required(fields.password, { message: 'A password é obrigatória.' });
   });
 
   protected login(event: SubmitEvent): void {
     event.preventDefault();
 
     if (this.loginForm().invalid()) {
-      this.errorMessage.set('Please enter a valid email and password.');
+      this.errorMessage.set('Indica um email e uma password válidos.');
       return;
     }
 
@@ -61,12 +63,12 @@ export class Login {
             code === 'INVALID_CREDENTIALS' ||
             code === 'INVALID_PASSWORD'
           ) {
-            this.errorMessage.set('Invalid email or password.');
+            this.errorMessage.set('Email ou password inválidos.');
             return;
           }
 
           this.errorMessage.set(
-            error.error?.detail ?? 'It was not possible to sign in.',
+            error.error?.detail ?? 'Não foi possível iniciar sessão.',
           );
         },
       });

@@ -1,9 +1,10 @@
 import { Component, effect, input, OnDestroy, output } from '@angular/core';
 
 import { Modal } from '../modal/modal.component';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
-  imports: [Modal],
+  imports: [Modal, TranslatePipe],
   selector: 'app-success-modal',
   templateUrl: './success-modal.component.html',
   styleUrl: './success-modal.component.scss',

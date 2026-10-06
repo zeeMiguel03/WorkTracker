@@ -14,15 +14,18 @@ import { Subscription } from 'rxjs';
 
 import { SourceCardModel } from '../../models/source-card.model';
 import { SourceService } from '../../services/source.service';
+import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
+import { LanguageService } from '../../../../core/i18n/language.service';
 
 @Component({
-  imports: [DatePipe],
+  imports: [DatePipe, TranslatePipe],
   selector: 'app-source-card',
   templateUrl: './source-card.component.html',
   styleUrl: './source-card.component.scss',
 })
 export class SourceCard implements OnInit, OnChanges, OnDestroy {
   private readonly sourceService = inject(SourceService);
+  protected readonly language = inject(LanguageService);
 
   readonly source = input.required<SourceCardModel>();
   readonly editRequested = output<number>();

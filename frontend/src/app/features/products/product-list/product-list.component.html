@@ -1,48 +1,47 @@
 <main class="products-page">
   <header class="products-page__header">
     <div>
-      <h1>Produtos</h1>
-      <nav class="products-page__breadcrumb" aria-label="Breadcrumb">
-        <a routerLink="/dashboard">Dashboard</a>
+      <h1>{{ "Produtos" | translate }}</h1>
+      <nav class="products-page__breadcrumb" [attr.aria-label]="('Breadcrumb' | translate)">
+        <a routerLink="/dashboard">{{ "Dashboard" | translate }}</a>
         <span aria-hidden="true">›</span>
-        <span aria-current="page">Produtos</span>
+        <span aria-current="page">{{ "Produtos" | translate }}</span>
       </nav>
     </div>
 
     <button class="products-page__primary-button" type="button" (click)="openCreateProduct()">
       <span aria-hidden="true">+</span>
-      Novo produto
-    </button>
+       {{ "Novo produto" | translate }} </button>
   </header>
 
   <section class="products-catalog" aria-labelledby="products-title">
     <div class="products-catalog__toolbar">
-      <h2 id="products-title">{{ totalItems() }} {{ totalItems() === 1 ? 'artigo' : 'artigos' }}</h2>
-      <div class="products-catalog__filters" aria-label="Filtrar produtos por estado">
+      <h2 id="products-title">{{ totalItems() }} {{ (totalItems() === 1 ? 'artigo' : 'artigos') | translate }}</h2>
+      <div class="products-catalog__filters" [attr.aria-label]="('Filtrar produtos por estado' | translate)">
         @for (filter of statusFilters; track filter.value) {
           <button
             type="button"
             [class.products-catalog__filter--active]="selectedStatus() === filter.value"
             [attr.aria-pressed]="selectedStatus() === filter.value"
             (click)="selectStatus(filter.value)"
-          >{{ filter.label }}</button>
+          >{{ filter.label | translate }}</button>
         }
       </div>
     </div>
 
     <div class="products-catalog__search">
       <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4 4" /></svg>
-      <input type="search" placeholder="Pesquisar produtos..." [value]="searchTerm()" (input)="updateSearch($event)" />
+      <input type="search" [placeholder]="('Pesquisar produtos...' | translate)" [value]="searchTerm()" (input)="updateSearch($event)" />
     </div>
 
     @if (isLoading()) {
-      <div class="products-catalog__state">A carregar produtos...</div>
+      <div class="products-catalog__state">{{ "A carregar produtos..." | translate }}</div>
     } @else if (errorMessage()) {
-      <div class="products-catalog__state products-catalog__state--error">{{ errorMessage() }}</div>
+      <div class="products-catalog__state products-catalog__state--error">{{ errorMessage() | translate }}</div>
     } @else if (products().length === 0) {
       <div class="products-catalog__state">
-        <strong>Ainda não tens produtos</strong>
-        <span>Adiciona o teu primeiro produto para começar.</span>
+        <strong>{{ "Ainda não tens produtos" | translate }}</strong>
+        <span>{{ "Adiciona o teu primeiro produto para começar." | translate }}</span>
       </div>
     } @else {
       <div class="products-catalog__grid">
@@ -57,12 +56,12 @@
       </div>
 
       @if (totalPages() > 1) {
-        <nav class="products-pagination" aria-label="Paginação de produtos">
-          <button type="button" [disabled]="page() === 1" (click)="goToPage(page() - 1)">Anterior</button>
+        <nav class="products-pagination" [attr.aria-label]="('Paginação de produtos' | translate)">
+          <button type="button" [disabled]="page() === 1" (click)="goToPage(page() - 1)">{{ "Anterior" | translate }}</button>
           @for (pageNumber of pageNumbers(); track pageNumber) {
             <button type="button" [class.products-pagination__active]="page() === pageNumber" (click)="goToPage(pageNumber)">{{ pageNumber }}</button>
           }
-          <button type="button" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">Seguinte</button>
+          <button type="button" [disabled]="page() === totalPages()" (click)="goToPage(page() + 1)">{{ "Seguinte" | translate }}</button>
         </nav>
       }
     }
@@ -72,7 +71,7 @@
 @if (productModalOpen()) {
   <app-modal [open]="true" titleId="product-modal-title" size="large" [closeOnBackdrop]="!isSaving()" (closed)="closeProductModal()">
     <div modal-heading class="products-modal__heading">
-      <h2 id="product-modal-title">Novo produto</h2>
+      <h2 id="product-modal-title">{{ "Novo produto" | translate }}</h2>
     </div>
     <app-product-form
       [saving]="isSaving()"
@@ -86,18 +85,18 @@
 @if (deleteProductId()) {
   <app-modal [open]="true" titleId="list-delete-product-title" size="confirmation" [closeOnBackdrop]="!isDeleting()" (closed)="cancelDelete()">
     <div modal-heading class="products-modal__heading">
-      <span class="products-modal__eyebrow">Atenção</span>
-      <h2 id="list-delete-product-title">Apagar produto?</h2>
+      <span class="products-modal__eyebrow">{{ "Atenção" | translate }}</span>
+      <h2 id="list-delete-product-title">{{ "Apagar produto?" | translate }}</h2>
     </div>
     <div class="products-delete-modal">
-      <p>Esta ação não pode ser desfeita. O produto e as fotografias associadas serão removidos permanentemente.</p>
+      <p>{{ "Esta ação não pode ser desfeita. O produto e as fotografias associadas serão removidos permanentemente." | translate }}</p>
       @if (errorMessage()) {
-        <div class="products-catalog__state products-catalog__state--error">{{ errorMessage() }}</div>
+        <div class="products-catalog__state products-catalog__state--error">{{ errorMessage() | translate }}</div>
       }
       <div class="products-delete-modal__actions">
-        <button class="products-modal__secondary-button" type="button" [disabled]="isDeleting()" (click)="cancelDelete()">Cancelar</button>
+        <button class="products-modal__secondary-button" type="button" [disabled]="isDeleting()" (click)="cancelDelete()">{{ "Cancelar" | translate }}</button>
         <button class="products-modal__danger-button" type="button" [disabled]="isDeleting()" (click)="confirmDelete()">
-          {{ isDeleting() ? 'A apagar...' : 'Apagar produto' }}
+          {{ (isDeleting() ? 'A apagar...' : 'Apagar produto') | translate }}
         </button>
       </div>
     </div>

@@ -1,5 +1,7 @@
-import { Component, ElementRef, NgZone, AfterViewInit, ViewChild, inject, input, output, signal } from '@angular/core';
+import { Component, ElementRef, Injector, NgZone, AfterViewInit, ViewChild, effect, inject, input, output, signal } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { LanguageService } from '../../core/i18n/language.service';
+import { TranslatePipe } from '../../core/i18n/translate.pipe';
 
 type GoogleButtonText = 'signin_with' | 'signup_with' | 'continue_with';
 
@@ -37,7 +39,7 @@ declare global {
 
 let googleScriptPromise: Promise<GoogleIdentityApi> | null = null;
 
-function loadGoogleIdentityServices(): Promise<GoogleIdentityApi> {
+function loadGoogleIdentityServices(locale: string): Promise<GoogleIdentityApi> {
   if (window.google?.accounts?.id) {
     return Promise.resolve(window.google);
   }
@@ -48,7 +50,7 @@ function loadGoogleIdentityServices(): Promise<GoogleIdentityApi> {
 
   googleScriptPromise = new Promise<GoogleIdentityApi>((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client?hl=en';
+    script.src = `https://accounts.google.com/gsi/client?hl=${encodeURIComponent(locale)}`;
     script.async = true;
     script.defer = true;
     script.onload = () => {
@@ -85,10 +87,11 @@ function loadGoogleIdentityServices(): Promise<GoogleIdentityApi> {
     }
     .google-button__error { margin: 8px 0 0; color: #f97066; text-align: center; font-size: 13px; line-height: 18px; }
   `],
+  imports: [TranslatePipe],
   template: `
     <div #buttonHost class="google-button-host"></div>
     @if (errorMessage()) {
-      <p class="google-button__error" role="alert">{{ errorMessage() }}</p>
+      <p class="google-button__error" role="alert">{{ errorMessage() | translate }}</p>
     }
   `,
 })
@@ -99,38 +102,44 @@ export class GoogleSignInButton implements AfterViewInit {
   protected readonly errorMessage = signal<string | null>(null);
 
   private readonly zone = inject(NgZone);
+  private readonly language = inject(LanguageService);
+  private readonly injector = inject(Injector);
 
   @ViewChild('buttonHost', { static: true })
   private buttonHost!: ElementRef<HTMLDivElement>;
 
   ngAfterViewInit(): void {
-    if (!environment.googleClientId) {
-      this.errorMessage.set('A autenticação Google ainda não está configurada.');
-      return;
-    }
+    effect(() => {
+      const locale = this.language.locale();
+      if (!environment.googleClientId) {
+        this.errorMessage.set('A autenticação Google ainda não está configurada.');
+        return;
+      }
 
-    void loadGoogleIdentityServices()
-      .then((google) => {
-        google.accounts.id.initialize({
-          client_id: environment.googleClientId,
-          callback: (response) => {
-            if (response.credential) {
-              this.zone.run(() => this.credential.emit(response.credential));
-            }
-          },
+      void loadGoogleIdentityServices(locale)
+        .then((google) => {
+          if (this.language.locale() !== locale) return;
+          google.accounts.id.initialize({
+            client_id: environment.googleClientId,
+            callback: (response) => {
+              if (response.credential) {
+                this.zone.run(() => this.credential.emit(response.credential));
+              }
+            },
+          });
+          this.buttonHost.nativeElement.replaceChildren();
+          google.accounts.id.renderButton(this.buttonHost.nativeElement, {
+            theme: 'filled_black',
+            size: 'large',
+            text: this.text(),
+            shape: 'rectangular',
+            width: Math.min(400, Math.max(240, Math.floor(this.buttonHost.nativeElement.clientWidth))),
+            locale,
+          });
+        })
+        .catch(() => {
+          this.errorMessage.set('Não foi possível carregar a autenticação Google.');
         });
-        google.accounts.id.renderButton(this.buttonHost.nativeElement, {
-          theme: 'filled_black',
-          size: 'large',
-          text: this.text(),
-          shape: 'rectangular',
-          width: Math.min(400, Math.max(240, Math.floor(this.buttonHost.nativeElement.clientWidth))),
-          locale: 'en',
-        });
-
-      })
-      .catch(() => {
-        this.errorMessage.set('Não foi possível carregar a autenticação Google.');
-      });
+    }, { injector: this.injector });
   }
 }

@@ -1,6 +1,8 @@
 import { Component, input, output, signal } from '@angular/core';
+import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 @Component({
+  imports: [TranslatePipe],
   selector: 'app-file-picker',
   templateUrl: './file-picker.component.html',
   styleUrl: './file-picker.component.scss',
