@@ -30,16 +30,16 @@ html {
 }
 
 html:not(.dark) {
-  --app-bg: #f8fafc;
-  --app-surface: #ffffff;
-  --app-surface-muted: #f2f4f7;
-  --app-input: #ffffff;
-  --app-border: #e4e7ec;
-  --app-border-strong: #d0d5dd;
-  --app-text: #101828;
-  --app-text-secondary: #344054;
-  --app-text-muted: #667085;
-  --app-text-subtle: #98a2b3;
+  --app-bg: #f3f5f8;
+  --app-surface: #fafbfc;
+  --app-surface-muted: #f1f3f6;
+  --app-input: #f7f8fa;
+  --app-border: #e1e6ed;
+  --app-border-strong: #d0d7e2;
+  --app-text: #172033;
+  --app-text-secondary: #536176;
+  --app-text-muted: #596579;
+  --app-text-subtle: #697589;
   color-scheme: light;
 }
 
@@ -72,7 +72,6 @@ html:not(.dark) .account-stat-card,
 html:not(.dark) .source-card,
 html:not(.dark) .task-column,
 html:not(.dark) .task-card,
-html:not(.dark) .products-catalog,
 html:not(.dark) .product-detail__gallery,
 html:not(.dark) .product-detail__summary,
 html:not(.dark) .product-detail__panel,
@@ -720,15 +719,6 @@ html:not(.dark) .advanced-filters > button,
 html:not(.dark) .draft-products__empty button {
   color: #465fff !important;
   border-color: rgb(70 95 255 / 28%) !important;
-}
-
-html:not(.dark) .products-catalog {
-  color: var(--app-text-secondary) !important;
-  background: var(--app-surface) !important;
-  border: 1px solid var(--app-border) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 10px 28px rgb(16 24 40 / 5%) !important;
-  padding: 28px !important;
 }
 
 html:not(.dark) .products-catalog__filters button {

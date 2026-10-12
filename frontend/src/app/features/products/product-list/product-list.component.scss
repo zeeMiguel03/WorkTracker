@@ -1,7 +1,7 @@
 :host { display: block; min-height: calc(100vh - 74px); }
 * { box-sizing: border-box; }
 .products-page { min-height: calc(100vh - 74px); padding: 30px 32px 48px; color: #f2f4f7; background: #0c111d; }
-.products-page__header, .products-catalog { width: 100%; max-width: 1480px; margin-inline: auto; }
+.products-page__header, .products-catalog { width: 100%; max-width: var(--app-content-max-width, 1720px); margin-inline: auto; }
 .products-page__header, .products-catalog__toolbar, .products-catalog__filters { display: flex; align-items: center; }
 .products-page__header { justify-content: space-between; gap: 24px; margin-bottom: 34px; }
 .products-page h1, .products-page h2, .products-page p { margin-top: 0; }
