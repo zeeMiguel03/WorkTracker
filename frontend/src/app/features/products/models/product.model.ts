@@ -17,6 +17,9 @@ export interface ProductListItemApi {
   readonly condition: number | string;
   readonly status: number | string;
   readonly listingPrice: number | null;
+  readonly salePrice: number | null;
+  readonly realizedProfit: number | null;
+  readonly soldAt: string | null;
   readonly createdAt: string;
   readonly coverImageId: number | null;
   readonly coverImageUrl: string | null;
@@ -90,6 +93,9 @@ export interface ProductListItem {
   readonly name: string;
   readonly category: string;
   readonly price: number;
+  readonly salePrice: number | null;
+  readonly realizedProfit: number | null;
+  readonly soldAt: string | null;
   readonly status: ProductStatus;
   readonly imageId: number | null;
   readonly imageUrl: string | null;

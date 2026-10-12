@@ -16,6 +16,9 @@ public class ListProductDTO
     public ProductStatus Status { get; set; }
 
     public decimal? ListingPrice { get; set; }
+    public decimal? SalePrice { get; set; }
+    public decimal? RealizedProfit { get; set; }
+    public DateTime? SoldAt { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public int? CoverImageId { get; set; }

@@ -85,6 +85,16 @@ export class ProductCard implements OnInit, OnChanges, OnDestroy {
     return new Intl.NumberFormat(this.language.locale(), { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }).format(price);
   }
 
+  protected formatNullablePrice(price: number | null): string {
+    return price === null ? '—' : this.formatPrice(price);
+  }
+
+  protected formatDate(value: string | null): string {
+    if (!value) return '—';
+
+    return new Intl.DateTimeFormat(this.language.locale(), { dateStyle: 'medium' }).format(new Date(value));
+  }
+
   private loadProductImage(): void {
     this.imageSubscription?.unsubscribe();
     this.revokeImageUrl();

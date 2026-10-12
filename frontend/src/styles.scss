@@ -786,6 +786,19 @@ html:not(.dark) .product-card__meta {
   color: var(--app-text-muted) !important;
 }
 
+html:not(.dark) .product-card__realized-profit,
+html:not(.dark) .product-card__meta--sold time {
+  color: var(--app-text-muted) !important;
+}
+
+html:not(.dark) .product-card__realized-profit:not(.product-card__realized-profit--negative) {
+  color: #067647 !important;
+}
+
+html:not(.dark) .product-card__realized-profit--negative {
+  color: #b42318 !important;
+}
+
 html:not(.dark) .product-card__menu-trigger {
   color: var(--app-text-secondary) !important;
   background: rgb(255 255 255 / 90%) !important;

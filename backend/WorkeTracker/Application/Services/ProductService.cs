@@ -252,6 +252,12 @@ namespace Application.Services
                         Condition = product.Condition,
                         Status = product.Status,
                         ListingPrice = product.ListingPrice,
+                        SalePrice = product.SalePrice,
+                        RealizedProfit = product.Status == ProductStatus.Sold && product.SalePrice.HasValue
+                            ? product.SalePrice.Value - (product.SaleOtherCosts ?? 0m) -
+                                product.PurchasePrice - product.AllocatedShippingCost - product.AllocatedOtherCosts
+                            : null,
+                        SoldAt = product.SoldAt,
                         CreatedAt = product.CreatedAt,
                         CoverImageId = product.Images
                             .FirstOrDefault(image => image.IsCover)

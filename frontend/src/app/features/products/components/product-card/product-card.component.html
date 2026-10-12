@@ -64,15 +64,27 @@
     </div>
   </div>
   <div class="product-card__body">
-    <div class="product-card__heading">
+    <div class="product-card__heading" [class.product-card__heading--sold]="product().status === 'sold'">
       <h3>{{ product().name }}</h3>
-      <strong>{{ formatPrice(product().price) }}</strong>
-    </div>
-    <div class="product-card__meta">
-      <span>{{ product().category }}</span>
-      @if (product().status !== 'sold') {
-        <span>{{ (product().status === 'draft' ? 'Em rascunho' : 'Disponível') | translate }}</span>
+      @if (product().status === 'sold') {
+        <strong>{{ formatNullablePrice(product().salePrice) }}</strong>
+      } @else {
+        <strong>{{ formatPrice(product().price) }}</strong>
       }
     </div>
+    @if (product().status === 'sold') {
+      <div class="product-card__meta product-card__meta--sold">
+        <span
+          class="product-card__realized-profit"
+          [class.product-card__realized-profit--negative]="(product().realizedProfit ?? 0) < 0"
+        >{{ formatNullablePrice(product().realizedProfit) }}</span>
+        <time [attr.datetime]="product().soldAt" [attr.title]="('Vendido em' | translate) + ': ' + formatDate(product().soldAt)">{{ formatDate(product().soldAt) }}</time>
+      </div>
+    } @else {
+      <div class="product-card__meta">
+        <span>{{ product().category }}</span>
+        <span>{{ (product().status === 'draft' ? 'Em rascunho' : 'Disponível') | translate }}</span>
+      </div>
+    }
   </div>
 </article>

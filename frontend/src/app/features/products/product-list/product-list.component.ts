@@ -187,6 +187,11 @@ export class ProductList {
       name: product.name,
       category: product.category || 'Sem categoria',
       price: Number(product.listingPrice) || 0,
+      salePrice: product.salePrice === null || product.salePrice === undefined ? null : Number(product.salePrice),
+      realizedProfit: product.realizedProfit === null || product.realizedProfit === undefined
+        ? null
+        : Number(product.realizedProfit),
+      soldAt: product.soldAt,
       status: this.toStatus(product.status),
       imageId: product.coverImageId,
       imageUrl: product.coverImageUrl,

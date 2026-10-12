@@ -27,8 +27,13 @@
 .product-card--draft .product-card__status { color: #e4e7ec; background: rgba(52,64,84,.9); border-color: rgba(152,162,179,.42); }
 .product-card__body { flex: 1 0 auto; padding: 14px 14px 15px; }
 .product-card__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.product-card__heading--sold { align-items: center; }
 .product-card h3 { min-width: 0; margin: 0; overflow: hidden; color: #f2f4f7; font-size: 13px; line-height: 1.4; text-overflow: ellipsis; white-space: nowrap; }
 .product-card__heading strong { flex: 0 0 auto; color: #f2f4f7; font-size: 13px; }
 .product-card__meta { display: flex; margin-top: 8px; align-items: center; justify-content: space-between; gap: 10px; color: #98a2b3; font-size: 11px; }
 .product-card__meta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.product-card__meta--sold { font-size: 10px; }
+.product-card__realized-profit { color: #32d583; font-weight: 600; }
+.product-card__realized-profit--negative { color: #f97066; }
+.product-card__meta--sold time { flex: 0 0 auto; color: #98a2b3; white-space: nowrap; }
 .product-card__meta span:last-child { flex: 0 0 auto; }
