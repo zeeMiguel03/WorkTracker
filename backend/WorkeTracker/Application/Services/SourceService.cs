@@ -72,14 +72,12 @@ namespace Application.Services
 
         public async Task UpdateSourceAsync(UpdateSourceDTO dto, CancellationToken cancellationToken = default)
         {
-            var source = await GetOwnedSourceAsync(
-                dto.Id,
-                "You do not have permission to update this source.",
-                cancellationToken);
+            var source = await GetOwnedSourceAsync(dto.Id, "You do not have permission to update this source.", cancellationToken);
 
             await ValidateSourceNameAvailableAsync(dto.Name, source.UserId, source.Id, cancellationToken);
 
             var oldImagePath = source.ImageUrl;
+
             string? newImagePath = null;
 
             try
