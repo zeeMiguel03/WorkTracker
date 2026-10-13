@@ -65,6 +65,7 @@ namespace Application.Services
             }
 
             _tasksStatusRepo.Remove(taskStatus);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 

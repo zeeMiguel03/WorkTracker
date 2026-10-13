@@ -545,7 +545,7 @@ public class TasksServiceTests
     public async Task ListTasksByUserAsync_ClampsPageSizeToMaximum()
     {
         _tasksRepository.GetPageByUserIdAsync(
-                UserId, 1, 50, -1, "query", Arg.Any<CancellationToken>())
+                UserId, 1, 50, null, "query", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult<(IReadOnlyList<Tasks> Items, int TotalCount)>((Array.Empty<Tasks>(), 0)));
 
         var result = await _sut.ListTasksByUserAsync(-3, 100, -1, "query");
