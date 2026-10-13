@@ -799,6 +799,31 @@ html:not(.dark) .product-card__realized-profit--negative {
   color: #b42318 !important;
 }
 
+html:not(.dark) .products-pagination button {
+  color: var(--app-text-secondary) !important;
+  background: var(--app-surface) !important;
+  border-color: var(--app-border-strong) !important;
+}
+
+html:not(.dark) .products-pagination button:hover:not(:disabled) {
+  color: #3641f5 !important;
+  background: var(--app-surface-muted) !important;
+  border-color: #98a2b3 !important;
+}
+
+html:not(.dark) .products-pagination button.products-pagination__active {
+  color: #fff !important;
+  background: #465fff !important;
+  border-color: #465fff !important;
+}
+
+html:not(.dark) .products-pagination button:disabled {
+  color: var(--app-text-muted) !important;
+  background: var(--app-surface-muted) !important;
+  border-color: var(--app-border) !important;
+  opacity: 1;
+}
+
 html:not(.dark) .product-card__menu-trigger {
   color: var(--app-text-secondary) !important;
   background: rgb(255 255 255 / 90%) !important;
