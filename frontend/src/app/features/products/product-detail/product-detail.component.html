@@ -168,6 +168,12 @@
             <span class="product-detail__eyebrow">{{ "Resumo" | translate }}</span>
             <strong>{{ formatPrice(sellingPrice(product)) }}</strong>
           </div>
+          <dl class="product-detail__facts product-detail__summary-profit">
+            <div>
+              <dt>{{ (toStatus(product.status) === 'sold' ? 'Lucro realizado' : 'Lucro estimado') | translate }}</dt>
+              <dd [class.product-detail__value--positive]="financialTone(profit(product)) === 'positive'" [class.product-detail__value--negative]="financialTone(profit(product)) === 'negative'">{{ formatPrice(profit(product)) }}</dd>
+            </div>
+          </dl>
           <dl class="product-detail__facts">
             <div><dt>{{ "Categoria" | translate }}</dt><dd>{{ (product.category || 'Sem categoria') | translate }}</dd></div>
             <div><dt>{{ "Marca" | translate }}</dt><dd>{{ product.brand || '—' }}</dd></div>

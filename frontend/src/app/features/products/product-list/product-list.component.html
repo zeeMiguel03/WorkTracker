@@ -82,6 +82,48 @@
   </app-modal>
 }
 
+@if (saleProduct(); as product) {
+  <app-modal [open]="true" titleId="sell-product-title" size="default" [closeOnBackdrop]="!isSelling()" (closed)="closeSaleModal()">
+    <div modal-heading class="products-modal__heading">
+      <span class="products-modal__eyebrow">{{ "Registar venda" | translate }}</span>
+      <h2 id="sell-product-title">{{ "Marcar produto como vendido" | translate }}</h2>
+    </div>
+
+    <form class="products-sell-form" (ngSubmit)="confirmSale()">
+      <p>{{ product.name }} · {{ "Indica os dados da venda para calcular o lucro do produto." | translate }}</p>
+      @if (isLoadingSaleOptions()) {
+        <div class="products-sell-form__state">{{ "A carregar canais de venda..." | translate }}</div>
+      } @else {
+        <label class="products-sell-form__field">
+          <span>{{ "Canal da venda" | translate }} <small>{{ "(opcional)" | translate }}</small></span>
+          <app-dropdown [fullWidth]="true" [options]="saleOptions()" [value]="saleDraft.sourceId?.toString() ?? ''" (valueChange)="chooseSaleSource($event)" />
+        </label>
+      }
+      <label class="products-sell-form__field">
+        <span>{{ "Preço de venda" | translate }}</span>
+        <input name="salePrice" type="number" min="0" step="0.01" [(ngModel)]="saleDraft.salePrice" required />
+      </label>
+      <label class="products-sell-form__field">
+        <span>{{ "Data da venda" | translate }}</span>
+        <input name="soldAt" type="date" [(ngModel)]="saleDraft.soldAt" required />
+      </label>
+      <label class="products-sell-form__field">
+        <span>{{ "Outros custos" | translate }} <small>{{ "(opcional)" | translate }}</small></span>
+        <input name="saleOtherCosts" type="number" min="0" step="0.01" [(ngModel)]="saleDraft.saleOtherCosts" />
+      </label>
+      @if (saleError()) {
+        <div class="products-sell-form__error">{{ saleError() | translate }}</div>
+      }
+      <div class="products-sell-form__actions">
+        <button class="products-sell-form__button" type="button" [disabled]="isSelling()" (click)="closeSaleModal()">{{ "Cancelar" | translate }}</button>
+        <button class="products-sell-form__button products-sell-form__button--primary" type="submit" [disabled]="isSelling() || isLoadingSaleOptions()">
+          {{ (isSelling() ? 'A registar...' : 'Confirmar venda') | translate }}
+        </button>
+      </div>
+    </form>
+  </app-modal>
+}
+
 @if (deleteProductId()) {
   <app-modal [open]="true" titleId="list-delete-product-title" size="confirmation" [closeOnBackdrop]="!isDeleting()" (closed)="cancelDelete()">
     <div modal-heading class="products-modal__heading">

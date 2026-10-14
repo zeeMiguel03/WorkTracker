@@ -1,25 +1,30 @@
 import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 
 import { Modal } from '../../../shared/ui/modal/modal.component';
+import { Dropdown, DropdownOption } from '../../../shared/ui/dropdown/dropdown.component';
 import { ProductCard } from '../components/product-card/product-card.component';
 import { ProductForm } from '../product-form/product-form.component';
 import { ProductDraft, ProductListItem, ProductListItemApi, ProductStatus } from '../models/product.model';
-import { CreateProductRequest, ProductService } from '../services/product.service';
+import { CreateProductRequest, ProductService, SellProductRequest } from '../services/product.service';
+import { ProductRelationsService } from '../services/product-relations.service';
+import { portugalSaleDateInstant } from '../../../shared/util/portugal-calendar';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 
 type ProductFilter = 'all' | ProductStatus;
 
 @Component({
-  imports: [ProductCard, ProductForm, Modal, RouterLink, TranslatePipe],
+  imports: [ProductCard, ProductForm, Modal, RouterLink, FormsModule, Dropdown, TranslatePipe],
   selector: 'app-product-list',
   styleUrl: './product-list.component.scss',
   templateUrl: './product-list.component.html',
 })
 export class ProductList {
   private readonly productService = inject(ProductService);
+  private readonly productRelationsService = inject(ProductRelationsService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchChanges = new Subject<string>();
@@ -33,6 +38,12 @@ export class ProductList {
   protected readonly isSaving = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly deleteProductId = signal<number | null>(null);
+  protected readonly saleProduct = signal<ProductListItem | null>(null);
+  protected readonly saleOptions = signal<readonly DropdownOption[]>([]);
+  protected readonly isLoadingSaleOptions = signal(false);
+  protected readonly isSelling = signal(false);
+  protected readonly saleError = signal<string | null>(null);
+  protected saleDraft = { sourceId: null as number | null, salePrice: 0, saleOtherCosts: null as number | null, soldAt: this.todayInputValue() };
   protected readonly isDeleting = signal(false);
   protected readonly page = signal(1);
   protected readonly totalItems = signal(0);
@@ -80,7 +91,64 @@ export class ProductList {
   }
 
   protected openProductForSale(productId: number): void {
-    void this.router.navigate(['/products', productId], { queryParams: { action: 'sell' } });
+    const product = this.products().find((item) => item.id === productId);
+    if (!product || this.isSelling() || product.status === 'sold') return;
+
+    this.saleProduct.set(product);
+    this.saleDraft = {
+      sourceId: null,
+      salePrice: product.price,
+      saleOtherCosts: null,
+      soldAt: this.todayInputValue(),
+    };
+    this.saleError.set(null);
+    this.isLoadingSaleOptions.set(true);
+    this.productRelationsService.loadOptions()
+      .pipe(finalize(() => this.isLoadingSaleOptions.set(false)))
+      .subscribe({
+        next: (options) => {
+          this.saleOptions.set(options.sourceOptions);
+          this.saleDraft = { ...this.saleDraft, sourceId: options.sourceOptions[0] ? Number(options.sourceOptions[0].value) : null };
+        },
+        error: () => this.saleError.set('Não foi possível carregar os canais de venda.'),
+      });
+  }
+
+  protected closeSaleModal(): void {
+    if (!this.isSelling()) {
+      this.saleProduct.set(null);
+      this.saleError.set(null);
+    }
+  }
+
+  protected chooseSaleSource(value: string): void {
+    this.saleDraft = { ...this.saleDraft, sourceId: value ? Number(value) : null };
+  }
+
+  protected confirmSale(): void {
+    const product = this.saleProduct();
+    if (!product || this.isSelling() || this.saleDraft.salePrice < 0 || !this.saleDraft.soldAt) {
+      if (!this.saleDraft.soldAt) this.saleError.set('Indica a data da venda.');
+      return;
+    }
+
+    const request: SellProductRequest = {
+      sourceId: this.saleDraft.sourceId,
+      salePrice: Number(this.saleDraft.salePrice) || 0,
+      saleOtherCosts: this.saleDraft.saleOtherCosts === null ? null : Number(this.saleDraft.saleOtherCosts),
+      soldAt: portugalSaleDateInstant(this.saleDraft.soldAt),
+    };
+    this.isSelling.set(true);
+    this.saleError.set(null);
+    this.productService.sell(product.id, request)
+      .pipe(finalize(() => this.isSelling.set(false)))
+      .subscribe({
+        next: () => {
+          this.saleProduct.set(null);
+          this.loadProducts();
+        },
+        error: () => this.saleError.set('Não foi possível registar a venda.'),
+      });
   }
 
   protected openDeleteConfirmation(productId: number): void {
@@ -205,5 +273,12 @@ export class ProductList {
       draft: 'draft', purchased: 'purchased', active: 'active', sold: 'sold', archived: 'archived',
     };
     return values[normalized] ?? 'draft';
+  }
+
+  private todayInputValue(): string {
+    const now = new Date();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${now.getFullYear()}-${month}-${day}`;
   }
 }

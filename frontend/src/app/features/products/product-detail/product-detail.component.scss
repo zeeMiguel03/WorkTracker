@@ -34,6 +34,7 @@
 .product-detail__summary-top strong { color: #f2f4f7; font-size: 22px; }
 .product-detail__facts { display: grid; gap: 0; margin: 0; }
 .product-detail__summary .product-detail__facts { margin-top: 7px; }
+.product-detail__summary-profit dd { font-size: 16px; font-weight: 750; }
 .product-detail__facts div { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 12px 0; border-bottom: 1px solid rgba(37,48,68,.72); }
 .product-detail__facts div:last-child { border-bottom: 0; }
 .product-detail__facts dt { color: #98a2b3; font-size: 11px; }

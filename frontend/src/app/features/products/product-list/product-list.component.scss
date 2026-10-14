@@ -41,6 +41,22 @@
 .products-modal__danger-button { color: #fff; background: #d92d20; border: 1px solid #d92d20; }
 .products-modal__danger-button:hover:not(:disabled) { background: #b42318; border-color: #b42318; }
 .products-modal__secondary-button:disabled, .products-modal__danger-button:disabled { cursor: wait; opacity: .55; }
+.products-sell-form { display: grid; gap: 15px; }
+.products-sell-form > p { margin: 0 0 2px; color: #98a2b3; font-size: 12px; line-height: 1.6; }
+.products-sell-form__field { display: grid; gap: 5px; min-width: 0; }
+.products-sell-form__field > span { color: #d0d5dd; font-size: 10px; font-weight: 700; }
+.products-sell-form__field small { color: #667085; font-weight: 500; }
+.products-sell-form__field input { width: 100%; min-height: 37px; padding: 8px 10px; color: #f2f4f7; background: #101828; border: 1px solid #253044; border-radius: 7px; outline: 0; font: inherit; font-size: 12px; }
+.products-sell-form__field input:focus { border-color: #7592ff; box-shadow: 0 0 0 3px rgba(70,95,255,.15); }
+.products-sell-form__field input[type="number"] { appearance: textfield; }
+.products-sell-form__field input[type="number"]::-webkit-inner-spin-button, .products-sell-form__field input[type="number"]::-webkit-outer-spin-button { margin: 0; appearance: none; }
+.products-sell-form__state, .products-sell-form__error { padding: 12px; color: #98a2b3; background: #101828; border: 1px solid #253044; border-radius: 8px; font-size: 12px; }
+.products-sell-form__error { color: #fda29b; border-color: rgba(253,162,155,.3); }
+.products-sell-form__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; margin-top: 4px; padding-top: 16px; border-top: 1px solid #253044; }
+.products-sell-form__button { min-height: 40px; padding: 0 14px; color: #b9c2d0; background: #182230; border: 1px solid #344054; border-radius: 8px; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.products-sell-form__button--primary { color: #fff; background: #465fff; border-color: #465fff; }
+.products-sell-form__button--primary:hover:not(:disabled) { background: #3641f5; border-color: #3641f5; }
+.products-sell-form__button:disabled { cursor: wait; opacity: .55; }
 @media (max-width: 640px) {
   .products-page { padding: 22px 14px 34px; }
   .products-page__header { align-items: flex-start; margin-bottom: 28px; }
