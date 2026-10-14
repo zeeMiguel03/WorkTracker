@@ -13,7 +13,7 @@
       <div>
         <span class="product-detail__eyebrow">{{ "Detalhe do produto" | translate }}</span>
         <div class="product-detail__title-row">
-          <h1>{{ product.name }}</h1>
+          <h1>{{ product.name }}     #{{ product.id}}</h1>
           <span class="product-detail__status">{{ statusLabel(product.status) | translate }}</span>
         </div>
       </div>
@@ -163,26 +163,20 @@
           }
         </div>
 
-        <aside class="product-detail__summary">
+        <aside class="product-detail__summary product-detail__financial-summary">
           <div class="product-detail__summary-top">
-            <span class="product-detail__eyebrow">{{ "Resumo" | translate }}</span>
+            <span class="product-detail__eyebrow">{{ "Financeiro" | translate }}</span>
             <strong>{{ formatPrice(sellingPrice(product)) }}</strong>
           </div>
-          <dl class="product-detail__facts product-detail__summary-profit">
-            <div>
-              <dt>{{ (toStatus(product.status) === 'sold' ? 'Lucro realizado' : 'Lucro estimado') | translate }}</dt>
-              <dd [class.product-detail__value--positive]="financialTone(profit(product)) === 'positive'" [class.product-detail__value--negative]="financialTone(profit(product)) === 'negative'">{{ formatPrice(profit(product)) }}</dd>
-            </div>
-          </dl>
-          <dl class="product-detail__facts">
-            <div><dt>{{ "Categoria" | translate }}</dt><dd>{{ (product.category || 'Sem categoria') | translate }}</dd></div>
-            <div><dt>{{ "Marca" | translate }}</dt><dd>{{ product.brand || '—' }}</dd></div>
-            <div><dt>{{ "Tamanho" | translate }}</dt><dd>{{ product.size || '—' }}</dd></div>
-            <div><dt>{{ "Cor" | translate }}</dt><dd>{{ product.color || '—' }}</dd></div>
-            <div><dt>{{ "Condição" | translate }}</dt><dd>{{ conditionLabel(product.condition) | translate }}</dd></div>
-            <div><dt>{{ "Adicionado em" | translate }}</dt><dd>{{ formatDate(product.createdAt) }}</dd></div>
-            @if (toStatus(product.status) === 'sold') {
-              <div><dt>{{ "Vendido em" | translate }}</dt><dd>{{ formatDate(product.soldAt) }}</dd></div>
+          <dl class="product-detail__facts product-detail__facts--financial">
+            <div><dt>{{ (toStatus(product.status) === 'sold' ? 'Lucro realizado' : 'Lucro estimado') | translate }}</dt><dd [class.product-detail__value--positive]="financialTone(profit(product)) === 'positive'" [class.product-detail__value--negative]="financialTone(profit(product)) === 'negative'">{{ formatPrice(profit(product)) }}</dd></div>
+            <div><dt>{{ "Preço de compra" | translate }}</dt><dd>{{ formatPrice(product.purchasePrice) }}</dd></div>
+            <div><dt>{{ "Portes atribuídos" | translate }}</dt><dd>{{ formatPrice(product.allocatedShippingCost) }}</dd></div>
+            <div><dt>{{ "Outros custos" | translate }}</dt><dd>{{ formatPrice(product.allocatedOtherCosts) }}</dd></div>
+            <div><dt>{{ (toStatus(product.status) === 'sold' ? 'Preço recebido' : 'Preço anunciado') | translate }}</dt><dd>{{ formatPrice(sellingPrice(product)) }}</dd></div>
+            <div><dt>{{ (toStatus(product.status) === 'sold' ? 'Margem de lucro' : 'Margem estimada') | translate }}</dt><dd [class.product-detail__value--positive]="financialTone(profit(product)) === 'positive'" [class.product-detail__value--negative]="financialTone(profit(product)) === 'negative'">{{ formatPercentage(profitMargin(product)) }}</dd></div>
+            @if (toStatus(product.status) === 'sold' && product.saleOtherCosts !== null) {
+              <div><dt>{{ "Custos da venda" | translate }}</dt><dd>{{ formatPrice(product.saleOtherCosts) }}</dd></div>
             }
           </dl>
         </aside>
@@ -198,17 +192,17 @@
 
         <article class="product-detail__panel">
           <div class="product-detail__section-heading">
-            <div><span class="product-detail__eyebrow">{{ "Financeiro" | translate }}</span><h2>{{ "Valores" | translate }}</h2></div>
+            <div><span class="product-detail__eyebrow">{{ "Resumo" | translate }}</span><h2>{{ "Detalhes do produto" | translate }}</h2></div>
           </div>
-          <dl class="product-detail__facts product-detail__facts--financial">
-            <div><dt>{{ "Preço de compra" | translate }}</dt><dd>{{ formatPrice(product.purchasePrice) }}</dd></div>
-            <div><dt>{{ "Portes atribuídos" | translate }}</dt><dd>{{ formatPrice(product.allocatedShippingCost) }}</dd></div>
-            <div><dt>{{ "Outros custos" | translate }}</dt><dd>{{ formatPrice(product.allocatedOtherCosts) }}</dd></div>
-            <div><dt>{{ (toStatus(product.status) === 'sold' ? 'Preço recebido' : 'Preço anunciado') | translate }}</dt><dd>{{ formatPrice(sellingPrice(product)) }}</dd></div>
-            <div><dt>{{ (toStatus(product.status) === 'sold' ? 'Lucro realizado' : 'Lucro estimado') | translate }}</dt><dd [class.product-detail__value--positive]="financialTone(profit(product)) === 'positive'" [class.product-detail__value--negative]="financialTone(profit(product)) === 'negative'">{{ formatPrice(profit(product)) }}</dd></div>
-            <div><dt>{{ (toStatus(product.status) === 'sold' ? 'Margem de lucro' : 'Margem estimada') | translate }}</dt><dd [class.product-detail__value--positive]="financialTone(profit(product)) === 'positive'" [class.product-detail__value--negative]="financialTone(profit(product)) === 'negative'">{{ formatPercentage(profitMargin(product)) }}</dd></div>
-            @if (toStatus(product.status) === 'sold' && product.saleOtherCosts !== null) {
-              <div><dt>{{ "Custos da venda" | translate }}</dt><dd>{{ formatPrice(product.saleOtherCosts) }}</dd></div>
+          <dl class="product-detail__facts">
+            <div><dt>{{ "Categoria" | translate }}</dt><dd>{{ (product.category || 'Sem categoria') | translate }}</dd></div>
+            <div><dt>{{ "Marca" | translate }}</dt><dd>{{ product.brand || '—' }}</dd></div>
+            <div><dt>{{ "Tamanho" | translate }}</dt><dd>{{ product.size || '—' }}</dd></div>
+            <div><dt>{{ "Cor" | translate }}</dt><dd>{{ product.color || '—' }}</dd></div>
+            <div><dt>{{ "Condição" | translate }}</dt><dd>{{ conditionLabel(product.condition) | translate }}</dd></div>
+            <div><dt>{{ "Adicionado em" | translate }}</dt><dd>{{ formatDate(product.createdAt) }}</dd></div>
+            @if (toStatus(product.status) === 'sold') {
+              <div><dt>{{ "Vendido em" | translate }}</dt><dd>{{ formatDate(product.soldAt) }}</dd></div>
             }
             <div><dt>{{ "Última atualização" | translate }}</dt><dd>{{ formatDate(product.updatedAt) }}</dd></div>
           </dl>
