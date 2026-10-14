@@ -60,8 +60,11 @@ public sealed class ProductRepository : IProductRepository
         if (!string.IsNullOrWhiteSpace(search))
         {
             var normalizedSearch = search.Trim();
+            var idSearch = normalizedSearch.StartsWith('#') ? normalizedSearch[1..].Trim() : normalizedSearch;
+            var matchesProductId = int.TryParse(idSearch, out var productId);
 
             query = query.Where(product =>
+                (matchesProductId && product.Id == productId) ||
                 product.Name.Contains(normalizedSearch) ||
                 (product.Brand != null && product.Brand.Contains(normalizedSearch)) ||
                 (product.Category != null && product.Category.Contains(normalizedSearch)) ||
